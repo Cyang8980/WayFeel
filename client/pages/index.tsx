@@ -1,6 +1,8 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { initMap } from "./api/map";
 import { Calendar, momentLocalizer } from "react-big-calendar";
+import Sidebar from "./Components/sidebar";
+import { MenuIcon, CloseIcon } from "./Components/icons";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -78,48 +80,41 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
   );
 };
 
-// Menu and Close Icon Components
-const MenuIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="3" y1="12" x2="21" y2="12"></line>
-    <line x1="3" y1="6" x2="21" y2="6"></line>
-    <line x1="3" y1="18" x2="21" y2="18"></line>
-  </svg>
-);
-
-const CloseIcon = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-  >
-    <line x1="18" y1="6" x2="6" y2="18"></line>
-    <line x1="6" y1="6" x2="18" y2="18"></line>
-  </svg>
-);
-
 const Index = () => {
   const [message, setMessage] = useState("Loading...");
   const [activeItem, setActiveItem] = useState("home");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
+
+  const googleMapsRef = useRef<any>(null);
+
+  const loadGoogleMapsScript = () => {
+    if (window.google && window.google.maps) {
+      googleMapsRef.current = window.google.maps; // Store the loaded Google Maps instance
+      initMap();
+    } else {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        if (window.google && window.google.maps) {
+          googleMapsRef.current = window.google.maps; // Store the loaded Google Maps instance
+          initMap(); // Ensure this is only called once the script is loaded
+        }
+      };
+      document.head.appendChild(script);
+
+      // Define the initMap function globally so Google Maps can call it once the script is loaded
+      window.initMap = () => {
+        if (window.google && window.google.maps) {
+          googleMapsRef.current = window.google.maps;
+          initMap();
+        }
+      };
+    }
+  };
 
   const handleNavigate = (action: "PREV" | "TODAY" | "NEXT") => {
     const offsetMap: Record<CalendarView, moment.DurationInputArg2> = {
@@ -139,34 +134,21 @@ const Index = () => {
   };
 
   useEffect(() => {
-    const loadGoogleMapsScript = () => {
-      if (window.google && window.google.maps) {
-        initMap();
-      } else {
-        const script = document.createElement("script");
-        script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initMap`;
-        script.async = true;
-        script.defer = true;
-        script.onload = () => {
-          if (window.google && window.google.maps) {
-            initMap();
-          }
-        };
-        document.head.appendChild(script);
-      }
-    };
-
     loadGoogleMapsScript();
 
-    fetch("http://localhost:8080/api/home")
+    fetch("/api/home")
       .then((response) => {
         if (!response.ok) {
           throw new Error(`HTTP error! status: ${response.status}`);
         }
         return response.json();
       })
-      .then((data) => setMessage(data.message))
-      .catch((error) => console.error("Error fetching data:", error));
+      .then((data) => {
+        setMessage(data.message);
+      })
+      .catch((error) => {
+        console.error("Error fetching data:", error);
+      });
   }, []);
 
   const events = [
@@ -206,28 +188,12 @@ const Index = () => {
       </nav>
 
       <div className="flex pt-14">
-        <aside
-          className={`fixed inset-y-0 left-0 transform ${
-            isSidebarOpen ? "translate-x-0" : "-translate-x-full"
-          } bg-gray-800 text-white w-64 transition-transform duration-300 ease-in-out z-20 mt-14`}
-        >
-          <nav className="p-4">
-            {menuItems.map((item) => (
-              <button
-                key={item.id}
-                onClick={() => {
-                  setActiveItem(item.id);
-                  setSidebarOpen(false);
-                }}
-                className={`flex items-center w-full p-3 mb-2 rounded-lg hover:bg-gray-700 transition-colors ${
-                  activeItem === item.id ? "bg-gray-700" : ""
-                }`}
-              >
-                <span>{item.label}</span>
-              </button>
-            ))}
-          </nav>
-        </aside>
+        <Sidebar
+          isOpen={isSidebarOpen}
+          activeItem={activeItem}
+          onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+          onSetActiveItem={setActiveItem}
+        />
 
         <main className="flex-1 flex">
           <section className="w-1/4 p-4">
@@ -258,7 +224,7 @@ const Index = () => {
           <section className="w-3/4 p-4">
             <div
               id="map"
-              style={{ height: "1000px", width: "150%" }}
+              style={{ height: "780px", width: "100%" }}
               className="rounded-lg shadow-lg mb-4"
             ></div>
             <div className="bg-white p-4 rounded-lg shadow">{message}</div>

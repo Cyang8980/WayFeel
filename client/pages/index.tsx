@@ -6,6 +6,7 @@ import { MenuIcon, CloseIcon } from "./Components/icons";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, useClerk } from "@clerk/nextjs";
+// import mapStyle from "./api/mapStyles/paper.json"
 
 // Types
 type CalendarView = "month" | "week" | "day";
@@ -82,7 +83,7 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
 };
 
 const Index = () => {
-  const { isSignedIn, user } = useUser();
+  const { isSignedIn } = useUser();
   const { signOut, redirectToSignIn } = useClerk();
   const [message, setMessage] = useState("Loading...");
   const [activeItem, setActiveItem] = useState("home");
@@ -165,13 +166,6 @@ const Index = () => {
       start: new Date(2025, 0, 16, 13, 0),
       end: new Date(2025, 0, 16, 14, 0),
     },
-  ];
-
-  const menuItems = [
-    { id: "home", label: "🏠 Home" },
-    { id: "analytics", label: "📊 Analytics" },
-    { id: "profile", label: "👤 Profile" },
-    { id: "settings", label: "⚙️ Settings" },
   ];
 
   return (

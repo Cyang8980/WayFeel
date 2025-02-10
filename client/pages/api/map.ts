@@ -1,14 +1,15 @@
 export let map: google.maps.Map;
 
+// export async function initMap(styleArray: google.maps.MapTypeStyle[]) {
 export async function initMap() {
   // Request needed libraries.
   console.log("Initializing map...");
-  const { Map } = (await google.maps.importLibrary(
-    "maps"
-  )) as google.maps.MapsLibrary;
-  const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-    "marker"
-  )) as google.maps.MarkerLibrary;
+  // const { Map } = (await google.maps.importLibrary(
+  //   "maps"
+  // )) as google.maps.MapsLibrary;
+  // const { AdvancedMarkerElement } = (await google.maps.importLibrary(
+  //   "marker"
+  // )) as google.maps.MarkerLibrary;
 
   const myLatlng = { lat: 40.6782, lng: -73.9442 };
 
@@ -17,6 +18,8 @@ export async function initMap() {
     zoom: 14,
     center: myLatlng,
     mapId: "DEMO_MAP_ID",
+    // styles: styleArray
+    // styles:
   });
 
   // Add a click listener to the map to place a marker

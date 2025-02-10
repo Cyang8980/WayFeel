@@ -5,6 +5,7 @@ import Sidebar from "./Components/sidebar";
 import { MenuIcon, CloseIcon } from "./Components/icons";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import { useUser, useClerk } from "@clerk/nextjs";
 
 // Types
 type CalendarView = "month" | "week" | "day";
@@ -81,6 +82,8 @@ const CustomToolbar: React.FC<CustomToolbarProps> = ({
 };
 
 const Index = () => {
+  const { isSignedIn, user } = useUser();
+  const { signOut, redirectToSignIn } = useClerk();
   const [message, setMessage] = useState("Loading...");
   const [activeItem, setActiveItem] = useState("home");
   const [isSidebarOpen, setSidebarOpen] = useState(false);
@@ -183,7 +186,25 @@ const Index = () => {
           >
             {isSidebarOpen ? <CloseIcon /> : <MenuIcon />}
           </button>
+          
           <h1 className="text-xl font-bold">Wayfeel</h1>
+
+          {/* Sign-in / Sign-out Button */}
+          {!isSignedIn ? (
+            <button
+              onClick={() => redirectToSignIn()}
+              className="ml-auto text-white bg-blue-600 p-2 rounded hover:bg-blue-700 transition-colors"
+            >
+              Sign In
+            </button>
+          ) : (
+            <button
+              onClick={() => signOut()} // Sign out using Clerk's signOut method
+              className="ml-auto text-white bg-red-600 p-2 rounded hover:bg-red-700 transition-colors"
+            >
+              Sign Out
+            </button>
+          )}
         </div>
       </nav>
 

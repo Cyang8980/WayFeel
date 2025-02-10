@@ -87,30 +87,52 @@ const Index = () => {
   const [currentView, setCurrentView] = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
 
-  const googleMapsRef = useRef<any>(null);
+  const googleMapsRef = useRef<google.maps.Map | null>(null);
 
   const loadGoogleMapsScript = () => {
+    // Check if google maps API is already loaded
     if (window.google && window.google.maps) {
-      googleMapsRef.current = window.google.maps; // Store the loaded Google Maps instance
-      initMap();
+      googleMapsRef.current = new window.google.maps.Map(
+        document.getElementById("map") as HTMLElement,
+        {
+          zoom: 8,
+          center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
+        }
+      );
+      initMap(); // Call your map initialization logic after loading
     } else {
+      // Load the Google Maps script if not already loaded
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initMap`;
       script.async = true;
       script.defer = true;
+      
       script.onload = () => {
         if (window.google && window.google.maps) {
-          googleMapsRef.current = window.google.maps; // Store the loaded Google Maps instance
-          initMap(); // Ensure this is only called once the script is loaded
+          googleMapsRef.current = new window.google.maps.Map(
+            document.getElementById("map") as HTMLElement,
+            {
+              zoom: 8,
+              center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
+            }
+          );
+          initMap(); // Call your map initialization logic after loading
         }
       };
+      
       document.head.appendChild(script);
-
-      // Define the initMap function globally so Google Maps can call it once the script is loaded
+  
+      // Define the initMap function globally to be called once the script is loaded
       window.initMap = () => {
         if (window.google && window.google.maps) {
-          googleMapsRef.current = window.google.maps;
-          initMap();
+          googleMapsRef.current = new window.google.maps.Map(
+            document.getElementById("map") as HTMLElement,
+            {
+              zoom: 8,
+              center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
+            }
+          );
+          initMap(); // Ensure your logic runs after map is initialized
         }
       };
     }
@@ -162,13 +184,6 @@ const Index = () => {
       start: new Date(2025, 0, 16, 13, 0),
       end: new Date(2025, 0, 16, 14, 0),
     },
-  ];
-
-  const menuItems = [
-    { id: "home", label: "🏠 Home" },
-    { id: "analytics", label: "📊 Analytics" },
-    { id: "profile", label: "👤 Profile" },
-    { id: "settings", label: "⚙️ Settings" },
   ];
 
   return (

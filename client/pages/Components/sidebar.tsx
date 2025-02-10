@@ -1,5 +1,5 @@
 import React from "react";
-import { MenuIcon, CloseIcon } from "./icons";
+import { CloseIcon } from "./icons";
 
 // Define types for the props
 interface SidebarProps {
@@ -8,13 +8,6 @@ interface SidebarProps {
   onToggleSidebar: () => void;
   onSetActiveItem: (id: string) => void;
 }
-
-const menuItems = [
-  { id: "home", label: "🏠 Home" },
-  { id: "analytics", label: "📊 Analytics" },
-  { id: "profile", label: "👤 Profile" },
-  { id: "settings", label: "⚙️ Settings" },
-];
 
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen,

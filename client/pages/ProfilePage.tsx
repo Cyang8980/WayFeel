@@ -1,4 +1,5 @@
-import React from "react";
+import React, { useState } from "react";
+import Sidebar from "./Components/sidebar";
 
 interface ProfileData {
   name: string;
@@ -117,6 +118,8 @@ const Icons = {
 };
 
 const ProfilePage: React.FC = () => {
+  const [activeItem, setActiveItem] = useState("home");
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
   const profile: ProfileData = {
     name: "Sarah Johnson",
     role: "Senior Software Engineer",
@@ -134,73 +137,83 @@ const ProfilePage: React.FC = () => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6">
-      <div className="space-y-6">
-        {/* Header Card */}
-        <Card>
-          <CardContent className="pt-6">
-            <div className="flex items-start gap-6">
-              {/* Profile Image */}
-              <div className="w-24 h-24 bg-gray-200 rounded-full p-4">
-                <Icons.User />
+    <div className="flex">
+      {/* Sidebar */}
+      {/* Main content */}
+      <Sidebar
+          isOpen={isSidebarOpen}
+          activeItem={activeItem}
+          onToggleSidebar={() => setSidebarOpen(!isSidebarOpen)}
+          onSetActiveItem={setActiveItem}
+        />
+      <div className="flex-1 max-w-4xl mx-auto p-6">
+        <div className="space-y-6">
+          {/* Header Card */}
+          <Card>
+            <CardContent className="pt-6">
+              <div className="flex items-start gap-6">
+                {/* Profile Image */}
+                <div className="w-24 h-24 bg-gray-200 rounded-full p-4">
+                  <Icons.User />
+                </div>
+
+                {/* Basic Info */}
+                <div className="flex-1">
+                  <h1 className="text-2xl font-bold">{profile.name}</h1>
+                  <p className="text-gray-600">{profile.role}</p>
+                  <p className="mt-2 text-gray-700">{profile.bio}</p>
+                </div>
               </div>
 
-              {/* Basic Info */}
-              <div className="flex-1">
-                <h1 className="text-2xl font-bold">{profile.name}</h1>
-                <p className="text-gray-600">{profile.role}</p>
-                <p className="mt-2 text-gray-700">{profile.bio}</p>
+              {/* Stats */}
+              <div className="flex gap-6 mt-6">
+                <div className="text-center">
+                  <div className="font-bold">{profile.stats.followers}</div>
+                  <div className="text-sm text-gray-600">Followers</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold">{profile.stats.following}</div>
+                  <div className="text-sm text-gray-600">Following</div>
+                </div>
+                <div className="text-center">
+                  <div className="font-bold">{profile.stats.projects}</div>
+                  <div className="text-sm text-gray-600">Projects</div>
+                </div>
               </div>
-            </div>
+            </CardContent>
+          </Card>
 
-            {/* Stats */}
-            <div className="flex gap-6 mt-6">
-              <div className="text-center">
-                <div className="font-bold">{profile.stats.followers}</div>
-                <div className="text-sm text-gray-600">Followers</div>
+          {/* Details Card */}
+          <Card>
+            <CardHeader className="pb-4">
+              <h2 className="text-xl font-semibold">Details</h2>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                <div className="flex items-center gap-3">
+                  <Icons.Mail />
+                  <span>{profile.email}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Icons.Location />
+                  <span>{profile.location}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Icons.Calendar />
+                  <span>Joined {profile.joinDate}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Icons.Briefcase />
+                  <span>{profile.company}</span>
+                </div>
+                <div className="flex items-center gap-3">
+                  <Icons.Link />
+                  <span>{profile.website}</span>
+                </div>
               </div>
-              <div className="text-center">
-                <div className="font-bold">{profile.stats.following}</div>
-                <div className="text-sm text-gray-600">Following</div>
-              </div>
-              <div className="text-center">
-                <div className="font-bold">{profile.stats.projects}</div>
-                <div className="text-sm text-gray-600">Projects</div>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Details Card */}
-        <Card>
-          <CardHeader className="pb-4">
-            <h2 className="text-xl font-semibold">Details</h2>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              <div className="flex items-center gap-3">
-                <Icons.Mail />
-                <span>{profile.email}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Icons.Location />
-                <span>{profile.location}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Icons.Calendar />
-                <span>Joined {profile.joinDate}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Icons.Briefcase />
-                <span>{profile.company}</span>
-              </div>
-              <div className="flex items-center gap-3">
-                <Icons.Link />
-                <span>{profile.website}</span>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );

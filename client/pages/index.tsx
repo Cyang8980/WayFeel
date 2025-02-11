@@ -1,8 +1,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import { initMap } from "./api/map";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import Sidebar from "./Components/sidebar";
-import { MenuIcon, CloseIcon } from "./Components/icons";
+import Sidebar from "../Components/sidebar";
+import { MenuIcon } from "../Components/Icons/menuIcon";
+import { CloseIcon } from "../Components/Icons/closeIcon";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
@@ -86,7 +87,6 @@ const Index = () => {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const [currentView, setCurrentView] = useState<CalendarView>("month");
   const [currentDate, setCurrentDate] = useState(new Date());
-
   const googleMapsRef = useRef<google.maps.Map | null>(null);
 
   const loadGoogleMapsScript = () => {

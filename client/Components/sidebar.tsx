@@ -1,5 +1,5 @@
 import React from "react";
-import { CloseIcon } from "./icons";
+import { CloseIcon } from "./Icons/closeIcon"
 
 // Define types for the props
 interface SidebarProps {
@@ -8,6 +8,7 @@ interface SidebarProps {
   onToggleSidebar: () => void;
   onSetActiveItem: (id: string) => void;
 }
+
 
 const Sidebar: React.FC<SidebarProps> = ({
   isOpen,
@@ -32,7 +33,7 @@ const Sidebar: React.FC<SidebarProps> = ({
         onClick={onToggleSidebar}
         className="absolute top-4 right-4 text-white"
       >
-        <CloseIcon />
+        <CloseIcon/>
       </button>
 
       <nav className="p-4">

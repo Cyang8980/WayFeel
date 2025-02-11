@@ -5,6 +5,8 @@ import Sidebar from "../Components/sidebar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, useClerk } from "@clerk/nextjs";
+import Image from "next/image";
+import kofiImage from "./support_me_on_kofi.png";
 
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -71,8 +73,14 @@ const Index = () => {
     <div className="min-h-screen bg-gray-100">
       <nav className="bg-gray-800 text-white fixed w-full z-10">
         <div className="flex items-center px-4 py-3">
-          <h1 className="text-xl font-bold">Wayfeel</h1>
-  
+          <h1 className="text-xl font-bold mr-20">Wayfeel</h1>
+          <a
+            href="https://ko-fi.com/wayfeel"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <Image src="/kofi_logo.svg" alt="Ko-fi" width={150} height={50} />
+          </a>
           {/* Sign-in / Sign-out Button */}
           {!isSignedIn ? (
             <button
@@ -91,15 +99,17 @@ const Index = () => {
           )}
         </div>
       </nav>
-  
+
       <div className="flex pt-14">
         {/* Sidebar */}
         <div className="w-1/6 fixed top-16 left-0 p-4">
           <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
         </div>
-  
+
         {/* Content area */}
-        <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]"> {/* Adjusted for sidebar width and margin */}
+        <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
+          {" "}
+          {/* Adjusted for sidebar width and margin */}
           <section className="w-[25%] p-4">
             {/* temp workaround */}
             <div style={{ height: "470px" }}>
@@ -116,7 +126,6 @@ const Index = () => {
               toolbar={false}
             />
           </section>
-  
           <section className="w-[65%] p-4">
             <div
               id="map"

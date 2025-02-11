@@ -6,18 +6,17 @@ interface SidebarProps {
   onSetActiveItem: (item: string) => void;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({
-  activeItem,
-  onSetActiveItem,
-}) => {
+const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
   const { openUserProfile } = useClerk();
 
   const menuItems = [
     { id: "home", label: "🏠", action: () => router.push("/") },
-    { id: "analytics", label: "📊", action: () => router.push("/analytics") },
+    // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
+    { id: "analytics", label: "📊", action: () => alert("not done yet") },
     { id: "profile", label: "👤", action: openUserProfile },
-    { id: "settings", label: "⚙️", action: () => router.push("/settings") },
+    { id: "settings", label: "⚙️", action: () => alert("not done yet") },
+    // { id: "settings", label: "⚙️", action: () => router.push("/settings") },
   ];
 
   return (

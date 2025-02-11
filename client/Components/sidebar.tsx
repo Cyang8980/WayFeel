@@ -1,53 +1,47 @@
-import React from "react";
-import { useRouter } from "next/router"; // Import useRouter
-// import { useUser } from "@clerk/nextjs";
-// import { MenuIcon, CloseIcon } from "./icons";
+import { useRouter } from "next/router";
+import { useClerk } from "@clerk/nextjs";
 
 interface SidebarProps {
-  isOpen: boolean;
   activeItem: string;
-  onToggleSidebar: () => void;
-  onSetActiveItem: (id: string) => void;
+  onSetActiveItem: (item: string) => void;
 }
 
 const Sidebar: React.FC<SidebarProps> = ({
-  isOpen,
   activeItem,
-  onToggleSidebar,
   onSetActiveItem,
 }) => {
-  const router = useRouter(); // Initialize router
+  const router = useRouter();
+  const { openUserProfile } = useClerk();
 
   const menuItems = [
-    { id: "home", label: "🏠 Home", path: "/" },
-    { id: "analytics", label: "📊 Analytics", path: "/analytics" },
-    { id: "profile", label: "👤 Profile", path: "/profile" }, // Route for ProfilePage
-    { id: "settings", label: "⚙️ Settings", path: "/settings" },
+    { id: "home", label: "🏠", action: () => router.push("/") },
+    { id: "analytics", label: "📊", action: () => router.push("/analytics") },
+    { id: "profile", label: "👤", action: openUserProfile },
+    { id: "settings", label: "⚙️", action: () => router.push("/settings") },
   ];
 
   return (
     <aside
-      className={`fixed inset-y-0 left-0 transform ${
-        isOpen ? "translate-x-0" : "-translate-x-full"
-      } bg-gray-800 text-white w-64 transition-transform duration-300 ease-in-out z-50 mt-14`}
+      className={`w-16 bg-gray-900 text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50`}
     >
-      <nav className="p-4">
+      {/* Sidebar Items */}
+      <ul className="mt-4 space-y-2">
         {menuItems.map((item) => (
-          <button
-            key={item.id}
-            onClick={() => {
-              onSetActiveItem(item.id);
-              onToggleSidebar();
-              router.push(item.path); // Redirect to the respective page
-            }}
-            className={`flex items-center w-full p-3 mb-2 rounded-lg hover:bg-gray-700 transition-colors ${
-              activeItem === item.id ? "bg-gray-700" : ""
-            }`}
-          >
-            <span>{item.label}</span>
-          </button>
+          <li key={item.id}>
+            <button
+              onClick={() => {
+                onSetActiveItem(item.id);
+                item.action();
+              }}
+              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${
+                activeItem === item.id ? "bg-gray-800" : ""
+              }`}
+            >
+              {item.label}
+            </button>
+          </li>
         ))}
-      </nav>
+      </ul>
     </aside>
   );
 };

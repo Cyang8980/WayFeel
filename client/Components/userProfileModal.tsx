@@ -1,12 +1,12 @@
-import { Button } from "@mui/material";
-import { useClerk } from "@clerk/nextjs";
+// import { Button } from "@mui/material";
+// import { useClerk } from "@clerk/nextjs";
 
-export function CustomUserProfileButton() {
-  const { openUserProfile } = useClerk(); // Clerk function to open the default modal
+// export function CustomUserProfileButton() {
+//   const { openUserProfile } = useClerk(); // Clerk function to open the default modal
 
-  return (
-    <Button onClick={() => openUserProfile()} variant="contained" color="primary">
-      Open User Profile
-    </Button>
-  );
-}
+//   return (
+//     <Button onClick={() => openUserProfile()} variant="contained" color="primary">
+//       Open User Profile
+//     </Button>
+//   );
+// }

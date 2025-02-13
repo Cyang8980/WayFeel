@@ -1,21 +1,27 @@
-import { UserProfile } from "@clerk/nextjs";
-import { useRouter } from "next/router";
+'use client'
 
-export default function ProfilePage() {
-  const router = useRouter();
+import { UserButton } from '@clerk/nextjs'
 
+const DotIcon = () => {
   return (
-    <div className="flex flex-col items-center min-h-screen bg-gray-100 p-4">
-      {/* Back Button */}
-      <button
-        onClick={() => router.push("/")}
-        className="mb-4 px-4 py-2 bg-gray-800 text-white rounded-lg shadow hover:bg-gray-700 transition"
-      >
-        ← Back to Home
-      </button>
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="currentColor">
+      <path d="M256 512A256 256 0 1 0 256 0a256 256 0 1 0 0 512z" />
+    </svg>
+  )
+}
 
-      {/* Clerk User Profile */}
-      <UserProfile />
-    </div>
-  );
+export const CustomUserButton = () => {
+  return (
+    <UserButton>
+      <UserButton.UserProfileLink label="Homepage" url="/" labelIcon={<DotIcon />} />
+      <UserButton.UserProfilePage label="Custom Page" url="custom" labelIcon={<DotIcon />}>
+        <div>
+          <h1>Custom Profile Page</h1>
+          <p>This is the custom profile page</p>
+        </div>
+      </UserButton.UserProfilePage>
+      <UserButton.UserProfilePage label="account" />
+      <UserButton.UserProfileLink label="Security" url="/security" labelIcon={<DotIcon />}/>
+    </UserButton>
+  )
 }

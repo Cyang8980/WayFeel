@@ -1,5 +1,6 @@
 import { useRouter } from "next/router";
-import { useClerk } from "@clerk/nextjs";
+import { useClerk, useUser } from "@clerk/nextjs";
+import { useState } from "react";
 
 interface SidebarProps {
   activeItem: string;
@@ -9,20 +10,18 @@ interface SidebarProps {
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
   const { openUserProfile } = useClerk();
+  const { user } = useUser();
 
   const menuItems = [
     { id: "home", label: "🏠", action: () => router.push("/") },
     // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
     { id: "analytics", label: "📊", action: () => alert("not done yet") },
     { id: "profile", label: "👤", action: openUserProfile },
-    { id: "settings", label: "⚙️", action: () => alert("not done yet") },
-    // { id: "settings", label: "⚙️", action: () => router.push("/settings") },
+    { id: "settings", label: "⚙️", action: () => router.push("/dobPrompt") }, // This will navigate to the UnSafePage
   ];
 
   return (
-    <aside
-      className={`w-16 bg-gray-900 text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50`}
-    >
+    <aside className={`w-16 bg-gray-900 text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50`}>
       {/* Sidebar Items */}
       <ul className="mt-4 space-y-2">
         {menuItems.map((item) => (

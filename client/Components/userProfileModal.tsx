@@ -7,6 +7,6 @@ export function CustomUserProfileButton() {
   return (
     <Button onClick={() => openUserProfile()} variant="contained" color="primary">
       Open User Profile
-    </Button>
+    </Button> 
   );
 }

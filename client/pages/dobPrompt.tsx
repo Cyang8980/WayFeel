@@ -1,12 +1,19 @@
 import { useUser } from '@clerk/nextjs';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from "next/router";
 
 export default function UnSafePage() {
   const { user } = useUser();
+  const router = useRouter();
   const [birthday, setBirthday] = useState('');
   const [error, setError] = useState('');
-  const router = useRouter();
+
+  // Load birthday from user's metadata
+  useEffect(() => {
+    if (user?.unsafeMetadata?.birthday) {
+      setBirthday(user.unsafeMetadata.birthday);
+    }
+  }, [user]);
 
   const handleUpdate = () => {
     if (!birthday) {
@@ -37,6 +44,7 @@ export default function UnSafePage() {
         >
           Update Birthday
         </button>
+          
       </div>
     </div>
   );

@@ -1,6 +1,9 @@
 import { useRouter } from "next/router";
 import { useClerk, useUser } from "@clerk/nextjs";
 import { useState } from "react";
+import { UserButton } from '@clerk/nextjs'
+import { CustomUserButton } from "@/pages/profile/[[...index]]";
+
 
 interface SidebarProps {
   activeItem: string;

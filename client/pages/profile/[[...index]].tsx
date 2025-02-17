@@ -1,7 +1,6 @@
 'use client'
 
 import { UserButton } from '@clerk/nextjs'
-import { useUser } from '@clerk/nextjs'
 
 const DotIcon = () => {
   return (
@@ -14,7 +13,6 @@ const DotIcon = () => {
 export const CustomUserButton = () => {
   return (
     <UserButton>
-      <UserButton.UserProfileLink label="Homepage" url="/" labelIcon={<DotIcon />} />
       <UserButton.UserProfilePage label="Custom Page" url="custom" labelIcon={<DotIcon />}>
         <div>
           <h1>Custom Profile Page</h1>
@@ -22,7 +20,6 @@ export const CustomUserButton = () => {
         </div>
       </UserButton.UserProfilePage>
       <UserButton.UserProfilePage label="account" />
-      <UserButton.UserProfileLink label="Security" url="/security" labelIcon={<DotIcon />}/>
     </UserButton>
   )
 }

@@ -17,9 +17,7 @@ const Layout: React.FC = () => {
     <div className="flex">
       {/* Sidebar Component */}
       <Sidebar
-        isOpen={isSidebarOpen}
         activeItem={activeItem}
-        onToggleSidebar={toggleSidebar}
         onSetActiveItem={setActiveMenuItem}
       />
 

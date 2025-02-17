@@ -19,8 +19,10 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
     { id: "home", label: "🏠", action: () => router.push("/") },
     // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
     { id: "analytics", label: "📊", action: () => alert("not done yet") },
-    { id: "profile", label: "👤", action: openUserProfile },
-    { id: "settings", label: "⚙️", action: () => router.push("/dobPrompt") }, // This will navigate to the UnSafePage
+    // { id: "profile", label: "👤", action: openUserProfile },
+    // { id: "profile", label: "👤", action: openUserProfile },
+    { id: "settings", label: "⚙️", action: () => alert("not done yet") },
+    // { id: "settings", label: "⚙️", action: () => router.push("/settings") },
   ];
 
   return (

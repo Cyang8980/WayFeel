@@ -1,6 +1,9 @@
 'use client'
 
 import { UserButton } from '@clerk/nextjs'
+import UnSafePage from '../dob/dobPrompt'
+import { useState } from 'react'
+
 
 const DotIcon = () => {
   return (
@@ -11,12 +14,13 @@ const DotIcon = () => {
 }
 
 export const CustomUserButton = () => {
+  const [birthday, setBirthday] = useState('');
+
   return (
     <UserButton>
-      <UserButton.UserProfilePage label="Custom Page" url="custom" labelIcon={<DotIcon />}>
+      <UserButton.UserProfilePage label="Birthday" url="custom" labelIcon={<DotIcon />}>
         <div>
-          <h1>Custom Profile Page</h1>
-          <p>This is the custom profile page</p>
+          <UnSafePage onBirthdayUpdate={setBirthday} />
         </div>
       </UserButton.UserProfilePage>
       <UserButton.UserProfilePage label="account" />

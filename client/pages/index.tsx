@@ -4,7 +4,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../Components/sidebar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
+import { useUser, SignInButton } from "@clerk/nextjs";
 import Image from "next/image";
 import { CustomUserButton } from "./profile/[[...index]]";
 // import kofiImage from "./support_me_on_kofi.png";
@@ -20,7 +20,7 @@ const Index = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
 
   const googleMapsRef = useRef<google.maps.Map | null>(null);
-  
+
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(

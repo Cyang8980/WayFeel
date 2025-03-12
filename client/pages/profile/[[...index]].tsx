@@ -15,7 +15,6 @@ const DotIcon = () => {
 
 export const CustomUserButton = () => {
   const [birthday, setBirthday] = useState('');
-
   return (
     <UserButton>
       <UserButton.UserProfilePage label="Birthday" url="custom" labelIcon={<DotIcon />}>

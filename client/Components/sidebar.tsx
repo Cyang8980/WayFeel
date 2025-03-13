@@ -18,15 +18,15 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const menuItems = [
     { id: "home", label: "🏠", action: () => router.push("/") },
     // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
-    { id: "analytics", label: "📊", action: () => alert("not done yet") },
-    // { id: "profile", label: "👤", action: openUserProfile },
+    { id: "calander", label: "📅", action: () => router.push("/calander/calander") },
+    { id: "timeline", label: "🕑", action: () => router.push("/timeline/timeline") },
     // { id: "profile", label: "👤", action: openUserProfile },
     { id: "settings", label: "⚙️", action: () => alert("not done yet") },
     // { id: "settings", label: "⚙️", action: () => router.push("/settings") },
   ];
 
   return (
-    <aside className={`w-16 bg-gray-900 text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50`}>
+    <aside className={`w-16 bg-gray-900 text-white h-screen fixed top-10 left-0 transform transition-transform duration-300 z-50`}>
       {/* Sidebar Items */}
       <ul className="mt-4 space-y-2">
         {menuItems.map((item) => (

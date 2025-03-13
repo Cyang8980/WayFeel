@@ -2,11 +2,16 @@ import { useRouter } from "next/router";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../pages/profile/[[...index]]";
 import { useEffect, useState } from "react";
+import styled from 'styled-components';
 
 interface SidebarProps {
   activeItem: string;
   onSetActiveItem: (item: string) => void;
 }
+
+const ButtonWrapper = styled.div`
+  margin: 20px;
+`;
 
 type MenuItem = {
   id: string;
@@ -43,7 +48,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
           </button>
         </SignInButton>
       ) : (
-        <CustomUserButton/>
+        <ButtonWrapper>
+          <CustomUserButton />
+        </ButtonWrapper>
       )}
       <ul className="mt-4 space-y-2">
         {menuItems.map((item) => (
@@ -53,9 +60,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
                 onSetActiveItem(item.id);
                 item.action();
               }}
-              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${
-                activeItem === item.id ? "bg-gray-800" : ""
-              }`}
+              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${activeItem === item.id ? "bg-gray-800" : ""}`}
             >
               {item.label}
             </button>

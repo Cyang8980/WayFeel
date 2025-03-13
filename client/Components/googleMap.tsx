@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from "react";
-
+import { initMap } from "@/pages/api/map";
 const GoogleMap = () => {
   const mapRef = useRef(null);
   const markerRef = useRef(null);

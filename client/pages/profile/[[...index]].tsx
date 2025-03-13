@@ -1,7 +1,6 @@
 'use client'
 
 import { UserButton } from '@clerk/nextjs'
-import { useUser } from '@clerk/nextjs'
 import UnSafePage from '../dob/dobPrompt'
 import { useState } from 'react'
 
@@ -13,9 +12,6 @@ const DotIcon = () => {
     </svg>
   )
 }
-
-
-
 
 export const CustomUserButton = () => {
   const [birthday, setBirthday] = useState('');

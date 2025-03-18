@@ -1,6 +1,4 @@
 import { useRouter } from "next/router";
-import { useClerk, useUser } from "@clerk/nextjs";
-
 
 interface SidebarProps {
   activeItem: string;
@@ -9,8 +7,6 @@ interface SidebarProps {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
-  const { openUserProfile } = useClerk();
-  const { user } = useUser();
 
   const menuItems = [
     { id: "home", label: "🏠", action: () => router.push("/") },

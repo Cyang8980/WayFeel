@@ -110,28 +110,30 @@ const Index = () => {
         </div>
 
         {/* Content Area */}
-        <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
-          <section className="w-[25%] p-4">
-            <div style={{ height: '470px' }}>
+        <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%] flex-col md:flex-row">
+          {/* Left Section */}
+          <section className="w-full md:w-[25%] p-4 flex flex-col space-y-4">
+            <div className="h-[470px] bg-gray-100 flex items-center justify-center rounded-lg shadow">
               AI location recommendation goes here
             </div>
-            <Calendar
-              localizer={localizer}
-              startAccessor="start"
-              endAccessor="end"
-              date={currentDate}
-              onNavigate={(date) => setCurrentDate(date)}
-              style={{ height: '310px', width: '100%' }}
-              className="shadow-lg rounded-lg bg-white p-4"
-              toolbar={false}
-            />
+            <div className="flex-1">
+              <Calendar
+                localizer={localizer}
+                startAccessor="start"
+                endAccessor="end"
+                date={currentDate}
+                onNavigate={(date) => setCurrentDate(date)}
+                className="shadow-lg rounded-lg bg-white w-full h-[200px] md:h-[350px]" // Responsive height for larger screens
+                toolbar={false}
+              />
+            </div>
           </section>
 
-          <section className="w-[65%] p-4">
+          {/* Right Section */}
+          <section className="w-full md:w-[65%] p-4">
             <div
               id="map"
-              style={{ height: '745px', width: '100%' }}
-              className="rounded-lg shadow-lg mb-4"
+              className="h-[745px] md:h-[80vh] w-full rounded-lg shadow-lg mb-4" // Use vh for responsiveness
             ></div>
           </section>
         </main>

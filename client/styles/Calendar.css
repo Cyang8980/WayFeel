@@ -1,0 +1,25 @@
+/* CalendarStyles.css */
+.rbc-month-view {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr); /* 7 columns for the days of the week */
+  }
+  
+  .rbc-day-slot {
+    position: relative;
+    padding: 0;
+    height: 0;
+    padding-bottom: 100%; /* Ensures square aspect ratio */
+  }
+  
+  .rbc-day-slot > div {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+  
+  .rbc-event {
+    border-radius: 0; /* Remove rounded corners for events */
+  }
+  

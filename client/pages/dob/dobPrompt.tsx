@@ -9,10 +9,15 @@ export default function UnSafePage() {
 
   // Load birthday from user's metadata when component mounts
   useEffect(() => {
-    if (user?.unsafeMetadata?.birthday) {
-      setBirthday(user.unsafeMetadata.birthday);
+    const birthdayValue = user?.unsafeMetadata?.birthday;
+  
+    if (typeof birthdayValue === "string") {
+      setBirthday(birthdayValue);
+    } else {
+      setBirthday(""); // Ensures state is always a string
     }
   }, [user]);
+  
 
   const handleUpdate = () => {
     if (!birthday) {

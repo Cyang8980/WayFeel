@@ -1,9 +1,10 @@
+/* eslint-disable react/no-unescaped-entities */
 "use client";
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Ensure your shadcn/ui Button is set up correctly
 import GoogleMap from "@/Components/googleMap";
+import { Button } from "@/Components/ui/button";
 
 const LandingPage: React.FC = () => {
   return (

@@ -20,10 +20,13 @@ export const CustomUserButton = () => {
     <UserButton>
       <UserButton.UserProfilePage label="Birthday" url="custom" labelIcon={<DotIcon />}>
         <div>
-          <UnSafePage onBirthdayUpdate={setBirthday} />
+          <p>{birthday}</p>
+        </div>
+        <div>
+          <UnSafePage onBirthdayUpdate = {setBirthday} />
         </div>
       </UserButton.UserProfilePage>
       <UserButton.UserProfilePage label="account" />
     </UserButton>
   )
-}
+};

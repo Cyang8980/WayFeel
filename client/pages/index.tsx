@@ -4,7 +4,6 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../Components/sidebar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useUser } from "@clerk/nextjs";
 // import kofiImage from "./support_me_on_kofi.png";
 
 // Localizer for react-big-calendar
@@ -12,12 +11,11 @@ const localizer = momentLocalizer(moment);
 
 
 const Index = () => {
-  const { isSignedIn } = useUser();
   // const [message, setMessage] = useState("Loading...");
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
-
+  
   const loadGoogleMapsScript = () => {
     // Check if google maps API is already loaded
     if (window.google && window.google.maps) {
@@ -96,7 +94,6 @@ const Index = () => {
         <div className="w-1/6 fixed top-16 left-0 p-4">
           <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
         </div>
-
         {/* Content Area */}
         <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
           <section className="w-[25%] p-4">

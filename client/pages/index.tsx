@@ -74,32 +74,6 @@ const Index = () => {
     <div className="min-h-screen bg-gray-100">
       {/* Navbar */}
       <nav className="bg-gray-800 text-white fixed w-full z-10">
-        <div className="flex items-center justify-between px-4 py-3">
-          {/* Left Side (Brand + Ko-Fi Link) */}
-          <div className="flex items-center space-x-4">
-            <h1 className="text-xl font-bold">Wayfeel</h1>
-            <a
-              href="https://ko-fi.com/wayfeel"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <Image src="/kofi_logo.svg" alt="Ko-fi" width={100} height={40} />
-            </a>
-          </div>
-
-          {/* Right Side (Sign-in / UserButton) */}
-          <div className="ml-auto">
-            {!isSignedIn ? (
-              <SignInButton>
-                <button className="text-white bg-blue-600 px-4 py-2 rounded hover:bg-blue-700 transition-colors">
-                  Sign In
-                </button>
-              </SignInButton>
-            ) : (
-              <CustomUserButton/>
-            )}
-          </div>
-        </div>
       </nav>
 
       {/* Page Layout */}

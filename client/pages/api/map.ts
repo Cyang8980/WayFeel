@@ -2,14 +2,11 @@ export let map: google.maps.Map;
 
 // export async function initMap(styleArray: google.maps.MapTypeStyle[]) {
 export async function initMap() {
-  // Request needed libraries.
   console.log("Initializing map...");
-  // const { Map } = (await google.maps.importLibrary(
-  //   "maps"
-  // )) as google.maps.MapsLibrary;
-  // const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-  //   "marker"
-  // )) as google.maps.MarkerLibrary;
+
+  // Request needed libraries
+  // const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
+  // const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
 
   const myLatlng = { lat: 40.6782, lng: -73.9442 };
 
@@ -23,8 +20,10 @@ export async function initMap() {
   });
 
   // Add a click listener to the map to place a marker
-  map.addListener("click", (e: { latLng: google.maps.LatLng }) => {
-    placeMarkerAndPanTo(e.latLng, map);
+  map.addListener("click", (e: google.maps.MapMouseEvent) => {
+    if (e.latLng) { // Check if latLng is not null
+      placeMarkerAndPanTo(e.latLng, map);
+    }
   });
 }
 

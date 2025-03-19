@@ -3,7 +3,7 @@ import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../pages/profile/[[...index]]";
 import { useEffect, useState } from "react";
 import styled from 'styled-components';
-
+import { insertUser } from "@/pages/api/insertUser";
 interface SidebarProps {
   activeItem: string;
   onSetActiveItem: (item: string) => void;
@@ -21,7 +21,7 @@ type MenuItem = {
 
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
-  const { isSignedIn } = useUser();
+  const { isSignedIn, user } = useUser();
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -37,6 +37,24 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
       label: <img src="kofi_symbol.svg" alt="Ko-Fi" style={{ width: 24, height: 24 }} />,
       action: () => window.open("https://ko-fi.com/wayfeel", "_blank"),
     },
+    {
+      id: "onBoard",
+      label: "🚢",
+      action: async () => {
+        if (isSignedIn) {
+          try {
+            await insertUser({
+              id: user.id!,
+              first_name: user.firstName!, 
+              last_name: user.lastName!,
+            });
+            console.log('User successfully inserted!');
+          } catch (error) {
+            console.error('Failed to insert user:', error);
+          }
+        }
+      },
+    }
   ];
 
   return (

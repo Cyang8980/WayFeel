@@ -103,7 +103,20 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
       potatoButton.appendChild(potatoImage);
 
       potatoButton.onclick = () => {
-        placeMarkerAndPanTo(latLng, map, option.src, isSignedIn, user);
+        // Map the image source to the corresponding emoji_id
+        const emojiIdMap: { [key: string]: number } = {
+          "sad.svg": 1,
+          "angry.svg": 2,
+          "meh.svg": 3,
+          "happy.svg": 4,
+          "excited.svg": 5,
+        };
+      
+        // Get the emoji_id for the clicked potato
+        const emoji_id = emojiIdMap[option.src];
+      
+        // Call placeMarkerAndPanTo with emoji_id instead of src
+        placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user);
         document.body.removeChild(modal);
       };
 
@@ -138,34 +151,50 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     document.body.appendChild(modal);
   };
 
-  const placeMarkerAndPanTo = async (latLng: google.maps.LatLng, map: google.maps.Map, potatoImageSrc: string, isSignedIn: boolean, user: any) => {
+  const placeMarkerAndPanTo = async (
+    latLng: google.maps.LatLng,
+    map: google.maps.Map,
+    emoji_id: number, // Add emoji_id to the function arguments
+    isSignedIn: boolean,
+    user: any
+  ) => {
+    // Map emoji_id to the respective image source
+    const emojiImages: { [key: number]: string } = { // Index signature allows number indexing
+      1: "sad.svg",      // Sad Potato
+      2: "angry.svg",    // Angry Potato
+      3: "meh.svg",      // Meh Potato
+      4: "happy.svg",    // Happy Potato
+      5: "excited.svg",  // Excited Potato
+    };
+  
+    const potatoImageSrc = emojiImages[emoji_id] || "happy.svg"; // Default to happy if emoji_id is invalid
+  
     const newMarkerImage = createImageElement(potatoImageSrc);
-
+  
+    // Create the new marker
     const newMarker = new google.maps.marker.AdvancedMarkerElement({
       position: latLng,
       map: map,
       content: newMarkerImage,
     });
-
+  
+    // Insert the marker into the database if user is signed in
     if (isSignedIn && user) {
-    const lat = latLng.lat();
-    const lng = latLng.lng();
-    console.log("Latitude:", latLng.lat());
-    console.log("Longitude:", latLng.lng());
       try {
         await insertMarker({
           id: uuidv4(),
           longitude: latLng.lng(),
           latitude: latLng.lat(),
-          emoji_id: 1,
+          emoji_id: emoji_id, // Store the emoji_id in the database
           created_by: user.id!,
         });
         console.log("Marker Successfully Inserted!");
       } catch (error) {
-        console.error("Failed to insert user:", error);
+        console.error("Failed to insert marker:", error);
       }
     }
-
+  
+    // Pan the map to the new marker location
     map.panTo(latLng);
   };
 };

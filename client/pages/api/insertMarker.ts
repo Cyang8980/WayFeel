@@ -7,6 +7,7 @@ export interface Marker {
     latitude: number;
     emoji_id: number;
     created_by: string;
+    anon: boolean;
   }
   
 export async function insertMarker(marker: Marker): Promise<void> {

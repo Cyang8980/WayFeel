@@ -3,6 +3,7 @@ import { initMap } from "./api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../Components/sidebar";
 import moment from "moment";
+import { useUser } from "@clerk/nextjs"
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Localizer for react-big-calendar
@@ -12,6 +13,7 @@ const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
+  const { user } = useUser();
 
   const initializeMap = () => {
     if (window.google && window.google.maps) {
@@ -23,7 +25,7 @@ const Index = () => {
         }
       );
       // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, {}); // Pass correct parameters based on your app's logic
+      initMap("map", true, user); // Pass correct parameters based on your app's logic
     }
   };
 

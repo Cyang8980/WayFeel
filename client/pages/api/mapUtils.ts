@@ -183,6 +183,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {
+            console.log('User id ' + user.id)
             await insertMarker({
                 id: uuidv4(),
                 longitude: latLng.lng(),

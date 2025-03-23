@@ -8,6 +8,7 @@ export interface Marker {
     emoji_id: number;
     created_by: string;
     anon: boolean;
+    text: string;
   }
   
 export async function insertMarker(marker: Marker): Promise<void> {

@@ -1,9 +1,9 @@
 // mapUtils.ts
 
 export let map: google.maps.Map;
-import { insertMarker } from './insertMarker' 
+import { insertMarker, supabase } from './insertMarker' 
 import {v4 as uuidv4} from 'uuid';
-// import { getMarkers } from './getMarkers'
+import { getMarkersCurrUserAnon } from './getMarkers';
 
 export function createImageElement(src: string): HTMLImageElement {
   const img = document.createElement("img");
@@ -35,6 +35,32 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     mapId: "DEMO_MAP_ID",
   });
 
+  // Fetch existing markers
+  if (isSignedIn && user) {
+    const markers = await getMarkersCurrUserAnon(user.id);
+
+    if (markers) {
+      markers.forEach((marker) => {
+        const emojiImages: { [key: number]: string } = {
+          1: "sad.svg",
+          2: "angry.svg",
+          3: "meh.svg",
+          4: "happy.svg",
+          5: "excited.svg",
+        };
+
+        const potatoImageSrc = emojiImages[marker.emoji_id] || "happy.svg";
+        const newMarkerImage = createImageElement(potatoImageSrc);
+
+        new AdvancedMarkerElement({
+          position: { lat: marker.latitude, lng: marker.longitude },
+          map: map,
+          content: newMarkerImage,
+        });
+      });
+    }
+  }
+
   // Marker images initialization
   const sadPotato = createImageElement("sad.svg");
   const angryPotato = createImageElement("angry.svg");
@@ -53,7 +79,8 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     map: google.maps.Map,
     isSignedIn: boolean,
     user: any
-) => {
+  ) => {
+
     const potatoOptions = [
         { name: "Sad Potato", src: "sad.svg" },
         { name: "Angry Potato", src: "angry.svg" },
@@ -110,6 +137,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
         potatoButton.appendChild(potatoImage);
 
         potatoButton.onclick = () => {
+
             const emojiIdMap: { [key: string]: number } = {
                 "sad.svg": 1,
                 "angry.svg": 2,
@@ -180,6 +208,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
         content: newMarkerImage,
     });
 
+    console.log("inserting marker");
+    console.log("signed in " + isSignedIn);
+    console.log("user " + user)
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {

@@ -15,7 +15,7 @@ export function createImageElement(src: string): HTMLImageElement {
 export const initMap = async (
   mapElementId: string,
   isSignedIn: boolean,
-  user: any
+  user: { id: string } | null
 ) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
@@ -56,7 +56,7 @@ const openPotatoSelectionDialog = (
   latLng: google.maps.LatLng,
   map: google.maps.Map,
   isSignedIn: boolean,
-  user: any
+  user: { id: string } | null
 ) => {
   const potatoOptions = [
     { name: "Sad Potato", src: "sad.svg" },
@@ -137,7 +137,7 @@ const placeMarkerAndPanTo = async (
   map: google.maps.Map,
   emoji_id: number,
   isSignedIn: boolean,
-  user: any,
+  user: { id: string } | null,
   isAnonymous: boolean
 ) => {
   const emojiImages: { [key: number]: string } = {

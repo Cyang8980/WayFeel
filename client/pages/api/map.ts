@@ -7,11 +7,13 @@ const MapComponent = () => {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
-    initMap("map", isSignedIn!, user).then(() => {
+    initMap("map", isSignedIn!, user ?? null).then(() => {
       setIsMapLoaded(true);
-      console.log("Map is loaded:", isMapLoaded);
     });
   }, [isSignedIn, user]);
+
+  // Log map loading status outside useEffect
+  console.log("Map is loaded:", isMapLoaded);
 };
 
 export default MapComponent;

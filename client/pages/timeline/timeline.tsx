@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Sidebar from "@/Components/sidebar";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { CustomUserButton } from "../profile/[[...index]]";
+import { CustomUserButton } from "../profile";
 import Image from "next/image";
 
 const Timeline = () => {

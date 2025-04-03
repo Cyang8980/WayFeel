@@ -7,10 +7,11 @@ const MapComponent = () => {
   const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
-    // Call initMap here
-    initMap("map", isSignedIn!, user).then(() => setIsMapLoaded(true));
+    initMap("map", isSignedIn!, user).then(() => {
+      setIsMapLoaded(true);
+      console.log("Map is loaded:", isMapLoaded);
+    });
   }, [isSignedIn, user]);
-
 };
 
 export default MapComponent;

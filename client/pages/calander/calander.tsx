@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { CustomUserButton } from "../profile";
+import { CustomUserButton } from "@/Components/CustomUserButton";
 import Sidebar from "@/Components/sidebar";
 
 const localizer = momentLocalizer(moment);

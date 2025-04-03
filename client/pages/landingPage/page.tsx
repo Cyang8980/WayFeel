@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Ensure your shadcn/ui Button is set up correctly
+import { Button } from "@/Components/ui/button"; // Ensure your shadcn/ui Button is set up correctly
 import GoogleMap from "@/Components/googleMap";
 
 const LandingPage: React.FC = () => {
@@ -50,10 +50,12 @@ const LandingPage: React.FC = () => {
       <section className="py-12 bg-white text-gray-800">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 px-6">
           <div className="flex-1">
-            <h2 className="text-3xl font-bold mb-6">Log Your Emotions—Anywhere, Anytime.</h2>
+            <h2 className="text-3xl font-bold mb-6">
+              Log Your Emotions—Anywhere, Anytime.
+            </h2>
             <p>
-              Your feelings matter. With WayFeel’s interactive map, drop an
-              emoji to log your emotions—whether you’re at home, work, or out
+              Your feelings matter. With WayFeel's interactive map, drop an
+              emoji to log your emotions—whether you're at home, work, or out
               exploring.
             </p>
             <ul className="list-disc list-inside space-y-2 my-4 pl-6">
@@ -61,7 +63,7 @@ const LandingPage: React.FC = () => {
               <li>Find validation: Get support from a caring community.</li>
               <li>Create a living diary: Build your emotional journey.</li>
             </ul>
-            <p>It’s more than a map—it’s a safe space to be yourself.</p>
+            <p>It's more than a map—it's a safe space to be yourself.</p>
           </div>
           <div className="flex-1">
             <GoogleMap />
@@ -74,58 +76,102 @@ const LandingPage: React.FC = () => {
         <div className="max-w-6xl mx-auto px-6 text-center">
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-9">
             <div>
-              <h2 className="text-4xl font-bold mb-4 text-left col-start-1">Start tracking to understand yourself</h2>
-              <p className="text-lg mb-8 text-left col-start-1">You have an idea of what affects your emotions, but there’s nothing better than visualizing it to confirm your suspicions.</p>
-
+              <h2 className="text-4xl font-bold mb-4 text-left col-start-1">
+                Start tracking to understand yourself
+              </h2>
+              <p className="text-lg mb-8 text-left col-start-1">
+                You have an idea of what affects your emotions, but there's
+                nothing better than visualizing it to confirm your suspicions.
+              </p>
             </div>
             <div className="col-start-2">
-              <h3 className="font-bold text-xl text-left ">Anonymity Meets Support</h3>
-              <p className="text-left">Share your feelings without fear of judgment. Your privacy is our priority.</p>
+              <h3 className="font-bold text-xl text-left ">
+                Anonymity Meets Support
+              </h3>
+              <p className="text-left">
+                Share your feelings without fear of judgment. Your privacy is
+                our priority.
+              </p>
               <div className="pt-7">
                 <h3 className="font-bold text-xl text-left">Visual Map</h3>
-                <p className="text-left">Spot patterns, celebrate growth, and better understand your emotional landscape.</p>
+                <p className="text-left">
+                  Spot patterns, celebrate growth, and better understand your
+                  emotional landscape.
+                </p>
               </div>
             </div>
             <div className="col-start-3">
-              <h3 className="font-bold text-xl text-left">Connect with Others Who Get It</h3>
-              <p className="text-left">See how others feel in the same places, creating a sense of belonging and shared understanding.</p>
+              <h3 className="font-bold text-xl text-left">
+                Connect with Others Who Get It
+              </h3>
+              <p className="text-left">
+                See how others feel in the same places, creating a sense of
+                belonging and shared understanding.
+              </p>
               <div className="pt-7">
-                <h3 className="font-bold text-xl text-left">Emotion Calendar</h3>
+                <h3 className="font-bold text-xl text-left">
+                  Emotion Calendar
+                </h3>
                 <p className="text-left">Track your patterns over time.</p>
               </div>
             </div>
-            
           </div>
         </div>
-        
       </section>
-    
 
       {/* Emotional Journey Section */}
       <section className="py-12 bg-white text-gray-800">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 px-6">
           <img src="/potato.png" alt="Smiley Face" className="w-64 h-64 mr-6" />
           <div className="flex-1">
-            <h2 className="text-4xl font-bold mb-6">See Your Emotional Journey — At a Glance.</h2>
-            <ul className="list-disc space-y-2 my-4 pl-10 list-outside
-">
-              <li>Spot patterns: Notice how certain places or times affect your mood.</li>
-              <li>Celebrate growth: See how far you’ve come in managing your emotions.</li>
-              <li>Make better decisions: Use your emotional history to plan happier, healthier days.</li>
+            <h2 className="text-4xl font-bold mb-6">
+              See Your Emotional Journey — At a Glance.
+            </h2>
+            <ul
+              className="list-disc space-y-2 my-4 pl-10 list-outside
+"
+            >
+              <li>
+                Spot patterns: Notice how certain places or times affect your
+                mood.
+              </li>
+              <li>
+                Celebrate growth: See how far you've come in managing your
+                emotions.
+              </li>
+              <li>
+                Make better decisions: Use your emotional history to plan
+                happier, healthier days.
+              </li>
             </ul>
           </div>
           <div className="flex-1 flex justify-center items-center">
-            <img src= "/calendar.png" alt="Emotion Calendar" className="w-86 h-86" />
+            <img
+              src="/calendar.png"
+              alt="Emotion Calendar"
+              className="w-86 h-86"
+            />
           </div>
         </div>
       </section>
       {/* Testimonials Section */}
       <section className="py-12 bg-blue-300 text-white text-center">
-        <h2 className="text-4xl font-bold mb-6">See What Others Are Saying About Their Emotional Journey.</h2>
+        <h2 className="text-4xl font-bold mb-6">
+          See What Others Are Saying About Their Emotional Journey.
+        </h2>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-          <p>"WayFeel helped me understand why certain places make me anxious. Now I can plan my days better!" – Future User</p>
-          <p>"I love how anonymous and supportive the community is. It’s like having a diary that talks back!" – Future User</p>
-          <p>"Tracking my emotions over time has been a game-changer for my mental health." – Future User</p>
+          <p>
+            "WayFeel helped me understand why certain places make me anxious.
+            Now I can plan my days better!" – Future User
+          </p>
+          <p>
+            "I love how anonymous and supportive the community is. It's like
+            having a diary that talks back!" – Future User
+          </p>
+          <p>
+            "Tracking my emotions over time has been a game-changer for my
+            mental health." – Future User
+          </p>
         </div>
       </section>
 
@@ -136,16 +182,21 @@ const LandingPage: React.FC = () => {
           <p>Find a Community who</p>
           <p>Understands you?</p>
         </h1>
-        <Button className="bg-white text-red font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-600">Join WayFeel Now</Button>
+        <Button className="bg-white text-red font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-600">
+          Join WayFeel Now
+        </Button>
       </section>
 
       {/*Founder Note */}
       <section className="text-center item-center">
         <div className="flex-1 flex justify-center items-center pt-10 pb-10">
-          <img src="/note.png" alt="Note" className="items-center text-center w-100 h-100" />
+          <img
+            src="/note.png"
+            alt="Note"
+            className="items-center text-center w-100 h-100"
+          />
         </div>
       </section>
-
 
       {/* Footer */}
       <footer className="p-6 bg-gray-800 text-center text-white">

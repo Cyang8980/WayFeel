@@ -1,18 +1,16 @@
 import React, { useEffect, useRef } from "react";
-import { initMap } from "@/pages/api/map";
+
 const GoogleMap = () => {
-  const mapRef = useRef(null);
+  const mapRef = useRef<google.maps.Map | null>(null);
 
   // Function to initialize the map
   const initializeMap = () => {
-    if (!mapRef.current && document.getElementById("map")) {
-      mapRef.current = new window.google.maps.Map(
-        document.getElementById("map"),
-        {
-          center: { lat: 37.7749, lng: -122.4194 }, // Change this to your desired center
-          zoom: 10,
-        }
-      );
+    const mapElement = document.getElementById("map");
+    if (!mapRef.current && mapElement) {
+      mapRef.current = new window.google.maps.Map(mapElement, {
+        center: { lat: 37.7749, lng: -122.4194 }, // Change this to your desired center
+        zoom: 10,
+      });
     }
   };
 
@@ -30,7 +28,7 @@ const GoogleMap = () => {
       document.head.appendChild(script);
 
       // Set up a global callback for Google Maps
-      window.initMap = initializeMap;
+      (window as any).initMap = initializeMap;
     }
   };
 
@@ -39,7 +37,11 @@ const GoogleMap = () => {
   }, []);
 
   return (
-    <div id="map" style={{ height: "400px", width: "100%" }} className="rounded-lg shadow-lg" />
+    <div
+      id="map"
+      style={{ height: "400px", width: "100%" }}
+      className="rounded-lg shadow-lg"
+    />
   );
 };
 

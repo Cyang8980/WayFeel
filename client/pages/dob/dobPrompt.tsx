@@ -1,18 +1,24 @@
-import { useUser } from '@clerk/nextjs';
-import { useState, useEffect } from 'react';
+import { useUser } from "@clerk/nextjs";
+import { useState, useEffect, Dispatch, SetStateAction } from "react";
 
-export default function UnSafePage() {
+interface UnSafePageProps {
+  onBirthdayUpdate?: Dispatch<SetStateAction<string>>;
+}
+
+export default function UnSafePage({ onBirthdayUpdate }: UnSafePageProps) {
   const { user } = useUser();
-  const [birthday, setBirthday] = useState('');
-  const [error, setError] = useState('');
+  const [birthday, setBirthday] = useState<string>("");
+  const [error, setError] = useState("");
   const [editing, setEditing] = useState(false);
 
   // Load birthday from user's metadata when component mounts
   useEffect(() => {
     if (user?.unsafeMetadata?.birthday) {
-      setBirthday(user.unsafeMetadata.birthday);
+      const birthdayValue = user.unsafeMetadata.birthday as string;
+      setBirthday(birthdayValue);
+      onBirthdayUpdate?.(birthdayValue);
     }
-  }, [user]);
+  }, [user, onBirthdayUpdate]);
 
   const handleUpdate = () => {
     if (!birthday) {

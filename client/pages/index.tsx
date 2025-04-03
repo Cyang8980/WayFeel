@@ -3,7 +3,7 @@ import { initMap } from "./api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../Components/sidebar";
 import moment from "moment";
-import { useUser } from "@clerk/nextjs"
+import { useUser } from "@clerk/nextjs";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Localizer for react-big-calendar
@@ -25,7 +25,7 @@ const Index = () => {
         }
       );
       // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, user); // Pass correct parameters based on your app's logic
+      initMap("map", true, user ?? null); // Pass correct parameters based on your app's logic
     }
   };
 
@@ -65,7 +65,9 @@ const Index = () => {
         {/* Content Area */}
         <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
           <section className="w-[25%] p-4">
-            <div style={{ height: "470px" }}>AI location recommendation goes here</div>
+            <div style={{ height: "470px" }}>
+              AI location recommendation goes here
+            </div>
             <Calendar
               localizer={localizer}
               startAccessor="start"

@@ -14,13 +14,10 @@ interface Marker {
 export async function getMarkersCurrUserAnon(
   user_id: string
 ): Promise<Marker[] | null> {
-  const { data: markers, error } = (await supabase
+  const { data: markers, error } = await supabase
     .from("markers")
     .select("*")
-    .or(`user_id.eq.${user_id},anon.eq.true`)) as unknown as {
-    data: Marker[] | null;
-    error: any;
-  };
+    .or(`user_id.eq.${user_id},anon.eq.true`);
 
   if (error) {
     console.error("Error fetching markers:", error.message);
@@ -28,5 +25,5 @@ export async function getMarkersCurrUserAnon(
   }
 
   console.log("Fetched markers:", markers);
-  return markers;
+  return markers as Marker[] | null;
 }

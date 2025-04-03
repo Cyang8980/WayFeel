@@ -33,9 +33,6 @@ export const initMap = async (
   const { Map } = (await google.maps.importLibrary(
     "maps"
   )) as google.maps.MapsLibrary;
-  const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-    "marker"
-  )) as google.maps.MarkerLibrary;
 
   map = new Map(mapElement, {
     zoom: 14,

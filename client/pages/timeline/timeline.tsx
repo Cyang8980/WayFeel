@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import Sidebar from "@/Components/sidebar";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../profile/[[...index]]";
+import Image from "next/image";
 
 const Timeline = () => {
   const [posts] = useState([
@@ -40,7 +41,7 @@ const Timeline = () => {
               target="_blank"
               rel="noopener noreferrer"
             >
-              <img src="/kofi_logo.svg" alt="Ko-fi" width={100} height={40} />
+              <Image src="/kofi_logo.svg" alt="Ko-fi" width={100} height={40} />
             </a>
           </div>
           {/* Right Side (Sign-in / UserButton) */}

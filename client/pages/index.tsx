@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "@/Components/sidebar";
-import MapComponent from "@/Components/MapComponent";
 import moment from "moment";
-import { useUser } from "@clerk/nextjs";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
 // Localizer for react-big-calendar
@@ -13,7 +11,6 @@ const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
-  const { user } = useUser();
 
   const initializeMap = () => {
     if (window.google && window.google.maps) {

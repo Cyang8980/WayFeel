@@ -1,7 +1,7 @@
 "use client";
 
 import { UserButton } from "@clerk/nextjs";
-import UnSafePage from "../pages/dob/dobPrompt";
+import UnSafePage from "@/pages/dob/dobPrompt";
 
 const DotIcon = () => {
   return (

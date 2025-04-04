@@ -1,7 +1,6 @@
 import { useRouter } from "next/router";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "@/Components/CustomUserButton";
-import { useEffect, useState } from "react";
 import styled from "styled-components";
 import Image from "next/image";
 

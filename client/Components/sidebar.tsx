@@ -3,7 +3,6 @@ import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "@/Components/CustomUserButton";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
-import { insertUser } from "@/pages/api/insertUser";
 import Image from "next/image";
 
 interface SidebarProps {
@@ -19,6 +18,31 @@ type MenuItem = {
   id: string;
   label: React.ReactNode;
   action: () => void;
+};
+
+const insertUser = async (user: {
+  id: string;
+  first_name: string;
+  last_name: string;
+}) => {
+  try {
+    const response = await fetch("/api/insertUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to insert user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
 };
 
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {

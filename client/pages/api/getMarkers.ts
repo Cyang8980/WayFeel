@@ -6,12 +6,6 @@ const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
 );
 
-interface Marker {
-  id: number;
-  user_id: string;
-  anon: boolean;
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse

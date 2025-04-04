@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { initMap } from "./api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "@/Components/sidebar";
+import MapComponent from "@/Components/MapComponent";
 import moment from "moment";
 import { useUser } from "@clerk/nextjs";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -24,8 +24,6 @@ const Index = () => {
           center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
         }
       );
-      // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, user ?? null); // Pass correct parameters based on your app's logic
     }
   };
 

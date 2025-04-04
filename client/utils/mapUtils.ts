@@ -1,7 +1,6 @@
 "use client";
 
 export let map: google.maps.Map;
-import { insertMarker } from "@/pages/api/insertMarker";
 import { v4 as uuidv4 } from "uuid";
 
 // Helper function for creating image elements
@@ -35,4 +34,32 @@ export const initMap = async (
   });
 
   // Rest of your map initialization code...
+};
+
+export const insertMarker = async (marker: {
+  id: string;
+  longitude: number;
+  latitude: number;
+  emoji_id: number;
+  created_by: string;
+  anon: boolean;
+}) => {
+  try {
+    const response = await fetch("/api/insertMarker", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(marker),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to insert marker");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error inserting marker:", error);
+    throw error;
+  }
 };

@@ -1,10 +1,15 @@
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useCallback } from "react";
+
+interface WindowWithGoogle extends Window {
+  google?: typeof google;
+  initMap?: () => void;
+}
 
 const GoogleMap = () => {
   const mapRef = useRef<google.maps.Map | null>(null);
 
   // Function to initialize the map
-  const initializeMap = () => {
+  const initializeMap = useCallback(() => {
     const mapElement = document.getElementById("map");
     if (!mapRef.current && mapElement) {
       mapRef.current = new window.google.maps.Map(mapElement, {
@@ -12,10 +17,10 @@ const GoogleMap = () => {
         zoom: 10,
       });
     }
-  };
+  }, []);
 
   // Load the Google Maps script and initialize the map once it's loaded
-  const loadGoogleMapsScript = () => {
+  const loadGoogleMapsScript = useCallback(() => {
     // If Google Maps is already loaded, initialize the map immediately
     if (window.google && window.google.maps) {
       initializeMap();
@@ -28,13 +33,13 @@ const GoogleMap = () => {
       document.head.appendChild(script);
 
       // Set up a global callback for Google Maps
-      (window as any).initMap = initializeMap;
+      (window as WindowWithGoogle).initMap = initializeMap;
     }
-  };
+  }, [initializeMap]);
 
   useEffect(() => {
     loadGoogleMapsScript();
-  }, []);
+  }, [loadGoogleMapsScript]);
 
   return (
     <div

@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "@/Components/sidebar";
 import moment from "moment";
@@ -12,7 +12,7 @@ const Index = () => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
 
-  const initializeMap = () => {
+  const initializeMap = useCallback(() => {
     if (window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
@@ -22,9 +22,9 @@ const Index = () => {
         }
       );
     }
-  };
+  }, []);
 
-  const loadGoogleMapsScript = () => {
+  const loadGoogleMapsScript = useCallback(() => {
     // Check if Google Maps API is already loaded
     if (window.google && window.google.maps) {
       initializeMap();
@@ -40,11 +40,11 @@ const Index = () => {
 
       document.head.appendChild(script);
     }
-  };
+  }, [initializeMap]);
 
   useEffect(() => {
     loadGoogleMapsScript();
-  }, []);
+  }, [loadGoogleMapsScript]);
 
   return (
     <div className="min-h-screen bg-gray-100">

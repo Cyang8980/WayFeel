@@ -48,11 +48,6 @@ const insertUser = async (user: {
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true); // This ensures the button is only rendered on the client
-  }, []);
 
   const menuItems: MenuItem[] = [
     { id: "home", label: "🏠", action: () => router.push("/") },

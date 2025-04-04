@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Ensure your shadcn/ui Button is set up correctly
+import { Button } from "@/Components/ui/button";
 import GoogleMap from "@/Components/googleMap";
 
 const LandingPage: React.FC = () => {
@@ -41,8 +41,8 @@ const LandingPage: React.FC = () => {
           <p className="text-lg mb-8">
             Forget feeling lost, overwhelmed, or alone — use WayFeel to better
             understand your emotional journey. Our platform helps you record,
-            visualize, and validate your feelings so you can see exactly where you
-            stand.
+            visualize, and validate your feelings so you can see exactly where
+            you stand.
           </p>
           <Button className="bg-white text-blue-500 font-bold px-8 py-4 rounded-lg shadow hover:bg-gray-100">
             Join Beta
@@ -89,23 +89,37 @@ const LandingPage: React.FC = () => {
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center gap-12 px-6">
           {/* Text Content */}
           <div className="flex-1">
-            <h2 className="text-4xl font-bold mb-6">Log Your Emotions—Anywhere, Anytime.</h2>
+            <h2 className="text-4xl font-bold mb-6">
+              Log Your Emotions—Anywhere, Anytime.
+            </h2>
             <div className="mb-4">
               <p>
-              Your feelings matter, and now there’s a place to put them. With WayFeel’s interactive map, 
-              you can drop an emoji to log how you’re feeling—whether you’re at home, work, 
-              or exploring somewhere new.
+                Your feelings matter, and now there's a place to put them. With
+                WayFeel's interactive map, you can drop an emoji to log how
+                you're feeling—whether you're at home, work, or exploring
+                somewhere new.
               </p>
-              
+
               <ul className="list-disc list-inside space-y-2 my-4">
-                <li>Express freely: Share your emotions without judgment or pressure.</li>
-                <li>Find validation: Get supportive reactions and comments from a community that cares.</li>
-                <li>Create a living diary: Build a personal map of your emotional journey, one emoji at a time.</li>
+                <li>
+                  Express freely: Share your emotions without judgment or
+                  pressure.
+                </li>
+                <li>
+                  Find validation: Get supportive reactions and comments from a
+                  community that cares.
+                </li>
+                <li>
+                  Create a living diary: Build a personal map of your emotional
+                  journey, one emoji at a time.
+                </li>
               </ul>
-              <p>It’s more than a map—it’s a safe space to be yourself, wherever you are.</p>
+              <p>
+                It's more than a map—it's a safe space to be yourself, wherever
+                you are.
+              </p>
             </div>
-            
-            
+
             {/* <Button className="bg-blue-500 text-white font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-600">
               Learn More
             </Button> */}
@@ -124,13 +138,17 @@ const LandingPage: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div className="p-6 bg-white rounded-lg shadow">
               <p className="italic mb-4">
-                "WayFeel has transformed the way I understand my emotions. It's like having a personal diary that also reveals patterns I never noticed!"
+                "WayFeel has transformed the way I understand my emotions. It's
+                like having a personal diary that also reveals patterns I never
+                noticed!"
               </p>
               <p className="font-bold">— Alex D.</p>
             </div>
             <div className="p-6 bg-white rounded-lg shadow">
               <p className="italic mb-4">
-                "The insights and visualizations are amazing. I can finally see the connection between my moods and where I am. Highly recommended!"
+                "The insights and visualizations are amazing. I can finally see
+                the connection between my moods and where I am. Highly
+                recommended!"
               </p>
               <p className="font-bold">— Jamie L.</p>
             </div>
@@ -166,7 +184,10 @@ const LandingPage: React.FC = () => {
               />
             </div>
             <div>
-              <label htmlFor="message" className="block text-lg font-medium mb-2">
+              <label
+                htmlFor="message"
+                className="block text-lg font-medium mb-2"
+              >
                 Message
               </label>
               <textarea

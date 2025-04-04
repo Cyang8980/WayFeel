@@ -29,7 +29,7 @@ export const initMap = async (
   }
 
   map = new google.maps.Map(mapElement, {
-    center: { lat: 37.7749, lng: -122.4194 },
+    center: { lat: 40.7128, lng: -74.006 },
     zoom: 8,
   });
 

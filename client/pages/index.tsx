@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { initMap } from "./api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import Sidebar from "../Components/sidebar";
+import Sidebar from "@/Components/sidebar";
 import moment from "moment";
 import { useUser } from "@clerk/nextjs";
 import "react-big-calendar/lib/css/react-big-calendar.css";

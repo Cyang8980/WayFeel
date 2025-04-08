@@ -5,6 +5,8 @@ import Sidebar from "../Components/sidebar";
 import moment from "moment";
 import { useUser } from "@clerk/nextjs"
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import CalendarPage from "./calander/calander";
+
 
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -28,6 +30,10 @@ const Index = () => {
       initMap("map", true, user); // Pass correct parameters based on your app's logic
     }
   };
+
+  const initCalendar = () => {
+    CalendarPage()
+  }
 
   const loadGoogleMapsScript = () => {
     // Check if Google Maps API is already loaded
@@ -66,7 +72,8 @@ const Index = () => {
         <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
           <section className="w-[25%] p-4">
             <div style={{ height: "470px" }}>AI location recommendation goes here</div>
-            <Calendar
+            <Calendar 
+            // calendar 
               localizer={localizer}
               startAccessor="start"
               endAccessor="end"

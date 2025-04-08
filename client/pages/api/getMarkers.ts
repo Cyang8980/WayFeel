@@ -8,14 +8,16 @@ export const supabase = createClient(
 export async function getMarkersCurrUserAnon(user_id: string): Promise<any[] | null> {
     const { data: markers, error } = await supabase
         .from('markers')
-        .select('*')
-        .or(`user_id.eq.${user_id},anon.eq.true`); // Fetch user's markers OR anonymous markers
+        .select('id, longitude, latitude, emoji_id, created_by, anon, created_at') // Ensure timestamp is fetched
+        .or(`created_by.eq.${user_id}, anon.eq.true`) // Fetch user-specific and anonymous markers
+        .order('created_at', { ascending: true });
 
     if (error) {
         console.error('Error fetching markers:', error.message);
-        return null; // Or handle this error as needed
+        return null;
     }
-    
+
     console.log('Fetched markers:', markers);
     return markers;
 }
+

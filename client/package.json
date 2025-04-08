@@ -19,6 +19,7 @@
     "class-variance-authority": "^0.7.1",
     "client": "file:",
     "clsx": "^2.1.1",
+    "gapi-script": "^1.2.0",
     "lucide-react": "^0.475.0",
     "moment": "^2.30.1",
     "motion": "^12.4.3",

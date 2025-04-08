@@ -15,6 +15,7 @@ const { data, error } = await supabase
     .from('markers')
     .insert([marker])
     .select();
+    
 
 if (error) {
     console.error('Error inserting data:', error);

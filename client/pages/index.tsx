@@ -1,11 +1,9 @@
-import React, { useState, useEffect, useRef } from "react";
-import { initMap } from "./api/mapUtils"; // Import initMap from mapUtils
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import Sidebar from "../Components/sidebar";
+import Sidebar from "@/Components/sidebar";
 import moment from "moment";
-import { useUser } from "@clerk/nextjs"
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import CalendarPage from "./calander/calander";
+import CalendarPage from "./calendar/calendar";
 
 
 // Localizer for react-big-calendar
@@ -15,9 +13,8 @@ const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
-  const { user } = useUser();
 
-  const initializeMap = () => {
+  const initializeMap = useCallback(() => {
     if (window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
@@ -26,16 +23,10 @@ const Index = () => {
           center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
         }
       );
-      // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, user); // Pass correct parameters based on your app's logic
     }
-  };
+  }, []);
 
-  const initCalendar = () => {
-    CalendarPage()
-  }
-
-  const loadGoogleMapsScript = () => {
+  const loadGoogleMapsScript = useCallback(() => {
     // Check if Google Maps API is already loaded
     if (window.google && window.google.maps) {
       initializeMap();
@@ -51,11 +42,11 @@ const Index = () => {
 
       document.head.appendChild(script);
     }
-  };
+  }, [initializeMap]);
 
   useEffect(() => {
     loadGoogleMapsScript();
-  }, []);
+  }, [loadGoogleMapsScript]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -71,9 +62,10 @@ const Index = () => {
         {/* Content Area */}
         <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
           <section className="w-[25%] p-4">
-            <div style={{ height: "470px" }}>AI location recommendation goes here</div>
-            <Calendar 
-            // calendar 
+            <div style={{ height: "470px" }}>
+              AI location recommendation goes here
+            </div>
+            <Calendar
               localizer={localizer}
               startAccessor="start"
               endAccessor="end"

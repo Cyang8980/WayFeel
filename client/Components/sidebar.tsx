@@ -2,7 +2,7 @@ import { useRouter } from "next/router";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../pages/profile/[[...index]]";
 import { useEffect, useState } from "react";
-import styled from 'styled-components';
+import styled from "styled-components";
 import { insertUser } from "@/pages/api/insertUser";
 interface SidebarProps {
   activeItem: string;
@@ -30,11 +30,29 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
 
   const menuItems: MenuItem[] = [
     { id: "home", label: "🏠", action: () => router.push("/") },
+    // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
+    {
+      id: "calander",
+      label: "📅",
+      action: () => router.push("/calander/calander"),
+    },
+    {
+      id: "timeline",
+      label: "🕑",
+      action: () => router.push("/timeline/timeline"),
+    },
+    // { id: "profile", label: "👤", action: openUserProfile },
     { id: "analytics", label: "📊", action: () => alert("not done yet") },
     { id: "settings", label: "⚙️", action: () => alert("not done yet") },
     {
       id: "ko-fi",
-      label: <img src="kofi_symbol.svg" alt="Ko-Fi" style={{ width: 24, height: 24 }} />,
+      label: (
+        <img
+          src="kofi_symbol.svg"
+          alt="Ko-Fi"
+          style={{ width: 24, height: 24 }}
+        />
+      ),
       action: () => window.open("https://ko-fi.com/wayfeel", "_blank"),
     },
     {
@@ -45,16 +63,16 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
           try {
             await insertUser({
               id: user.id!,
-              first_name: user.firstName!, 
+              first_name: user.firstName!,
               last_name: user.lastName!,
             });
-            console.log('User successfully inserted!');
+            console.log("User successfully inserted!");
           } catch (error) {
-            console.error('Failed to insert user:', error);
+            console.error("Failed to insert user:", error);
           }
         }
       },
-    }
+    },
   ];
 
   return (
@@ -78,7 +96,9 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
                 onSetActiveItem(item.id);
                 item.action();
               }}
-              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${activeItem === item.id ? "bg-gray-800" : ""}`}
+              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${
+                activeItem === item.id ? "bg-gray-800" : ""
+              }`}
             >
               {item.label}
             </button>

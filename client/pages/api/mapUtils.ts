@@ -32,7 +32,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
   map = new Map(mapElement, {
     zoom: 14,
     center: { lat: 40.6782, lng: -73.9442 },
-    mapId: "DEMO_MAP_ID",
+    mapId: "DEMO_MAP_ID"
   });
 
   // Marker images initialization

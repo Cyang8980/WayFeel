@@ -1,23 +1,40 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient } from "@supabase/supabase-js";
+import { NextApiRequest, NextApiResponse } from "next";
 
-export const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!, 
-    process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
 );
 
-export async function getMarkersCurrUserAnon(user_id: string): Promise<any[] | null> {
-    const { data: markers, error } = await supabase
-        .from('markers')
-        .select('id, longitude, latitude, emoji_id, created_by, anon, created_at') // Ensure timestamp is fetched
-        .or(`created_by.eq.${user_id}, anon.eq.true`) // Fetch user-specific and anonymous markers
-        .order('created_at', { ascending: true });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  if (req.method !== "GET") {
+    return res.status(405).json({ message: "Method not allowed" });
+  }
 
-    if (error) {
-        console.error('Error fetching markers:', error.message);
-        return null;
+  try {
+    const { user_id } = req.query;
+
+    if (!user_id) {
+      return res.status(400).json({ error: "user_id is required" });
     }
 
-    console.log('Fetched markers:', markers);
-    return markers;
+    const { data: markers, error } = await supabase
+      .from("markers")
+      .select("*")
+      .or(`user_id.eq.${user_id},anon.eq.true`);
+
+    if (error) {
+      console.error("Error fetching markers:", error);
+      return res.status(500).json({ error: error.message });
+    }
+
+    return res.status(200).json(markers);
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).json({ error: "Internal server error" });
+  }
 }
 

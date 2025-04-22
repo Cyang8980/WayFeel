@@ -1,9 +1,9 @@
 import { useRouter } from "next/router";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { CustomUserButton } from "../pages/profile/[[...index]]";
-import { useEffect, useState } from "react";
+import { CustomUserButton } from "@/Components/CustomUserButton";
 import styled from "styled-components";
-import { insertUser } from "@/pages/api/insertUser";
+import Image from "next/image";
+
 interface SidebarProps {
   activeItem: string;
   onSetActiveItem: (item: string) => void;
@@ -19,14 +19,34 @@ type MenuItem = {
   action: () => void;
 };
 
+const insertUser = async (user: {
+  id: string;
+  first_name: string;
+  last_name: string;
+}) => {
+  try {
+    const response = await fetch("/api/insertUser", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(user),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to insert user");
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error("Error inserting user:", error);
+    throw error;
+  }
+};
+
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
-  const [isClient, setIsClient] = useState(false);
-
-  useEffect(() => {
-    setIsClient(true); // This ensures the button is only rendered on the client
-  }, []);
 
   const menuItems: MenuItem[] = [
     { id: "home", label: "🏠", action: () => router.push("/") },
@@ -47,11 +67,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
     {
       id: "ko-fi",
       label: (
-        <img
-          src="kofi_symbol.svg"
-          alt="Ko-Fi"
-          style={{ width: 24, height: 24 }}
-        />
+        <Image src="/kofi_symbol.svg" alt="Ko-Fi" width={24} height={24} />
       ),
       action: () => window.open("https://ko-fi.com/wayfeel", "_blank"),
     },

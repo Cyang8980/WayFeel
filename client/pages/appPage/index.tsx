@@ -7,6 +7,13 @@ import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 
+
+
+
+// TODO:          IF POTATO IS CLICKED, DISPLAY MESSAGE LINEKD TO THAT POTATO
+
+
+
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
 

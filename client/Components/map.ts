@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useUser } from "@clerk/nextjs";
-import { initMap } from "./mapUtils"; // Import initMap from mapUtils
+import { initMap } from "../pages/api/mapUtils"; // Import initMap from mapUtils
 
 const MapComponent = () => {
   const { isSignedIn, user } = useUser();

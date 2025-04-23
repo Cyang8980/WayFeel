@@ -1,43 +1,43 @@
+// components/GoogleMap.tsx
 import React, { useEffect, useRef, useCallback } from "react";
+import initMap from "./map";
 
-interface WindowWithGoogle extends Window {
-  google?: typeof google;
-  initMap?: () => void;
+declare global {
+  interface Window {
+    initMap: () => void;
+    google: typeof google;
+  }
 }
 
 const GoogleMap = () => {
   const mapRef = useRef<google.maps.Map | null>(null);
 
-  // Function to initialize the map
   const initializeMap = useCallback(() => {
-    const mapElement = document.getElementById("map");
-    if (!mapRef.current && mapElement) {
-      mapRef.current = new window.google.maps.Map(mapElement, {
-        center: { lat: 37.7749, lng: -122.4194 }, // Change this to your desired center
-        zoom: 10,
-      });
+    if (!mapRef.current && document.getElementById("map") && window.google?.maps) {
+      mapRef.current = new window.google.maps.Map(
+        document.getElementById("map") as HTMLElement,
+        {
+          center: { lat: 37.7749, lng: -122.4194 },
+          zoom: 10,
+        }
+      );
+      initMap(); // Remove this if not needed separately
     }
   }, []);
 
-  // Load the Google Maps script and initialize the map once it's loaded
   const loadGoogleMapsScript = useCallback(() => {
-    // If Google Maps is already loaded, initialize the map immediately
-    if (window.google && window.google.maps) {
+    if (window.google?.maps) {
       initializeMap();
     } else {
-      // Load the Google Maps script if not already loaded
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initMap`;
       script.async = true;
       script.defer = true;
 
-      // Make initializeMap globally accessible
-      window.initializeMap = initializeMap;
+      // Set initMap globally for callback
+      window.initMap = initializeMap;
 
       document.head.appendChild(script);
-
-      // Set up a global callback for Google Maps
-      (window as WindowWithGoogle).initMap = initializeMap;
     }
   }, [initializeMap]);
 

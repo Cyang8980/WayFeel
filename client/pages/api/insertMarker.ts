@@ -7,12 +7,24 @@ const supabase = createClient(
 );
 
 export interface Marker {
-  id: string;
-  longitude: number;
-  latitude: number;
-  emoji_id: number;
-  created_by: string;
-  anon: boolean;
+    id: string;
+    longitude: number;
+    latitude: number;
+    emoji_id: number;
+    created_by: string;
+    anon: boolean;
+    text: string;
+  }
+  
+export async function insertMarker(marker: Marker): Promise<void> {
+const { data, error } = await supabase
+    .from('markers')
+    .insert([marker])
+    .select();
+
+if (error) {
+    console.error('Error inserting data:', error);
+    return;
 }
 
 export default async function handler(

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { SignInButton, useUser } from "@clerk/nextjs";
@@ -21,19 +21,19 @@ const HomePage: React.FC = () => {
   const [showTextBox, setShowTextBox] = useState(false); // control visibility of text box
 
   // Scroll animation for the scrollable section
-  const { scrollYProgress } = useScroll();
-  const slideInLeft = useSpring(useTransform(scrollYProgress, [0, 0.5], [-200, 0]), {
-    stiffness: 100,
-    damping: 30,
-  });
-  const slideInRight = useSpring(useTransform(scrollYProgress, [0.5, 1], [200, 0]), {
-    stiffness: 100,
-    damping: 30,
-  });
-  const fadeIn = useSpring(useTransform(scrollYProgress, [0, 1], [0, 1]), {
-    stiffness: 100,
-    damping: 30,
-  });
+  // const { scrollYProgress } = useScroll();
+  // const slideInLeft = useSpring(useTransform(scrollYProgress, [0, 0.5], [-200, 0]), {
+  //   stiffness: 100,
+  //   damping: 30,
+  // });
+  // const slideInRight = useSpring(useTransform(scrollYProgress, [0.5, 1], [200, 0]), {
+  //   stiffness: 100,
+  //   damping: 30,
+  // });
+  // const fadeIn = useSpring(useTransform(scrollYProgress, [0, 1], [0, 1]), {
+  //   stiffness: 100,
+  //   damping: 30,
+  // });
 
   // Handle click in the hero section
   const handleHeroClick = (event: React.MouseEvent<HTMLDivElement>) => {

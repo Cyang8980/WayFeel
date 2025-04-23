@@ -101,11 +101,17 @@ const Index = () => {
           </section>
 
           <section className="w-[65%] p-4">
-            <div
-              id="map"
-              style={{ height: "745px", width: "100%" }}
-              className="rounded-lg shadow-lg mb-4"
-            ></div>
+            <div>
+              {isLoading? (
+                <div>Loading map...</div>
+              ) : (
+                <div
+                  id="map"
+                  style={{ height: "745px", width: "100%" }}
+                  className="rounded-lg shadow-lg mb-4"
+                ></div>
+              )}
+            </div>
           </section>
         </main>
       </div>

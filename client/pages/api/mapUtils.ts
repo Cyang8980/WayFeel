@@ -377,9 +377,6 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
         5: "excited.svg",
     };
 
-    const potatoImageSrc = emojiImages[emoji_id] || "happy.svg";
-    const newMarkerImage = createImageElement(potatoImageSrc);
-
     // const newMarker = new google.maps.marker.AdvancedMarkerElement({
     //     position: latLng,
     //     map: map,

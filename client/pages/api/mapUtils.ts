@@ -1,7 +1,7 @@
 // mapUtils.ts
 
 export let map: google.maps.Map;
-import { insertMarker, supabase } from './insertMarker' 
+import { insertMarker } from './insertMarker' 
 import {v4 as uuidv4} from 'uuid';
 import { getMarkersCurrUserAnon } from './getMarkers';
 

@@ -3,7 +3,7 @@ import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "fra
 import { Button } from "@/Components/ui/button";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
-import  insertUser  from "./api/insertUser";
+import { insertUser } from "./api/insertUser";
 
 // Define emoji type
 interface Emoji {

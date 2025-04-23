@@ -369,13 +369,6 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     isAnonymous: boolean, // New parameter for anonymous upload
     description?: string // New parameter for description 
 ) => {
-    const emojiImages: { [key: number]: string } = {
-        1: "sad.svg",
-        2: "angry.svg",
-        3: "meh.svg",
-        4: "happy.svg",
-        5: "excited.svg",
-    };
 
     // const newMarker = new google.maps.marker.AdvancedMarkerElement({
     //     position: latLng,

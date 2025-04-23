@@ -5,6 +5,12 @@ import { insertMarker } from './insertMarker'
 import {v4 as uuidv4} from 'uuid';
 import { getMarkersCurrUserAnon } from './getMarkers';
 
+interface User {
+  id: string;
+  [key: string]: unknown; // Add more fields as needed
+}
+
+
 let currentModal: HTMLElement | null = null;
 
 export function createImageElement(src: string): HTMLImageElement {
@@ -15,7 +21,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-export const initMap = async (mapElementId: string, isSignedIn: boolean, user: any) => {
+export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
@@ -82,7 +88,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     latLng: google.maps.LatLng,
     map: google.maps.Map,
     isSignedIn: boolean,
-    user: any
+    user: User
   ) => {
 
     if (currentModal) {
@@ -229,7 +235,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     map: google.maps.Map,
     emoji_id: number,
     isSignedIn: boolean,
-    user: any
+    user: User
   ) => {
 
     if (currentModal) {
@@ -360,7 +366,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     map: google.maps.Map,
     emoji_id: number, // Add emoji_id to the function arguments
     isSignedIn: boolean,
-    user: any,
+    user: User,
     isAnonymous: boolean, // New parameter for anonymous upload
     description?: string // New parameter for description 
 ) => {
@@ -403,7 +409,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
         }
     }
 
-    // Pan the map to the new marker location
+    // Pin the map to the new marker location
     map.panTo(latLng);
   };
 };

@@ -49,7 +49,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const { isSignedIn, user } = useUser();
 
   const menuItems: MenuItem[] = [
-    { id: "home", label: "🏠", action: () => router.push("/") },
+    { id: "home", label: "🏠", action: () => router.push("/appPage") },
     // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
     {
       id: "calander",

@@ -381,15 +381,15 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     const potatoImageSrc = emojiImages[emoji_id] || "happy.svg";
     const newMarkerImage = createImageElement(potatoImageSrc);
 
-    const newMarker = new google.maps.marker.AdvancedMarkerElement({
-        position: latLng,
-        map: map,
-        content: newMarkerImage,
-    });
+    // const newMarker = new google.maps.marker.AdvancedMarkerElement({
+    //     position: latLng,
+    //     map: map,
+    //     content: newMarkerImage,
+    // });
 
     console.log("inserting marker");
-    console.log("signed in " + isSignedIn);
-    console.log("user " + user)
+    // console.log("signed in " + isSignedIn);
+    // console.log("user " + user)
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {
@@ -404,6 +404,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
                 text: description || "",
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
+            initMap("map", true, user)
         } catch (error) {
             console.error("Failed to insert marker:", error);
         }

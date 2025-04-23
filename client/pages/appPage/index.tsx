@@ -36,7 +36,7 @@ const Index = () => {
   }, [isLoaded, isSignedIn, router]);
 
   const initializeMap = () => {
-    if (window.google && window.google.maps) {
+    if (user && window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {
@@ -44,8 +44,8 @@ const Index = () => {
           center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
         }
       );
-      // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, user); // Pass correct parameters based on your app's logic
+      // Pass the user ID directly after the check
+      initMap("map", true, user);
     }
   };
 

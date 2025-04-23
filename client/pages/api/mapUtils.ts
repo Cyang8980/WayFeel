@@ -7,7 +7,6 @@ import { getMarkersCurrUserAnon } from './getMarkers';
 
 interface User {
   id: string;
-  [key: string]: unknown; // Add more fields as needed
 }
 
 

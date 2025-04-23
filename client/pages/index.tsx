@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { motion, AnimatePresence, useScroll, useTransform, useSpring } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";

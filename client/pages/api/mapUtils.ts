@@ -69,12 +69,12 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     }
   }
 
-  // Marker images initialization
-  const sadPotato = createImageElement("sad.svg");
-  const angryPotato = createImageElement("angry.svg");
-  const mehPotato = createImageElement("meh.svg");
-  const happyPotato = createImageElement("happy.svg");
-  const excitedPotato = createImageElement("excited.svg");
+  // // Marker images initialization
+  // const sadPotato = createImageElement("sad.svg");
+  // const angryPotato = createImageElement("angry.svg");
+  // const mehPotato = createImageElement("meh.svg");
+  // const happyPotato = createImageElement("happy.svg");
+  // const excitedPotato = createImageElement("excited.svg");
 
   map.addListener("click", (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {

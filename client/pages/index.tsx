@@ -66,7 +66,7 @@ const HomePage: React.FC = () => {
     if (clickCount + 1 == 10) {
       setShowTextBox(true);
     }
-  }, []);
+  };
 
   // Handle user sign-in and insert user data
   const handleSignIn = async () => {
@@ -86,7 +86,7 @@ const HomePage: React.FC = () => {
         console.error("Failed to insert user:", error);
       }
     }
-  }, [initializeMap]);
+  };
 
   // Close text box
   const handleCloseTextBox = () => {

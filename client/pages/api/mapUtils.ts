@@ -384,13 +384,14 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
         try {
             console.log('User id ' + user.id)
             await insertMarker({
-                id: uuidv4(),
-                longitude: latLng.lng(),
-                latitude: latLng.lat(),
-                emoji_id: emoji_id,
-                created_by: user.id, // Handle anonymous uploads
-                anon: isAnonymous,
-                text: description || "",
+              id: uuidv4(),
+              longitude: latLng.lng(),
+              latitude: latLng.lat(),
+              emoji_id: emoji_id,
+              created_by: user.id, // Handle anonymous uploads
+              anon: isAnonymous,
+              text: description || "",
+              created_at: ''
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
             initMap("map", true, user)

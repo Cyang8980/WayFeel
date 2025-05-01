@@ -10,14 +10,11 @@ export async function getMarkersCurrUserAnon(user_id: string): Promise<Marker[] 
     const { data: markers, error } = await supabase
         .from('markers')
         .select('*')
-        .or(`created_by.eq.${user_id},anon.eq.true`); // Fetch user's markers OR anonymous markers
+        .or(`created_by.eq.${user_id},anon.eq.true`);
 
     if (error) {
       console.error("Error fetching markers:", error);
-      return res.status(500).json({ error: error.message });
+      return null;
     }
-    
-    // console.log('Fetched markers:', markers);
     return markers;
 }
-

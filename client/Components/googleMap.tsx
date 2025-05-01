@@ -1,20 +1,19 @@
 // components/GoogleMap.tsx
-import React, { useEffect, useRef } from "react";
-import initMap from "./map"
+import React, { useEffect, useRef, useCallback } from "react";
+import initMap from "./map";
 
-// Extend the Window interface to include initMap
 declare global {
   interface Window {
     initMap: () => void;
+    google: typeof google;
   }
 }
 
 const GoogleMap = () => {
   const mapRef = useRef<google.maps.Map | null>(null);
 
-  // Function to initialize the map
-  const initializeMap = () => {
-    if (!mapRef.current && document.getElementById("map")) {
+  const initializeMap = useCallback(() => {
+    if (!mapRef.current && document.getElementById("map") && window.google?.maps) {
       mapRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {
@@ -22,30 +21,36 @@ const GoogleMap = () => {
           zoom: 10,
         }
       );
-      initMap();
+      initMap(); // Remove this if not needed separately
     }
-  };
+  }, []);
 
-  const loadGoogleMapsScript = () => {
-    if (window.google && window.google.maps) {
+  const loadGoogleMapsScript = useCallback(() => {
+    if (window.google?.maps) {
       initializeMap();
     } else {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initMap`;
       script.async = true;
       script.defer = true;
-      document.head.appendChild(script);
 
+      // Set initMap globally for callback
       window.initMap = initializeMap;
+
+      document.head.appendChild(script);
     }
-  };
+  }, [initializeMap]);
 
   useEffect(() => {
     loadGoogleMapsScript();
-  }, []);
+  }, [loadGoogleMapsScript]);
 
   return (
-    <div id="map" style={{ height: "400px", width: "100%" }} className="rounded-lg shadow-lg" />
+    <div
+      id="map"
+      style={{ height: "400px", width: "100%" }}
+      className="rounded-lg shadow-lg"
+    />
   );
 };
 

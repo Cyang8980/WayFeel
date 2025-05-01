@@ -1,9 +1,14 @@
 // mapUtils.ts
 
 export let map: google.maps.Map;
-import { insertMarker, supabase } from './insertMarker' 
+import { insertMarker } from './insertMarker' 
 import {v4 as uuidv4} from 'uuid';
 import { getMarkersCurrUserAnon } from './getMarkers';
+
+interface User {
+  id: string;
+}
+
 
 let currentModal: HTMLElement | null = null;
 
@@ -15,7 +20,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-export const initMap = async (mapElementId: string, isSignedIn: boolean, user: any) => {
+export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
@@ -63,12 +68,12 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     }
   }
 
-  // Marker images initialization
-  const sadPotato = createImageElement("sad.svg");
-  const angryPotato = createImageElement("angry.svg");
-  const mehPotato = createImageElement("meh.svg");
-  const happyPotato = createImageElement("happy.svg");
-  const excitedPotato = createImageElement("excited.svg");
+  // // Marker images initialization
+  // const sadPotato = createImageElement("sad.svg");
+  // const angryPotato = createImageElement("angry.svg");
+  // const mehPotato = createImageElement("meh.svg");
+  // const happyPotato = createImageElement("happy.svg");
+  // const excitedPotato = createImageElement("excited.svg");
 
   map.addListener("click", (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
@@ -82,7 +87,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     latLng: google.maps.LatLng,
     map: google.maps.Map,
     isSignedIn: boolean,
-    user: any
+    user: User
   ) => {
 
     if (currentModal) {
@@ -229,7 +234,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     map: google.maps.Map,
     emoji_id: number,
     isSignedIn: boolean,
-    user: any
+    user: User
   ) => {
 
     if (currentModal) {
@@ -360,30 +365,20 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
     map: google.maps.Map,
     emoji_id: number, // Add emoji_id to the function arguments
     isSignedIn: boolean,
-    user: any,
+    user: User,
     isAnonymous: boolean, // New parameter for anonymous upload
     description?: string // New parameter for description 
 ) => {
-    const emojiImages: { [key: number]: string } = {
-        1: "sad.svg",
-        2: "angry.svg",
-        3: "meh.svg",
-        4: "happy.svg",
-        5: "excited.svg",
-    };
 
-    const potatoImageSrc = emojiImages[emoji_id] || "happy.svg";
-    const newMarkerImage = createImageElement(potatoImageSrc);
-
-    const newMarker = new google.maps.marker.AdvancedMarkerElement({
-        position: latLng,
-        map: map,
-        content: newMarkerImage,
-    });
+    // const newMarker = new google.maps.marker.AdvancedMarkerElement({
+    //     position: latLng,
+    //     map: map,
+    //     content: newMarkerImage,
+    // });
 
     console.log("inserting marker");
-    console.log("signed in " + isSignedIn);
-    console.log("user " + user)
+    // console.log("signed in " + isSignedIn);
+    // console.log("user " + user)
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {
@@ -399,12 +394,13 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
               created_at: ''
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
+            initMap("map", true, user)
         } catch (error) {
             console.error("Failed to insert marker:", error);
         }
     }
 
-    // Pan the map to the new marker location
+    // Pin the map to the new marker location
     map.panTo(latLng);
   };
 };

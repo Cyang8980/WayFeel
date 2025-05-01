@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import GoogleMap from "@/Components/googleMap";
+import Image from "next/image";
 
 const LandingPage: React.FC = () => {
   return (
@@ -54,8 +55,8 @@ const LandingPage: React.FC = () => {
             <div className="flex-1">
               <h2 className="text-3xl font-bold mb-6">Log Your Emotions—Anywhere, Anytime.</h2>
               <p>
-                Your feelings matter. With WayFeel's interactive map, drop an
-                emoji to log your emotions—whether you're at home, work, or out
+                Your feelings matter. With WayFeel&#39;s interactive map, drop an
+                emoji to log your emotions—whether you&#39;re at home, work, or out
                 exploring.
               </p>
               <ul className="list-disc list-inside space-y-2 my-4 pl-6">
@@ -63,7 +64,7 @@ const LandingPage: React.FC = () => {
                 <li>Find validation: Get support from a caring community.</li>
                 <li>Create a living diary: Build your emotional journey.</li>
               </ul>
-              <p>It's more than a map—it's a safe space to be yourself.</p>
+              <p>It&#39;s more than a map—it&#39;s a safe space to be yourself.</p>
             </div>
             <div className="flex-1">
               <GoogleMap />
@@ -77,7 +78,7 @@ const LandingPage: React.FC = () => {
             <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-9">
               <div>
                 <h2 className="text-4xl font-bold mb-4 text-left col-start-1">Start tracking to understand yourself</h2>
-                <p className="text-lg mb-8 text-left col-start-1">You have an idea of what affects your emotions, but there's nothing better than visualizing it to confirm your suspicions.</p>
+                <p className="text-lg mb-8 text-left col-start-1">You have an idea of what affects your emotions, but there&#39;s nothing better than visualizing it to confirm your suspicions.</p>
               </div>
               <div className="col-start-2">
                 <h3 className="font-bold text-xl text-left">Anonymity Meets Support</h3>
@@ -107,7 +108,7 @@ const LandingPage: React.FC = () => {
               <h2 className="text-4xl font-bold mb-6">See Your Emotional Journey — At a Glance.</h2>
               <ul className="list-disc space-y-2 my-4 pl-10 list-outside">
                 <li>Spot patterns: Notice how certain places or times affect your mood.</li>
-                <li>Celebrate growth: See how far you've come in managing your emotions.</li>
+                <li>Celebrate growth: See how far you&#39;ve come in managing your emotions.</li>
                 <li>Make better decisions: Use your emotional history to plan happier, healthier days.</li>
               </ul>
             </div>
@@ -120,11 +121,13 @@ const LandingPage: React.FC = () => {
 
       {/* Testimonials Section */}
       <section className="py-12 bg-blue-300 text-white text-center">
-        <h2 className="text-4xl font-bold mb-6">See What Others Are Saying About Their Emotional Journey.</h2>
+        <h2 className="text-4xl font-bold mb-6">
+          See What Others Are Saying About Their Emotional Journey.
+        </h2>
         <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 text-left">
-          <p>"WayFeel helped me understand why certain places make me anxious. Now I can plan my days better!" – Future User</p>
-          <p>"I love how anonymous and supportive the community is. It's like having a diary that talks back!" – Future User</p>
-          <p>"Tracking my emotions over time has been a game-changer for my mental health." – Future User</p>
+          <p>&quot;WayFeel helped me understand why certain places make me anxious. Now I can plan my days better!&quot; – Future User</p>
+          <p>&quot;I love how anonymous and supportive the community is. It&#39;s like having a diary that talks back!&quot; – Future User</p>
+          <p>&quot;Tracking my emotions over time has been a game-changer for my mental health.&quot; – Future User</p>
         </div>
       </section>
 
@@ -135,13 +138,21 @@ const LandingPage: React.FC = () => {
           <p>Find a Community who</p>
           <p>Understands you?</p>
         </h1>
-        <Button className="bg-white text-red font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-600">Join WayFeel Now</Button>
+        <Button className="bg-white text-red font-bold px-8 py-4 rounded-lg shadow hover:bg-blue-600">
+          Join WayFeel Now
+        </Button>
       </section>
 
-      {/*Founder Note */}
+      {/* Founder Note */}
       <section className="text-center item-center">
         <div className="flex-1 flex justify-center items-center pt-10 pb-10">
-          <img src="/note.png" alt="Note" className="items-center text-center w-100 h-100" />
+          <Image
+            src="/note.png"
+            alt="Note"
+            width={400}
+            height={400}
+            className="items-center text-center"
+          />
         </div>
       </section>
 

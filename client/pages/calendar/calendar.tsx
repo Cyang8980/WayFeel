@@ -2,10 +2,11 @@ import React, { useState, useEffect } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import { useUser, SignInButton } from "@clerk/nextjs";
-import CustomUserButton from "../profile/index"
+import { useUser, useAuth, SignInButton } from "@clerk/nextjs";
+import { CustomUserButton } from "Components/CustomUserButton";
 import Sidebar from "@/Components/sidebar";
 import { getMarkersCurrUserAnon } from "../api/getMarkers";
+
 
 const localizer = momentLocalizer(moment);
 
@@ -15,6 +16,7 @@ const CalendarPage = () => {
   const [events, setEvents] = useState<any[]>([]);
   const [activeItem, setActiveItem] = useState("home");
   const { user } = useUser();
+  const { getToken } = useAuth();
   const emojiMap: { [key: number]: string } = {
     1: '/sad.svg',
     2: '/angry.svg',
@@ -48,7 +50,7 @@ const CalendarPage = () => {
       ?.split('/')
       .pop()
       ?.replace('.svg', '')
-      ?.replace(/^\w/, (c: string) => c.toUpperCase()); // Capitalize name
+      ?.replace(/^\w/, (c) => c.toUpperCase()); // Capitalize name
 
     return (
       <div className="flex items-center gap-2" style={{ padding: '2px 8px', height: '100%' }}>

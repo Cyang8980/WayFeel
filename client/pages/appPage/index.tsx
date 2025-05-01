@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { initMap } from "../api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../../Components/sidebar";
@@ -35,43 +35,38 @@ const Index = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const initializeMap = () => {
-    if (window.google && window.google.maps) {
+  const initializeMap = useCallback(() => {
+    if (user && window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {
           zoom: 8,
-          center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
+          center: { lat: 37.7749, lng: -122.4194 },
         }
       );
-      // Call initMap from mapUtils once the map is initialized
-      initMap("map", true, user); // Pass correct parameters based on your app's logic
+      initMap("map", true, user);
     }
-  };
+  }, [user]);
 
-  const loadGoogleMapsScript = () => {
-    // Check if Google Maps API is already loaded
+  const loadGoogleMapsScript = useCallback(() => {
     if (window.google && window.google.maps) {
       initializeMap();
     } else {
-      // Load the Google Maps script if not already loaded
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
       script.async = true;
       script.defer = true;
 
-      // Make initializeMap globally accessible
       window.initializeMap = initializeMap;
-
       document.head.appendChild(script);
     }
-  };
+  }, [initializeMap]);
 
   useEffect(() => {
     if (isLoaded) {
       loadGoogleMapsScript();
     }
-  }, [isLoaded]);
+  }, [isLoaded, loadGoogleMapsScript]);
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -101,11 +96,17 @@ const Index = () => {
           </section>
 
           <section className="w-[65%] p-4">
-            <div
-              id="map"
-              style={{ height: "745px", width: "100%" }}
-              className="rounded-lg shadow-lg mb-4"
-            ></div>
+            <div>
+              {isLoading? (
+                <div>Loading map...</div>
+              ) : (
+                <div
+                  id="map"
+                  style={{ height: "745px", width: "100%" }}
+                  className="rounded-lg shadow-lg mb-4"
+                ></div>
+              )}
+            </div>
           </section>
         </main>
       </div>

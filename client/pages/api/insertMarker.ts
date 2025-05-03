@@ -2,12 +2,14 @@ import { createClient } from '@supabase/supabase-js';
 export const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_API_KEY!);
 
 export interface Marker {
+    created_at: string | number | Date;
     id: string;
     longitude: number;
     latitude: number;
     emoji_id: number;
     created_by: string;
     anon: boolean;
+    text: string;
   }
   
 export async function insertMarker(marker: Marker): Promise<void> {

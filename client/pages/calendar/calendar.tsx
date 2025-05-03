@@ -50,7 +50,7 @@ const CalendarPage = () => {
       ?.split('/')
       .pop()
       ?.replace('.svg', '')
-      ?.replace(/^\w/, (c) => c.toUpperCase()); // Capitalize name
+      ?.replace(/^\w/, (c: string) => c.toUpperCase()); // Capitalize name
 
     return (
       <div className="flex items-center gap-2" style={{ padding: '2px 8px', height: '100%' }}>

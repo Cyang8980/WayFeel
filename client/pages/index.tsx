@@ -5,7 +5,7 @@ import Sidebar from "../Components/sidebar";
 import moment from "moment";
 import { useUser } from "@clerk/nextjs"
 import "react-big-calendar/lib/css/react-big-calendar.css";
-import CalendarPage from "./calander/calander";
+import CalendarPage from "./calendar/calendar";
 
 
 // Localizer for react-big-calendar

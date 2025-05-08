@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { initMap } from "../api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../../Components/sidebar";
@@ -6,13 +6,6 @@ import moment from "moment";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import "react-big-calendar/lib/css/react-big-calendar.css";
-
-
-
-
-// TODO:          IF POTATO IS CLICKED, DISPLAY MESSAGE LINEKD TO THAT POTATO
-
-
 
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
@@ -25,6 +18,13 @@ const Index = () => {
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
+  const [mapInitialized, setMapInitialized] = useState(false);
+  const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
+
+  // adding start & end date filters
+  const [startDate, setStartDate] = useState<Date | null>(null);
+  const [endDate, setEndDate] = useState<Date | null>(null);
+
   useEffect(() => {
     if (isLoaded) {
       if (!isSignedIn) {
@@ -35,38 +35,84 @@ const Index = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  const initializeMap = useCallback(() => {
+  const initializeMap = () => {
     if (user && window.google && window.google.maps) {
+      //clear prev map
+      const mapElement = document.getElementById("map");
+      if (mapElement) mapElement.innerHTML = "";
+      
+      //init new map
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {
           zoom: 8,
-          center: { lat: 37.7749, lng: -122.4194 },
+          center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
         }
       );
-      initMap("map", true, user);
+      // Call initMap from mapUtils once the map is initialized
+      initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);// Pass correct parameters based on your app's logic
+      setMapInitialized(true);
     }
-  }, [user]);
+  };
 
-  const loadGoogleMapsScript = useCallback(() => {
+  const loadGoogleMapsScript = () => {
+    // Check if Google Maps API is already loaded
     if (window.google && window.google.maps) {
       initializeMap();
     } else {
+      // Load the Google Maps script if not already loaded
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
       script.async = true;
       script.defer = true;
 
+      // Make initializeMap globally accessible
       window.initializeMap = initializeMap;
+
+      script.onload = () => {
+        window.initializeMap = initializeMap;
+        setMapScriptLoaded(true);
+      };
+
       document.head.appendChild(script);
     }
-  }, [initializeMap]);
+  };
+
+  useEffect(() => {
+    if (mapInitialized && user) {
+      // Clear previous map
+      const mapElement = document.getElementById("map");
+      if (mapElement) mapElement.innerHTML = "";
+      
+      // Reinitialize with new dates
+      initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
+    }
+  }, [startDate, endDate, mapInitialized, user, isSignedIn]);
 
   useEffect(() => {
     if (isLoaded) {
       loadGoogleMapsScript();
     }
-  }, [isLoaded, loadGoogleMapsScript]);
+  }, [isLoaded]);
+
+  // start & end date filters
+  const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedStartDate = e.target.valueAsDate;
+    if (endDate && selectedStartDate && selectedStartDate > endDate) {
+      alert("Start date cannot be after end date");
+      return;
+    }
+    setStartDate(selectedStartDate);
+  };
+  
+  const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const selectedEndDate = e.target.valueAsDate;
+    if (startDate && selectedEndDate && selectedEndDate < startDate) {
+      alert("End date cannot be before start date");
+      return;
+    }
+    setEndDate(selectedEndDate);
+  };
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -96,17 +142,34 @@ const Index = () => {
           </section>
 
           <section className="w-[65%] p-4">
-            <div>
-              {isLoading? (
-                <div>Loading map...</div>
-              ) : (
-                <div
-                  id="map"
-                  style={{ height: "745px", width: "100%" }}
-                  className="rounded-lg shadow-lg mb-4"
-                ></div>
-              )}
+
+            {/* filter buttons */}
+            <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex gap-4">
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">Start Date</label>
+                <input
+                  type="date"
+                  className="w-full p-2 border rounded"
+                  onChange={handleStartDateChange}
+                  max={endDate?.toISOString().split('T')[0]} // Can't go beyond end date
+                />
+              </div>
+              <div className="flex-1">
+                <label className="block text-sm font-medium mb-1">End Date</label>
+                <input
+                  type="date"
+                  className="w-full p-2 border rounded"
+                  onChange={handleEndDateChange}
+                  min={startDate?.toISOString().split('T')[0]} 
+                />
+              </div>
             </div>
+
+            <div
+              id="map"
+              style={{ height: "745px", width: "100%" }}
+              className="rounded-lg shadow-lg mb-4"
+            ></div>
           </section>
         </main>
       </div>

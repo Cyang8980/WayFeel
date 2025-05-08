@@ -5,6 +5,8 @@ import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { insertUser } from "./api/insertUser";
 
+import Image from "next/image";
+
 // Define emoji type
 interface Emoji {
   id: number;
@@ -116,10 +118,12 @@ const HomePage: React.FC = () => {
                 top: emoji.y - 60,
               }}
             >
-              <img
+              <Image
                 src={`/emojis/Wayfeel_Emojis-0${emoji.index}.png`}
                 alt="Emoji"
-                className="w-32 h-32 select-none"
+                width={128} 
+                height={128}
+                className="select-none"
                 draggable="false"
               />
             </motion.div>
@@ -140,11 +144,14 @@ const HomePage: React.FC = () => {
             transition={{ duration: 2, delay: 0.5 }}
             style={{ overflow: "hidden" }}
           >
-            <img
+            <Image
               src="/images/Wayfeel_Logo_WHT-03.png"
               alt="WayFeel Logo"
+              width={384} 
+              height={0} 
               className="w-96 mb-4 select-none"
               draggable="false"
+              priority
             />
           </motion.div>
 

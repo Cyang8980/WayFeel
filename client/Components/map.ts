@@ -1,17 +1,18 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useUser } from "@clerk/nextjs";
-import { initMap } from "../pages/api/mapUtils"; // Import initMap from mapUtils
+import { initMap } from "../pages/api/mapUtils";
 
 const MapComponent = () => {
   const { isSignedIn, user } = useUser();
-  const [isMapLoaded, setIsMapLoaded] = useState(false);
 
   useEffect(() => {
     if (isSignedIn && user) {
-      initMap("map", isSignedIn, user).then(() => setIsMapLoaded(true));
+      initMap("map", isSignedIn, user);
     }
   }, [isSignedIn, user]);
-  
+
+  return null;
 };
+
 
 export default MapComponent;

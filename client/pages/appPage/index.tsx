@@ -108,7 +108,6 @@ const Index = () => {
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedEndDate = e.target.valueAsDate;
     if (startDate && selectedEndDate && selectedEndDate < startDate) {
-      // Optional: Show error to user
       alert("End date cannot be before start date");
       return;
     }

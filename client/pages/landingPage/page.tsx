@@ -2,7 +2,7 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Button } from "@/components/ui/button"; // Ensure your shadcn/ui Button is set up correctly
+import { Button } from "@/components/ui/button";
 import GoogleMap from "@/Components/googleMap";
 
 const LandingPage: React.FC = () => {

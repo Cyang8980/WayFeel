@@ -20,7 +20,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User, startDate?: Date, endDate?: Date) => {
+export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User, startDate?: Date, endDate?: Date, emojiIds?: number[], showAnonymous?: boolean) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
@@ -44,7 +44,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
 
   // Fetch existing markers
   if (isSignedIn && user) {
-    const markers = await getMarkersCurrUserAnon(user.id, startDate, endDate); 
+    const markers = await getMarkersCurrUserAnon(user.id, startDate, endDate, emojiIds, showAnonymous); 
 
     if (markers) {
       markers.forEach((marker) => {

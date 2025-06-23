@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Button } from "@/Components/ui/button";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
-import { insertUser } from "./api/insertUser";
 
 import Image from "next/image";
 
@@ -72,23 +71,35 @@ const HomePage: React.FC = () => {
 
   // Handle user sign-in and insert user data
   const handleSignIn = async () => {
-    if (isSignedIn && user) {
-      try {
-        const insertedData = await insertUser({
+  if (isSignedIn && user) {
+    try {
+      const response = await fetch('/api/insertUser', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
           id: user.id,
-          first_name: user.firstName || "Unknown", // Fallback if firstName is null
-          last_name: user.lastName || "Unknown", // Fallback if lastName is null
-        });
-  
-        // Log the data that was inserted into Supabase
-        console.log("Data inserted into Supabase:", insertedData);
-  
-        router.push("/appPage"); // Redirect to appPage after sign-in
-      } catch (error) {
-        console.error("Failed to insert user:", error);
+          first_name: user.firstName || 'Unknown',
+          last_name: user.lastName || 'Unknown',
+        }),
+      });
+
+      if (!response.ok) {
+        // You can get error details from response.json() if your API sends any
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'Failed to insert user');
       }
+
+      const data = await response.json();
+      console.log('User inserted successfully:', data);
+
+      router.push('/appPage');  // Redirect after success
+    } catch (error) {
+      console.error('Failed to insert user:', error);
+      // Optional: Show user-friendly error message here
     }
-  };
+  }
+};
+
 
   // Close text box
   const handleCloseTextBox = () => {

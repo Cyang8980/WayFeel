@@ -77,6 +77,11 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
       action: async () => {
         if (isSignedIn) {
           try {
+            console.log("Calling insertUser with:", {
+              id: user.id,
+              first_name: user.firstName,
+              last_name: user.lastName,
+            });
             await insertUser({
               id: user.id!,
               first_name: user.firstName!,

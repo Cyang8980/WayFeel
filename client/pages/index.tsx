@@ -71,34 +71,48 @@ const HomePage: React.FC = () => {
 
   // Handle user sign-in and insert user data
   const handleSignIn = async () => {
-  if (isSignedIn && user) {
-    try {
-      const response = await fetch('/api/insertUser', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          id: user.id,
-          first_name: user.firstName || 'Unknown',
-          last_name: user.lastName || 'Unknown',
-        }),
-      });
-
-      if (!response.ok) {
-        // You can get error details from response.json() if your API sends any
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'Failed to insert user');
+    if (isSignedIn && user) {
+      try {
+        // Send user id in the query string for GET request
+        const userExistsCheck = await fetch(`/api/getUser?id=${user.id}`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },  // This header is not strictly necessary for GET
+        });
+  
+        if (userExistsCheck.ok) {
+          // If user exists, redirect to the app page
+          router.push('/appPage');
+          return;  // Early exit if user exists
+        }
+  
+        // If user doesn't exist, insert the user with a POST request
+        const response = await fetch('/api/insertUser', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            id: user.id,
+            first_name: user.firstName || 'Unknown',
+            last_name: user.lastName || 'Unknown',
+          }),
+        });
+  
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'Failed to insert user');
+        }
+  
+        const data = await response.json();
+        console.log('User inserted successfully:', data);
+  
+        // Redirect after success
+        router.push('/appPage');  
+      } catch (error) {
+        console.error('Failed to handle sign-in:', error);
+        // Optionally, you could show a user-friendly message here (e.g., using a toast notification)
       }
-
-      const data = await response.json();
-      console.log('User inserted successfully:', data);
-
-      router.push('/appPage');  // Redirect after success
-    } catch (error) {
-      console.error('Failed to insert user:', error);
-      // Optional: Show user-friendly error message here
     }
-  }
-};
+  };
+  
 
 
   // Close text box

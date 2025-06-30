@@ -39,7 +39,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   map = new Map(mapElement, {
     zoom: 14,
     center: { lat: 40.6782, lng: -73.9442 },
-    mapId: "DEMO_MAP_ID"
+    mapId: "2144d356e076f199b6e1e755"
   });
 
   // Fetch existing markers

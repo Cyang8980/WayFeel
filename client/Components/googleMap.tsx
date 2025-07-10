@@ -1,6 +1,6 @@
 // components/GoogleMap.tsx
 import React, { useEffect, useRef, useCallback } from "react";
-import initMap from "./map";
+import initMap from "@/components/map"
 
 declare global {
   interface Window {

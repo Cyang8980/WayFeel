@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Sidebar from "@/Components/sidebar";
+import Sidebar from "@/components/sidebar";
 import { useUser, useClerk, UserButton, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../profile/[[...index]]";
 

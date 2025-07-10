@@ -4,7 +4,7 @@ import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, useAuth, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "../profile/[[...index]]";
-import Sidebar from "@/Components/sidebar";
+import Sidebar from "@/components/sidebar";
 import { getMarkersCurrUserAnon } from "../api/getMarkers";
 import { createImageElement } from "../api/mapUtils";
 

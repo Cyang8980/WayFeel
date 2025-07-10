@@ -3,7 +3,7 @@
 import React from "react";
 import { motion } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import GoogleMap from "@/Components/googleMap";
+import GoogleMap from "@/components/googleMap";
 
 const LandingPage: React.FC = () => {
   return (

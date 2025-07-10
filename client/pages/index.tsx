@@ -71,7 +71,7 @@ const HomePage: React.FC = () => {
 
   // Handle user sign-in and insert user data
   const handleSignIn = async () => {
-    if (isSignedIn && user) {
+    if (isSignedIn) {
       try {
         // Send user id in the query string for GET request
         const userExistsCheck = await fetch(`/api/getUser?id=${user.id}`, {
@@ -98,6 +98,7 @@ const HomePage: React.FC = () => {
   
         if (!response.ok) {
           const errorData = await response.json();
+          console.log(errorData)
           throw new Error(errorData.error || 'Failed to insert user');
         }
   

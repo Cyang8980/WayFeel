@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Button } from "@/Components/ui/button";
+import { Button } from "@/components/ui/button";
 import { SignInButton, useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 

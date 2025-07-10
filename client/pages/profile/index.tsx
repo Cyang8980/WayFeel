@@ -1,6 +1,6 @@
 "use client";
 
-import { CustomUserButton } from "@/Components/CustomUserButton";
+import { CustomUserButton } from "@/components/CustomUserButton";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import { useEffect } from "react";

@@ -6,11 +6,11 @@ export const supabase = createClient(
     process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
   );
 
-interface User {
-    id: string;
-    first_name: string;
-    last_name: string;
-  }
+// interface User {
+//     id: string;
+//     first_name: string;
+//     last_name: string;
+//   }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   // Only allow GET requests

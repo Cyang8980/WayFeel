@@ -83,290 +83,246 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   });
 
   // Potato Selection Modal
-  const openPotatoSelectionDialog = (
-    latLng: google.maps.LatLng,
-    map: google.maps.Map,
-    isSignedIn: boolean,
-    user: User
-  ) => {
+  // Safe utility to remove current modal
+function removeCurrentModal() {
+  if (currentModal && currentModal.parentNode === document.body) {
+    document.body.removeChild(currentModal);
+  }
+  currentModal = null;
+}
 
-    if (currentModal) {
-      if (currentModal && currentModal.parentNode === document.body) {
-        document.body.removeChild(currentModal);
-      }
-      currentModal = null;
-    }
+const openPotatoSelectionDialog = (
+  latLng: google.maps.LatLng,
+  map: google.maps.Map,
+  isSignedIn: boolean,
+  user: User
+) => {
+  removeCurrentModal();
 
-    const potatoOptions = [
-        { name: "Sad Potato", src: "sad.svg" },
-        { name: "Angry Potato", src: "angry.svg" },
-        { name: "Meh Potato", src: "meh.svg" },
-        { name: "Happy Potato", src: "happy.svg" },
-        { name: "Excited Potato", src: "excited.svg" },
-    ];
+  const modal = document.createElement("div");
+  currentModal = modal;
+  Object.assign(modal.style, {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    background: "white",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    zIndex: "1000",
+    width: "500px",
+    height: "300px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  });
 
-    const modal = document.createElement("div");
-    currentModal = modal;
-    modal.style.position = "absolute";
-    modal.style.left = "50%";
-    modal.style.top = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.background = "white";
-    modal.style.border = "1px solid #ccc";
-    modal.style.borderRadius = "8px";
-    modal.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
-    modal.style.zIndex = "1000";
+  const title = document.createElement("h2");
+  title.innerText = "Choose a Potato";
+  title.style.textAlign = "center";
+  modal.appendChild(title);
 
-    modal.style.width = "500px"; // Fixed width
-    modal.style.height = "300px"; // Fixed height
-    modal.style.display = "flex";
-    modal.style.flexDirection = "column";
-    modal.style.alignItems = "center";
-    modal.style.justifyContent = "center"; 
+  const potatoList = document.createElement("div");
+  Object.assign(potatoList.style, {
+    display: "flex",
+    justifyContent: "space-around",
+    flexWrap: "wrap",
+    gap: "10px"
+  });
 
-    const title = document.createElement("h2");
-    title.innerText = "Choose a Potato";
-    title.style.textAlign = "center";
-    modal.appendChild(title);
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "✕";
+  Object.assign(closeButton.style, {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  closeButton.onclick = removeCurrentModal;
+  modal.appendChild(closeButton);
 
-    const potatoList = document.createElement("div");
-    potatoList.style.display = "flex";
-    potatoList.style.justifyContent = "space-around";
-    potatoList.style.flexWrap = "wrap";
-    potatoList.style.gap = "10px";
-
-    // Close button (X)
-    const closeButton = document.createElement("button");
-    closeButton.innerText = "✕"; 
-    closeButton.style.position = "absolute";
-    closeButton.style.top = "10px";
-    closeButton.style.right = "10px";
-    closeButton.style.background = "transparent";
-    closeButton.style.border = "none";
-    closeButton.style.cursor = "pointer";
-    closeButton.style.fontSize = "24px";
-
-    closeButton.onclick = () => {
-      if (currentModal && currentModal.parentNode === document.body) {
-        document.body.removeChild(currentModal);
-      }
-      currentModal = null;
-    };
-
-    modal.appendChild(closeButton);
-
-    potatoOptions.forEach((option) => {
-        const potatoButton = document.createElement("button");
-        potatoButton.style.padding = "10px";
-        potatoButton.style.border = "2px solid #ccc";
-        potatoButton.style.background = "transparent";
-        potatoButton.style.cursor = "pointer";
-        potatoButton.style.width = "80px";
-        potatoButton.style.height = "80px";
-        potatoButton.style.borderRadius = "8px";
-        potatoButton.style.display = "flex";
-        potatoButton.style.alignItems = "center";
-        potatoButton.style.justifyContent = "center";
-        potatoButton.style.transition = "transform 0.3s ease";
-
-        const potatoImage = document.createElement("img");
-        potatoImage.src = option.src;
-        potatoImage.alt = option.name;
-        potatoImage.style.width = "50px";
-        potatoImage.style.height = "50px";
-        potatoImage.style.objectFit = "contain";
-        potatoImage.style.borderRadius = "8px";
-
-        potatoButton.appendChild(potatoImage);
-
-        potatoButton.onclick = () => {
-          const emojiIdMap: { [key: string]: number } = {
-            "sad.svg": 1,
-            "angry.svg": 2,
-            "meh.svg": 3,
-            "happy.svg": 4,
-            "excited.svg": 5,
-          };
-
-          const emoji_id = emojiIdMap[option.src];
-
-          // ✅ Only remove if modal is still in the DOM
-          if (currentModal && currentModal.parentNode === document.body) {
-            document.body.removeChild(currentModal);
-          }
-          currentModal = null;
-
-          currentModal = null;
-
-          openDescriptionDialog(latLng, map, emoji_id, isSignedIn, user);
-        };
-
-        potatoList.appendChild(potatoButton);
-        document.body.appendChild(modal);
-      });
-
-    // Slider for anonymity selection
-    // const anonContainer = document.createElement("div");
-    // anonContainer.style.display = "flex";
-    // anonContainer.style.alignItems = "center";
-    // anonContainer.style.justifyContent = "center";
-    // anonContainer.style.marginTop = "15px";
-
-    // const anonLabel = document.createElement("label");
-    // anonLabel.innerText = "Anonymous";
-    // anonLabel.style.marginRight = "10px";
-
-    // const anonSlider = document.createElement("input");
-    // anonSlider.type = "checkbox";
-    // anonSlider.style.cursor = "pointer";
-
-    // anonContainer.appendChild(anonLabel);
-    // anonContainer.appendChild(anonSlider);
-
-    modal.appendChild(potatoList);
-    // modal.appendChild(anonContainer);
-
-    document.body.appendChild(modal);
+  const emojiIdMap: { [key: string]: number } = {
+    "sad.svg": 1,
+    "angry.svg": 2,
+    "meh.svg": 3,
+    "happy.svg": 4,
+    "excited.svg": 5,
   };
 
-  // Description modal
-  const openDescriptionDialog = (
-    latLng: google.maps.LatLng,
-    map: google.maps.Map,
-    emoji_id: number,
-    isSignedIn: boolean,
-    user: User
-  ) => {
+  const potatoOptions = Object.entries(emojiIdMap).map(([src, id]) => ({
+    name: src.replace(".svg", "").replace(/^./, c => c.toUpperCase()) + " Potato",
+    src,
+    id
+  }));
 
-    if (currentModal && currentModal.parentNode === document.body) {
-      document.body.removeChild(currentModal);
-    }
-    currentModal = null;
+  potatoOptions.forEach(option => {
+    const button = document.createElement("button");
+    Object.assign(button.style, {
+      padding: "10px",
+      border: "2px solid #ccc",
+      background: "transparent",
+      cursor: "pointer",
+      width: "80px",
+      height: "80px",
+      borderRadius: "8px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "transform 0.3s ease"
+    });
 
-    const modal = document.createElement("div");
-    currentModal = modal;
-    modal.style.position = "absolute";
-    modal.style.left = "50%";
-    modal.style.top = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.background = "white";
-    modal.style.border = "1px solid #ccc";
-    modal.style.borderRadius = "8px";
-    modal.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
-    modal.style.zIndex = "1000";
+    const img = document.createElement("img");
+    img.src = option.src;
+    img.alt = option.name;
+    Object.assign(img.style, {
+      width: "50px",
+      height: "50px",
+      objectFit: "contain",
+      borderRadius: "8px"
+    });
 
-    modal.style.width = "500px"; // Fixed width (same as potato modal)
-    modal.style.height = "300px"; // Fixed height (same as potato modal)
-    modal.style.display = "flex";
-    modal.style.flexDirection = "column";
-    modal.style.alignItems = "center";
-  
-    const title = document.createElement("h2");
-    title.innerText = "Add a Description";
-    title.style.textAlign = "center";
-    modal.appendChild(title);
-  
-    // Textbox for description
-    const textbox = document.createElement("textarea");
-    textbox.style.width = "100%";
-    textbox.style.height = "100px";
-    textbox.style.marginTop = "10px";
-    textbox.style.padding = "10px";
-    textbox.style.border = "1px solid #ccc";
-    textbox.style.borderRadius = "4px";
-    textbox.placeholder = "Enter a description...";
-    modal.appendChild(textbox);
-  
-    // Slider for anonymity selection
-    const anonContainer = document.createElement("div");
-    anonContainer.style.display = "flex";
-    anonContainer.style.alignItems = "center";
-    anonContainer.style.justifyContent = "center";
-    anonContainer.style.marginTop = "15px";
-  
-    const anonLabel = document.createElement("label");
-    anonLabel.innerText = "Anonymous";
-    anonLabel.style.marginRight = "10px";
-  
-    const anonSlider = document.createElement("input");
-    anonSlider.type = "checkbox";
-    anonSlider.style.cursor = "pointer";
-  
-    anonContainer.appendChild(anonLabel);
-    anonContainer.appendChild(anonSlider);
-  
-    modal.appendChild(anonContainer);
-  
-    // Submit button
-    const submitButton = document.createElement("button");
-    submitButton.innerText = "Submit";
-    submitButton.style.marginTop = "15px";
-    submitButton.style.padding = "10px 20px";
-    submitButton.style.background = "#4CAF50";
-    submitButton.style.color = "white";
-    submitButton.style.border = "none";
-    submitButton.style.borderRadius = "4px";
-    submitButton.style.cursor = "pointer";
-  
-    submitButton.onclick = () => {
-      const description = textbox.value;
-      const isAnonymous = anonSlider.checked;
-  
-      placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
-      if (currentModal && currentModal.parentNode === document.body) {
-        document.body.removeChild(currentModal);
-      }
-      currentModal = null;
-      currentModal = null;
-    };
-  
-    modal.appendChild(submitButton);
+    button.appendChild(img);
 
-    // Close button (X)
-    const closeButton = document.createElement("button");
-    closeButton.innerText = "✕"; 
-    closeButton.style.position = "absolute";
-    closeButton.style.top = "10px";
-    closeButton.style.right = "10px";
-    closeButton.style.background = "transparent";
-    closeButton.style.border = "none";
-    closeButton.style.cursor = "pointer";
-    closeButton.style.fontSize = "24px";
-
-    closeButton.onclick = () => {
-      if (currentModal && currentModal.parentNode === document.body) {
-        document.body.removeChild(currentModal);
-      }
-      currentModal = null;
+    button.onclick = () => {
+      const emoji_id = emojiIdMap[option.src];
+      removeCurrentModal();
+      openDescriptionDialog(latLng, map, emoji_id, isSignedIn, user);
     };
 
-    modal.appendChild(closeButton);
-  
-    // Back button
-    const backButton = document.createElement("button");
-    backButton.innerText = "←"; // Unicode for left arrow
-    backButton.style.position = "absolute";
-    backButton.style.top = "10px";
-    backButton.style.left = "10px";
-    backButton.style.background = "transparent";
-    backButton.style.border = "none";
-    backButton.style.cursor = "pointer";
-    backButton.style.fontSize = "24px";
+    potatoList.appendChild(button);
+  });
 
-    backButton.onclick = () => {
-      if (currentModal && currentModal.parentNode === document.body) {
-        document.body.removeChild(currentModal);
-      }
-      currentModal = null;
-      openPotatoSelectionDialog(latLng, map, isSignedIn, user);
-    };
+  modal.appendChild(potatoList);
+  document.body.appendChild(modal);
+};
 
-    modal.appendChild(backButton);
-  
-    document.body.appendChild(modal);
+const openDescriptionDialog = (
+  latLng: google.maps.LatLng,
+  map: google.maps.Map,
+  emoji_id: number,
+  isSignedIn: boolean,
+  user: User
+) => {
+  removeCurrentModal();
+
+  const modal = document.createElement("div");
+  currentModal = modal;
+  Object.assign(modal.style, {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    background: "white",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    zIndex: "1000",
+    width: "500px",
+    height: "300px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  });
+
+  const title = document.createElement("h2");
+  title.innerText = "Add a Description";
+  title.style.textAlign = "center";
+  modal.appendChild(title);
+
+  const textbox = document.createElement("textarea");
+  Object.assign(textbox.style, {
+    width: "100%",
+    height: "100px",
+    marginTop: "10px",
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px"
+  });
+  textbox.placeholder = "Enter a description...";
+  modal.appendChild(textbox);
+
+  const anonContainer = document.createElement("div");
+  Object.assign(anonContainer.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "15px"
+  });
+
+  const anonLabel = document.createElement("label");
+  anonLabel.innerText = "Anonymous";
+  anonLabel.style.marginRight = "10px";
+
+  const anonSlider = document.createElement("input");
+  anonSlider.type = "checkbox";
+  anonSlider.style.cursor = "pointer";
+
+  anonContainer.appendChild(anonLabel);
+  anonContainer.appendChild(anonSlider);
+  modal.appendChild(anonContainer);
+
+  const submitButton = document.createElement("button");
+  submitButton.innerText = "Submit";
+  Object.assign(submitButton.style, {
+    marginTop: "15px",
+    padding: "10px 20px",
+    background: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer"
+  });
+
+  submitButton.onclick = () => {
+    const description = textbox.value;
+    const isAnonymous = anonSlider.checked;
+    placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
+    removeCurrentModal();
   };
+
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "✕";
+  Object.assign(closeButton.style, {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  closeButton.onclick = removeCurrentModal;
+
+  const backButton = document.createElement("button");
+  backButton.innerText = "←";
+  Object.assign(backButton.style, {
+    position: "absolute",
+    top: "10px",
+    left: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  backButton.onclick = () => {
+    removeCurrentModal();
+    openPotatoSelectionDialog(latLng, map, isSignedIn, user);
+  };
+
+  modal.appendChild(submitButton);
+  modal.appendChild(closeButton);
+  modal.appendChild(backButton);
+
+  document.body.appendChild(modal);
+};
+
 
 
   const placeMarkerAndPanTo = async (

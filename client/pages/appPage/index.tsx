@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
-// import React, { useState, useEffect, useRef } from "react";
-// import { initMap } from "../api/mapUtils"; // Import initMap from mapUtils
+// import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { initMap } from "../api/mapUtils"; // Import initMap from mapUtils
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../../components/sidebar";
 import moment from "moment";
@@ -14,15 +14,15 @@ const localizer = momentLocalizer(moment);
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
-  // const googleMapsRef = useRef<google.maps.Map | null>(null);
-  const { isLoaded, isSignedIn } = useUser();
-  // const { isLoaded, isSignedIn, user } = useUser();
+  const googleMapsRef = useRef<google.maps.Map | null>(null);
+  // const { isLoaded, isSignedIn } = useUser();
+  const { isLoaded, isSignedIn, user } = useUser();
 
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
 
-  // const [mapInitialized, setMapInitialized] = useState(false);
-  // const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
+  const [mapInitialized, setMapInitialized] = useState(false);
+  const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
 
   // adding start & end date filters
   const [startDate, setStartDate] = useState<Date | null>(null);
@@ -38,65 +38,65 @@ const Index = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  // const initializeMap = () => {
-  //   if (user && window.google && window.google.maps) {
-  //     //clear prev map
-  //     const mapElement = document.getElementById("map");
-  //     if (mapElement) mapElement.innerHTML = "";
+  const initializeMap = () => {
+    if (user && window.google && window.google.maps) {
+      //clear prev map
+      const mapElement = document.getElementById("map");
+      if (mapElement) mapElement.innerHTML = "";
       
-  //     //init new map
-  //     googleMapsRef.current = new window.google.maps.Map(
-  //       document.getElementById("map") as HTMLElement,
-  //       {
-  //         zoom: 8,
-  //         center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
-  //       }
-  //     );
-  //     // Call initMap from mapUtils once the map is initialized
-  //     initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);// Pass correct parameters based on your app's logic
-  //     setMapInitialized(true);
-  //   }
-  // };
+      //init new map
+      googleMapsRef.current = new window.google.maps.Map(
+        document.getElementById("map") as HTMLElement,
+        {
+          zoom: 8,
+          center: { lat: 37.7749, lng: -122.4194 }, // Example: San Francisco
+        }
+      );
+      // Call initMap from mapUtils once the map is initialized
+      initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);// Pass correct parameters based on your app's logic
+      setMapInitialized(true);
+    }
+  };
 
-  // const loadGoogleMapsScript = () => {
-  //   // Check if Google Maps API is already loaded
-  //   if (window.google && window.google.maps) {
-  //     initializeMap();
-  //   } else {
-  //     // Load the Google Maps script if not already loaded
-  //     const script = document.createElement("script");
-  //     script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
-  //     script.async = true;
-  //     script.defer = true;
+  const loadGoogleMapsScript = () => {
+    // Check if Google Maps API is already loaded
+    if (window.google && window.google.maps) {
+      initializeMap();
+    } else {
+      // Load the Google Maps script if not already loaded
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
+      script.async = true;
+      script.defer = true;
 
-  //     // Make initializeMap globally accessible
-  //     window.initializeMap = initializeMap;
+      // Make initializeMap globally accessible
+      window.initializeMap = initializeMap;
 
-  //     script.onload = () => {
-  //       window.initializeMap = initializeMap;
-  //       setMapScriptLoaded(true);
-  //     };
+      script.onload = () => {
+        window.initializeMap = initializeMap;
+        setMapScriptLoaded(true);
+      };
 
-  //     document.head.appendChild(script);
-  //   }
-  // };
+      document.head.appendChild(script);
+    }
+  };
 
-  // useEffect(() => {
-  //   if (mapInitialized && user) {
-  //     // Clear previous map
-  //     const mapElement = document.getElementById("map");
-  //     if (mapElement) mapElement.innerHTML = "";
+  useEffect(() => {
+    if (mapInitialized && user) {
+      // Clear previous map
+      const mapElement = document.getElementById("map");
+      if (mapElement) mapElement.innerHTML = "";
       
-  //     // Reinitialize with new dates
-  //     initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
-  //   }
-  // }, [startDate, endDate, mapInitialized, user, isSignedIn]);
+      // Reinitialize with new dates
+      initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
+    }
+  }, [startDate, endDate, mapInitialized, user, isSignedIn]);
 
-  // useEffect(() => {
-  //   if (isLoaded) {
-  //     loadGoogleMapsScript();
-  //   }
-  // }, [isLoaded]);
+  useEffect(() => {
+    if (isLoaded) {
+      loadGoogleMapsScript();
+    }
+  }, [isLoaded]);
 
   // start & end date filters
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -176,12 +176,23 @@ const Index = () => {
                 />
               </div>
             </div>
-
-            <div
-              id="map"
-              style={{ height: "745px", width: "100%" }}
-              className="rounded-lg shadow-lg mb-4"
-            ></div>
+           <>
+            {!mapScriptLoaded ? (
+              <div
+                id="map"
+                style={{ height: "745px", width: "100%" }}
+                className="rounded-lg shadow-lg mb-4"
+              >
+                <p>Loading map...</p>
+              </div>
+            ) : (
+              <div
+                id="map"
+                style={{ height: "745px", width: "100%" }}
+                className="rounded-lg shadow-lg mb-4"
+              />
+            )}
+          </>
           </section>
         </main>
       </div>

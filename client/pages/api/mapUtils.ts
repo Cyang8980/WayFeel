@@ -177,32 +177,28 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
         potatoButton.appendChild(potatoImage);
 
         potatoButton.onclick = () => {
+          const emojiIdMap: { [key: string]: number } = {
+            "sad.svg": 1,
+            "angry.svg": 2,
+            "meh.svg": 3,
+            "happy.svg": 4,
+            "excited.svg": 5,
+          };
 
-            const emojiIdMap: { [key: string]: number } = {
-                "sad.svg": 1,
-                "angry.svg": 2,
-                "meh.svg": 3,
-                "happy.svg": 4,
-                "excited.svg": 5,
-            };
+          const emoji_id = emojiIdMap[option.src];
 
-            const emoji_id = emojiIdMap[option.src];
-
-            // Get slider value for anonymity
-            // const isAnonymous = anonSlider.checked;
-
-            // placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous);
+          // ✅ Only remove if modal is still in the DOM
+          if (modal.parentNode === document.body) {
             document.body.removeChild(modal);
-            currentModal = null;
+          }
 
-            openDescriptionDialog(latLng, map, emoji_id, isSignedIn, user);
+          currentModal = null;
 
+          openDescriptionDialog(latLng, map, emoji_id, isSignedIn, user);
         };
 
         potatoList.appendChild(potatoButton);
-        document.body.appendChild(modal);
-
-    });
+      });
 
     // Slider for anonymity selection
     // const anonContainer = document.createElement("div");

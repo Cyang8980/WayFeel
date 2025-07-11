@@ -91,7 +91,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   ) => {
 
     if (currentModal) {
-      document.body.removeChild(currentModal);
+      if (currentModal && currentModal.parentNode === document.body) {
+        document.body.removeChild(currentModal);
+      }
       currentModal = null;
     }
 
@@ -146,7 +148,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     closeButton.style.fontSize = "24px";
 
     closeButton.onclick = () => {
-      document.body.removeChild(modal);
+      if (currentModal && currentModal.parentNode === document.body) {
+        document.body.removeChild(currentModal);
+      }
       currentModal = null;
     };
 
@@ -188,9 +192,10 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
           const emoji_id = emojiIdMap[option.src];
 
           // ✅ Only remove if modal is still in the DOM
-          if (modal.parentNode === document.body) {
-            document.body.removeChild(modal);
+          if (currentModal && currentModal.parentNode === document.body) {
+            document.body.removeChild(currentModal);
           }
+          currentModal = null;
 
           currentModal = null;
 
@@ -198,6 +203,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
         };
 
         potatoList.appendChild(potatoButton);
+        document.body.appendChild(modal);
       });
 
     // Slider for anonymity selection
@@ -233,10 +239,10 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     user: User
   ) => {
 
-    if (currentModal) {
+    if (currentModal && currentModal.parentNode === document.body) {
       document.body.removeChild(currentModal);
-      currentModal = null;
     }
+    currentModal = null;
 
     const modal = document.createElement("div");
     currentModal = modal;
@@ -309,7 +315,10 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
       const isAnonymous = anonSlider.checked;
   
       placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
-      document.body.removeChild(modal);
+      if (currentModal && currentModal.parentNode === document.body) {
+        document.body.removeChild(currentModal);
+      }
+      currentModal = null;
       currentModal = null;
     };
   
@@ -327,7 +336,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     closeButton.style.fontSize = "24px";
 
     closeButton.onclick = () => {
-      document.body.removeChild(modal);
+      if (currentModal && currentModal.parentNode === document.body) {
+        document.body.removeChild(currentModal);
+      }
       currentModal = null;
     };
 
@@ -345,7 +356,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
     backButton.style.fontSize = "24px";
 
     backButton.onclick = () => {
-      document.body.removeChild(modal);
+      if (currentModal && currentModal.parentNode === document.body) {
+        document.body.removeChild(currentModal);
+      }
       currentModal = null;
       openPotatoSelectionDialog(latLng, map, isSignedIn, user);
     };

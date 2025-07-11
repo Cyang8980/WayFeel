@@ -85,8 +85,8 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   // Potato Selection Modal
   // Safe utility to remove current modal
 function removeCurrentModal() {
-  if (currentModal && currentModal.parentNode === document.body) {
-    document.body.removeChild(currentModal);
+  if (currentModal && currentModal.isConnected) {
+    currentModal.remove(); // safe and simple
   }
   currentModal = null;
 }
@@ -144,7 +144,9 @@ const openPotatoSelectionDialog = (
     cursor: "pointer",
     fontSize: "24px"
   });
-  closeButton.onclick = removeCurrentModal;
+  closeButton.onclick = () => {
+    removeCurrentModal();
+  };
   modal.appendChild(closeButton);
 
   const emojiIdMap: { [key: string]: number } = {
@@ -298,7 +300,9 @@ const openDescriptionDialog = (
     cursor: "pointer",
     fontSize: "24px"
   });
-  closeButton.onclick = removeCurrentModal;
+  closeButton.onclick = () => {
+    removeCurrentModal();
+  };
 
   const backButton = document.createElement("button");
   backButton.innerText = "←";

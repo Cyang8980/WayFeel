@@ -84,12 +84,12 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
 
   // Potato Selection Modal
   // Safe utility to remove current modal
-function removeCurrentModal() {
-  if (currentModal && currentModal.isConnected) {
-    currentModal.remove(); // safe and simple
+  function removeCurrentModal() {
+    if (currentModal && currentModal.isConnected) {
+      currentModal.remove(); // safe and simple
+    }
+    currentModal = null;
   }
-  currentModal = null;
-}
 
 const openPotatoSelectionDialog = (
   latLng: google.maps.LatLng,

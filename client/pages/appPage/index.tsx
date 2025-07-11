@@ -11,6 +11,16 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 // Localizer for react-big-calendar
 const localizer = momentLocalizer(moment);
 
+function safelyClearMapElement() {
+  if (typeof window !== "undefined") {
+    const modal = document.querySelector("#custom-potato-modal");
+    if (modal && modal.isConnected) modal.remove(); // clean modal first
+
+    const mapElement = document.getElementById("map");
+    if (mapElement) mapElement.innerHTML = ""; // then clear map
+  }
+}
+
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
@@ -42,7 +52,7 @@ const Index = () => {
     if (user && window.google && window.google.maps) {
       //clear prev map
       const mapElement = document.getElementById("map");
-      if (mapElement) mapElement.innerHTML = "";
+      if (mapElement) safelyClearMapElement();;
       
       //init new map
       googleMapsRef.current = new window.google.maps.Map(
@@ -85,7 +95,7 @@ const Index = () => {
     if (mapInitialized && user) {
       // Clear previous map
       const mapElement = document.getElementById("map");
-      if (mapElement) mapElement.innerHTML = "";
+      if (mapElement) safelyClearMapElement();;
       
       // Reinitialize with new dates
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);

@@ -100,6 +100,7 @@ const openPotatoSelectionDialog = (
   removeCurrentModal();
 
   const modal = document.createElement("div");
+  modal.id = "custom-potato-modal";
   currentModal = modal;
   Object.assign(modal.style, {
     position: "absolute",
@@ -214,6 +215,7 @@ const openDescriptionDialog = (
   removeCurrentModal();
 
   const modal = document.createElement("div");
+  modal.id = "custom-potato-modal"; 
   currentModal = modal;
   Object.assign(modal.style, {
     position: "absolute",

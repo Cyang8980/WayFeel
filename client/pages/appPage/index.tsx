@@ -13,11 +13,20 @@ const localizer = momentLocalizer(moment);
 
 function safelyClearMapElement() {
   if (typeof window !== "undefined") {
-    const modal = document.querySelector("#custom-potato-modal");
-    if (modal && modal.isConnected) modal.remove(); // clean modal first
+    const modal = document.getElementById("custom-potato-modal");
+    if (modal && modal.parentNode) {
+      try {
+        modal.parentNode.removeChild(modal);
+        console.log("Removed existing modal safely");
+      } catch (e) {
+        console.warn("Modal removal failed:", e);
+      }
+    }
 
     const mapElement = document.getElementById("map");
-    if (mapElement) mapElement.innerHTML = ""; // then clear map
+    if (mapElement) {
+      mapElement.innerHTML = "";
+    }
   }
 }
 

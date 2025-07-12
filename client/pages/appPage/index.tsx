@@ -114,8 +114,8 @@ const Index = () => {
       // safelyClearMapElement();
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
     }
-  }, [startDate, endDate, mapInitialized, user, isSignedIn]);
-
+  }, [mapInitialized, user, isSignedIn]);
+  // [startDate, endDate, mapInitialized, user, isSignedIn])
   useEffect(() => {
     if (isLoaded) {
       console.log("[EFFECT] isLoaded → loading Google Maps script");

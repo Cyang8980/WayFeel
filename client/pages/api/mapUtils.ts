@@ -11,7 +11,7 @@ interface User {
 
 
 let currentModal: HTMLElement | null = null;
-
+console.log(currentModal)
 export function createImageElement(src: string): HTMLImageElement {
   const img = document.createElement("img");
   img.src = src;
@@ -86,10 +86,10 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   // Safe utility to remove current modal
   function removeCurrentModal() {
     
-    if (currentModal && currentModal.isConnected) {
-      console.trace("Calling removeChild on node:", currentModal);
-      currentModal.remove(); // safe and simple
-    }
+    // if (currentModal && currentModal.isConnected) {
+    //   console.trace("Calling removeChild on node:", currentModal);
+    //   currentModal.remove(); // safe and simple
+    // }
     currentModal = null;
   }
 

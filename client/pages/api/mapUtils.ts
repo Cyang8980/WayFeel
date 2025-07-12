@@ -367,8 +367,8 @@ const placeMarkerAndPanTo = async (
               created_at: ''
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
-            removeCurrentModal();
-            initMap("map", true, user)
+            // removeCurrentModal();
+            // initMap("map", true, user)
         } catch (error) {
             console.error("Failed to insert marker:", error);
         }

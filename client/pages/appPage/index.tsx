@@ -56,7 +56,7 @@ const Index = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
 
   console.log("[RENDER] Index component");
-
+  console.log(mapScriptLoaded);
   useEffect(() => {
     console.log("[EFFECT] isLoaded or isSignedIn changed");
     if (isLoaded) {
@@ -231,14 +231,12 @@ const Index = () => {
                   </>
                 )} */}
                   <>
-                    <DebugRender label={mapScriptLoaded ? "Map Container (script loaded)" : "Map Placeholder (script not loaded)"} />
+                    <DebugRender label="Map Container (script loaded)" />
                     <div
                       id="map"
                       style={{ height: "745px", width: "100%" }}
                       className="rounded-lg shadow-lg mb-4"
-                    >
-                      {!mapScriptLoaded && <p>Loading map...</p>}
-                    </div>
+                    />
                   </>
               </section>
             </main>

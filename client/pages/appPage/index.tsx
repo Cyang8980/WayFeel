@@ -22,6 +22,7 @@ function safelyClearMapElement() {
       const parent = modal.parentNode;
       if (parent && parent.contains(modal)) {
         try {
+          console.trace("Calling removeChild on node:", modal);
           parent.removeChild(modal);
           console.log("Removed existing modal safely");
         } catch (e) {
@@ -114,7 +115,7 @@ const Index = () => {
       // safelyClearMapElement();
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
     }
-  }, [mapInitialized, user, isSignedIn]);
+  }, [startDate, endDate, mapInitialized, user, isSignedIn]);
   // [startDate, endDate, mapInitialized, user, isSignedIn])
   useEffect(() => {
     if (isLoaded) {

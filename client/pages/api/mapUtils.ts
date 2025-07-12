@@ -85,7 +85,9 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   // Potato Selection Modal
   // Safe utility to remove current modal
   function removeCurrentModal() {
+    
     if (currentModal && currentModal.isConnected) {
+      console.trace("Calling removeChild on node:", currentModal);
       currentModal.remove(); // safe and simple
     }
     currentModal = null;

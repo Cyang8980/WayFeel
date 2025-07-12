@@ -23,7 +23,7 @@ function safelyClearMapElement() {
       if (parent && parent.contains(modal)) {
         try {
           console.trace("Calling removeChild on node:", modal);
-          parent.removeChild(modal);
+          // parent.removeChild(modal);
           console.log("Removed existing modal safely");
         } catch (e) {
           console.warn("Modal removal failed:", e);

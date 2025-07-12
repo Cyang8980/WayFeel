@@ -166,11 +166,10 @@ const Index = () => {
               <DebugRender label="Sidebar" />
               <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
             </div>
-
+{/* <div style={{ height: "440px" }}>AI location recommendation goes here</div> */}
             <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
               <section className="w-[25%] p-4">
                 <DebugRender label="Left Panel with Calendar" />
-                <div style={{ height: "470px" }}>AI location recommendation goes here</div>
                 <Calendar
                   localizer={localizer}
                   startAccessor="start"
@@ -185,10 +184,9 @@ const Index = () => {
                   toolbar={false}
                 />
               </section>
-
               <section className="w-[65%] p-4">
                 <DebugRender label="Map Section" />
-                <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex gap-4">
+                <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex gap-4 -mt-6">
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Start Date</label>
                     <input
@@ -234,7 +232,7 @@ const Index = () => {
                     <DebugRender label="Map Container (script loaded)" />
                     <div
                       id="map"
-                      style={{ height: "745px", width: "100%" }}
+                      style={{ height: "700px", width: "100%" }}
                       className="rounded-lg shadow-lg mb-4"
                     />
                   </>

@@ -18,12 +18,17 @@ const DebugRender = ({ label }: { label: string }) => {
 function safelyClearMapElement() {
   if (typeof window !== "undefined") {
     const modal = document.getElementById("custom-potato-modal");
-    if (modal && modal.parentNode) {
-      try {
-        modal.parentNode.removeChild(modal);
-        console.log("Removed existing modal safely");
-      } catch (e) {
-        console.warn("Modal removal failed:", e);
+    if (modal) {
+      const parent = modal.parentNode;
+      if (parent && parent.contains(modal)) {
+        try {
+          parent.removeChild(modal);
+          console.log("Removed existing modal safely");
+        } catch (e) {
+          console.warn("Modal removal failed:", e);
+        }
+      } else {
+        console.log("Modal found but not attached to DOM");
       }
     }
 
@@ -34,6 +39,7 @@ function safelyClearMapElement() {
     }
   }
 }
+
 
 const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
@@ -105,7 +111,7 @@ const Index = () => {
   useEffect(() => {
     if (mapInitialized && user) {
       console.log("[EFFECT] Reinitializing map due to date or init state change");
-      // safelyClearMapElement();
+      safelyClearMapElement();
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
     }
   }, [startDate, endDate, mapInitialized, user, isSignedIn]);

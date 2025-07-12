@@ -331,7 +331,7 @@ const openDescriptionDialog = (
 
 
 
-  const placeMarkerAndPanTo = async (
+const placeMarkerAndPanTo = async (
     latLng: google.maps.LatLng,
     map: google.maps.Map,
     emoji_id: number, // Add emoji_id to the function arguments

@@ -73,7 +73,7 @@ const Index = () => {
   const initializeMap = () => {
     console.log("[CALL] initializeMap");
     if (user && window.google && window.google.maps) {
-      safelyClearMapElement();
+      // safelyClearMapElement();
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {
@@ -112,7 +112,7 @@ const Index = () => {
   useEffect(() => {
     if (mapInitialized && user) {
       console.log("[EFFECT] Reinitializing map due to date or init state change");
-      // safelyClearMapElement();
+      safelyClearMapElement();
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
     }
   }, [startDate, endDate, mapInitialized, user, isSignedIn]);
@@ -209,7 +209,7 @@ const Index = () => {
                   </div>
                 </div>
 
-                {!mapScriptLoaded ? (
+                {/* {!mapScriptLoaded ? (
                   <>
                     <DebugRender label="Map Placeholder (script not loaded)" />
                     <div
@@ -229,7 +229,17 @@ const Index = () => {
                       className="rounded-lg shadow-lg mb-4"
                     />
                   </>
-                )}
+                )} */}
+                  <>
+                    <DebugRender label={mapScriptLoaded ? "Map Container (script loaded)" : "Map Placeholder (script not loaded)"} />
+                    <div
+                      id="map"
+                      style={{ height: "745px", width: "100%" }}
+                      className="rounded-lg shadow-lg mb-4"
+                    >
+                      {!mapScriptLoaded && <p>Loading map...</p>}
+                    </div>
+                  </>
               </section>
             </main>
           </div>

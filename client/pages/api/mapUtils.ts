@@ -86,10 +86,10 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
   // Safe utility to remove current modal
   function removeCurrentModal() {
     
-    // if (currentModal && currentModal.isConnected) {
-    //   console.trace("Calling removeChild on node:", currentModal);
-    //   currentModal.remove(); // safe and simple
-    // }
+    if (currentModal && currentModal.isConnected) {
+      console.trace("Calling removeChild on node:", currentModal);
+      currentModal.remove(); // safe and simple
+    }
     currentModal = null;
   }
 
@@ -99,7 +99,7 @@ const openPotatoSelectionDialog = (
   isSignedIn: boolean,
   user: User
 ) => {
-  //removeCurrentModal();
+  removeCurrentModal();
 
   const modal = document.createElement("div");
   modal.id = "custom-potato-modal";
@@ -346,12 +346,12 @@ const placeMarkerAndPanTo = async (
     // const newMarker = new google.maps.marker.AdvancedMarkerElement({
     //     position: latLng,
     //     map: map,
-    //     content: newMarkerImage,
+    //     // content: newMarkerImage,
     // });
 
     console.log("inserting marker");
-    // console.log("signed in " + isSignedIn);
-    // console.log("user " + user)
+    console.log("signed in " + isSignedIn);
+    console.log("user " + user)
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {
@@ -367,8 +367,8 @@ const placeMarkerAndPanTo = async (
               created_at: ''
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
-            // removeCurrentModal();
-            // initMap("map", true, user)
+            removeCurrentModal();
+            initMap("map", true, user)
         } catch (error) {
             console.error("Failed to insert marker:", error);
         }

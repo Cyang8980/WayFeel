@@ -111,7 +111,7 @@ const Index = () => {
   useEffect(() => {
     if (mapInitialized && user) {
       console.log("[EFFECT] Reinitializing map due to date or init state change");
-      safelyClearMapElement();
+      // safelyClearMapElement();
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined);
     }
   }, [startDate, endDate, mapInitialized, user, isSignedIn]);

@@ -99,7 +99,7 @@ const openPotatoSelectionDialog = (
   isSignedIn: boolean,
   user: User
 ) => {
-  removeCurrentModal();
+  //removeCurrentModal();
 
   const modal = document.createElement("div");
   modal.id = "custom-potato-modal";

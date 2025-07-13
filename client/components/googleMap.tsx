@@ -19,6 +19,7 @@ const GoogleMap = () => {
         {
           center: { lat: 37.7749, lng: -122.4194 },
           zoom: 10,
+          // mapTypeControl: false,
         }
       );
       initMap(); // Remove this if not needed separately

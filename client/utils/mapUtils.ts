@@ -35,7 +35,7 @@ export const initMap = async (
 
   // Rest of your map initialization code...
 };
-
+const created_at = new Date().toISOString();
 export const insertMarker = async (marker: {
   id: string;
   longitude: number;
@@ -43,6 +43,7 @@ export const insertMarker = async (marker: {
   emoji_id: number;
   created_by: string;
   anon: boolean;
+  created_at: string;
 }) => {
   try {
     const response = await fetch("/api/insertMarker", {

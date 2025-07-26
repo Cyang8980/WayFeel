@@ -24,10 +24,20 @@ export async function getMarkers(options: MarkerFilterOptions = {}): Promise<Mar
   }
 
   // Anonymous filtering logic
-  if (anonFilter === 'only') {
-    query = query.eq('anon', true);
-  } else if (anonFilter === 'exclude') {
-    query = query.eq('anon', false);
+  if (user_id) {
+    query = query.eq('created_by', user_id);
+    if (anonFilter === 'only') {
+      query = query.eq('anon', true);
+    } else if (anonFilter === 'exclude') {
+      query = query.eq('anon', false);
+    } // else anonFilter = 'all' → no anon filtering on user markers
+  } else {
+    if (anonFilter === 'only') {
+      query = query.eq('anon', true);
+    } else if (anonFilter === 'exclude') {
+      query = query.eq('anon', false);
+    }
+    // else anonFilter = 'all' → no filtering at all
   }
   // if 'all', do not filter anon at all
 

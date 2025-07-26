@@ -16,26 +16,23 @@ export default async function handler(
   }
 
   if (typeof view === 'string') {
-    switch (view) {
-      case 'personal':
-        options.user_id = userId as string;
-        options.anonFilter = 'only'; // only non-anonymous personal markers
-        break;
-      case 'anon':
-        options.user_id = userId as string;
-        options.anonFilter = 'only';    // only anonymous markers by this user
-        break;
-      case 'notanon':
-        // show all non-anonymous markers regardless of user
-        delete options.user_id;
-        options.anonFilter = 'exclude';
-        break;
-      case 'all':
-      default:
-        options.anonFilter = 'all';     // show all markers
-        break;
-    }
-  } else {
+  switch (view) {
+    case 'personal':
+      options.user_id = userId as string;
+      options.anonFilter = 'all'; // include anon and non-anon markers created by user
+      break;
+    case 'anon':
+      options.anonFilter = 'only'; // only anonymous markers (from any user)
+      break;
+    case 'notanon':
+      options.anonFilter = 'exclude'; // only non-anonymous markers (from any user)
+      break;
+    case 'all':
+    default:
+      options.anonFilter = 'all'; // all markers
+      break;
+  }
+} else {
     // default case if no view specified
     options.anonFilter = 'all';
   }

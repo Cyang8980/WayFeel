@@ -32,7 +32,6 @@ function safelyClearMapElement() {
         console.log("Modal found but not attached to DOM");
       }
     }
-
     const mapElement = document.getElementById("map");
     if (mapElement) {
       console.log("Clearing map innerHTML");

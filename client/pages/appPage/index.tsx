@@ -142,7 +142,7 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-gray-100">
+        <div className="min-h-screen bg-[#B5C7EB]">
           <nav className="bg-gray-800 text-white fixed w-full z-10"></nav>
 
           <div className="flex pt-14">
@@ -167,6 +167,20 @@ const Index = () => {
               <section className="w-[65%] p-4">
                 <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex gap-4 -mt-6">
                   <div className="flex-1">
+                    <label className="block text-sm font-medium mb-1">View</label>
+                    <select
+                      className="w-full p-2 border rounded"
+                      value={selectedView}
+                      onChange={handleViewChange}
+                    >
+                      {markerViewOptions.map((option) => (
+                        <option key={option.value} value={option.value}>
+                          {option.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                  <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Start Date</label>
                     <input
                       type="date"
@@ -183,20 +197,6 @@ const Index = () => {
                       onChange={handleEndDateChange}
                       min={startDate?.toISOString().split("T")[0]}
                     />
-                  </div>
-                  <div className="flex-1">
-                    <label className="block text-sm font-medium mb-1">View</label>
-                    <select
-                      className="w-full p-2 border rounded"
-                      value={selectedView}
-                      onChange={handleViewChange}
-                    >
-                      {markerViewOptions.map((option) => (
-                        <option key={option.value} value={option.value}>
-                          {option.label}
-                        </option>
-                      ))}
-                    </select>
                   </div>
                 </div>
 

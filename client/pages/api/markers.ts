@@ -19,7 +19,7 @@ export default async function handler(
     switch (view) {
       case 'personal':
         options.user_id = userId as string;
-        options.anonFilter = 'exclude'; // only non-anonymous personal markers
+        options.anonFilter = 'only'; // only non-anonymous personal markers
         break;
       case 'anon':
         options.user_id = userId as string;

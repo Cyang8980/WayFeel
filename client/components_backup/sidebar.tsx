@@ -1,7 +1,7 @@
 import { useRouter } from "next/router";
 import { useUser, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "@/stuff/CustomUserButton";
-import styled from "styled-stuff";
+import styled from "styled-components";
 import Image from "next/image";
 
 interface SidebarProps {

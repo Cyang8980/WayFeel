@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import Sidebar from "@/components/sidebar";
+import Sidebar from "@/stuff/sidebar";
 import { useUser, SignInButton } from "@clerk/nextjs";
-import { CustomUserButton } from "@/components/CustomUserButton";
+import { CustomUserButton } from "@/stuff/CustomUserButton";
 import Image from "next/image";
 
 const Timeline = () => {

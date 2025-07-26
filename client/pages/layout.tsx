@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Sidebar from "@/components/sidebar";
+import Sidebar from "@/stuff/sidebar";
 
 const Layout: React.FC = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);

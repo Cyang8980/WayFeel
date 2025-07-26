@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { initMap } from "../api/mapUtils";
 import { Calendar, momentLocalizer } from "react-big-calendar";
-import Sidebar from "../../components/sidebar";
+import Sidebar from "../../stuff/sidebar";
 import moment from "moment";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
@@ -206,28 +206,6 @@ const Index = () => {
                     />
                   </div>
                 </div>
-
-                {/* {!mapScriptLoaded ? (
-                  <>
-                    <DebugRender label="Map Placeholder (script not loaded)" />
-                    <div
-                      id="map"
-                      style={{ height: "745px", width: "100%" }}
-                      className="rounded-lg shadow-lg mb-4"
-                    >
-                      <p>Loading map...</p>
-                    </div>
-                  </>
-                ) : (
-                  <>
-                    <DebugRender label="Map Container (script loaded)" />
-                    <div
-                      id="map"
-                      style={{ height: "745px", width: "100%" }}
-                      className="rounded-lg shadow-lg mb-4"
-                    />
-                  </>
-                )} */}
                   <>
                     <DebugRender label="Map Container (script loaded)" />
                     <div

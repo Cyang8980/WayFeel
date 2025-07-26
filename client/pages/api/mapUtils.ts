@@ -48,7 +48,7 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
 
     if (selectedView === "personal" && user?.id) {
       markerOptions.user_id = user.id;
-      markerOptions.anonFilter = "exclude";  // personal, exclude anonymous
+      markerOptions.anonFilter = "all";  // personal, exclude anonymous
     } else if (selectedView === "anon") {
       markerOptions.anonFilter = "only";     // only anonymous markers
     } else if (selectedView === "notanon") {

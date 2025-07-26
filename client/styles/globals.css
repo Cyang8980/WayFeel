@@ -1,5 +1,5 @@
 @tailwind base;
-@tailwind stuff;
+@tailwind components;
 @tailwind utilities;
 @layer base {
   :root {

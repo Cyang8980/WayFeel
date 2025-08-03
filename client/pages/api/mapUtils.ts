@@ -3,8 +3,15 @@
 export let map: google.maps.Map;
 import { insertMarker } from './insertMarker' 
 import {v4 as uuidv4} from 'uuid';
-// import { getMarkers } from './getMarkers'
+import { getMarkersCurrUserAnon } from './getMarkers';
 
+interface User {
+  id: string;
+}
+
+
+let currentModal: HTMLElement | null = null;
+console.log(currentModal)
 export function createImageElement(src: string): HTMLImageElement {
   const img = document.createElement("img");
   img.src = src;
@@ -13,7 +20,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-export const initMap = async (mapElementId: string, isSignedIn: boolean, user: any) => {
+export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User, startDate?: Date, endDate?: Date) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
@@ -32,15 +39,41 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
   map = new Map(mapElement, {
     zoom: 14,
     center: { lat: 40.6782, lng: -73.9442 },
-    mapId: "DEMO_MAP_ID",
+    mapId: "2144d356e076f199b6e1e755"
   });
 
-  // Marker images initialization
-  const sadPotato = createImageElement("sad.svg");
-  const angryPotato = createImageElement("angry.svg");
-  const mehPotato = createImageElement("meh.svg");
-  const happyPotato = createImageElement("happy.svg");
-  const excitedPotato = createImageElement("excited.svg");
+  // Fetch existing markers
+  if (isSignedIn && user) {
+    const markers = await getMarkersCurrUserAnon(user.id, startDate, endDate); 
+
+    if (markers) {
+      markers.forEach((marker) => {
+        const emojiImages: { [key: number]: string } = {
+          1: "sad.svg",
+          2: "angry.svg",
+          3: "meh.svg",
+          4: "happy.svg",
+          5: "excited.svg",
+        };
+
+        const potatoImageSrc = emojiImages[marker.emoji_id] || "happy.svg";
+        const newMarkerImage = createImageElement(potatoImageSrc);
+
+        new AdvancedMarkerElement({
+          position: { lat: marker.latitude, lng: marker.longitude },
+          map: map,
+          content: newMarkerImage,
+        });
+      });
+    }
+  }
+
+  // // Marker images initialization
+  // const sadPotato = createImageElement("sad.svg");
+  // const angryPotato = createImageElement("angry.svg");
+  // const mehPotato = createImageElement("meh.svg");
+  // const happyPotato = createImageElement("happy.svg");
+  // const excitedPotato = createImageElement("excited.svg");
 
   map.addListener("click", (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
@@ -48,157 +81,300 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: a
       openPotatoSelectionDialog(e.latLng, map, isSignedIn, user);
     }
   });
-  const openPotatoSelectionDialog = (
-    latLng: google.maps.LatLng,
-    map: google.maps.Map,
-    isSignedIn: boolean,
-    user: any
+
+  // Potato Selection Modal
+  // Safe utility to remove current modal
+  function removeCurrentModal() {
+    
+    if (currentModal && currentModal.isConnected) {
+      console.trace("Calling removeChild on node:", currentModal);
+      currentModal.remove(); // safe and simple
+    }
+    currentModal = null;
+  }
+
+const openPotatoSelectionDialog = (
+  latLng: google.maps.LatLng,
+  map: google.maps.Map,
+  isSignedIn: boolean,
+  user: User
 ) => {
-    const potatoOptions = [
-        { name: "Sad Potato", src: "sad.svg" },
-        { name: "Angry Potato", src: "angry.svg" },
-        { name: "Meh Potato", src: "meh.svg" },
-        { name: "Happy Potato", src: "happy.svg" },
-        { name: "Excited Potato", src: "excited.svg" },
-    ];
+  removeCurrentModal();
 
-    const modal = document.createElement("div");
-    modal.style.position = "absolute";
-    modal.style.left = "50%";
-    modal.style.top = "50%";
-    modal.style.transform = "translate(-50%, -50%)";
-    modal.style.padding = "20px";
-    modal.style.background = "white";
-    modal.style.border = "1px solid #ccc";
-    modal.style.borderRadius = "8px";
-    modal.style.boxShadow = "0px 4px 10px rgba(0, 0, 0, 0.2)";
-    modal.style.zIndex = "1000";
+  const modal = document.createElement("div");
+  modal.id = "custom-potato-modal";
+  currentModal = modal;
+  Object.assign(modal.style, {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    background: "white",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    zIndex: "1000",
+    width: "500px",
+    height: "300px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center"
+  });
 
-    const title = document.createElement("h2");
-    title.innerText = "Choose a Potato";
-    title.style.textAlign = "center";
-    modal.appendChild(title);
+  const title = document.createElement("h2");
+  title.innerText = "Choose a Potato";
+  title.style.textAlign = "center";
+  modal.appendChild(title);
 
-    const potatoList = document.createElement("div");
-    potatoList.style.display = "flex";
-    potatoList.style.justifyContent = "space-around";
-    potatoList.style.flexWrap = "wrap";
-    potatoList.style.gap = "10px";
+  const potatoList = document.createElement("div");
+  Object.assign(potatoList.style, {
+    display: "flex",
+    justifyContent: "space-around",
+    flexWrap: "wrap",
+    gap: "10px"
+  });
 
-    potatoOptions.forEach((option) => {
-        const potatoButton = document.createElement("button");
-        potatoButton.style.padding = "10px";
-        potatoButton.style.border = "2px solid #ccc";
-        potatoButton.style.background = "transparent";
-        potatoButton.style.cursor = "pointer";
-        potatoButton.style.width = "80px";
-        potatoButton.style.height = "80px";
-        potatoButton.style.borderRadius = "8px";
-        potatoButton.style.display = "flex";
-        potatoButton.style.alignItems = "center";
-        potatoButton.style.justifyContent = "center";
-        potatoButton.style.transition = "transform 0.3s ease";
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "✕";
+  Object.assign(closeButton.style, {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  closeButton.onclick = () => {
+    removeCurrentModal();
+  };
+  modal.appendChild(closeButton);
 
-        const potatoImage = document.createElement("img");
-        potatoImage.src = option.src;
-        potatoImage.alt = option.name;
-        potatoImage.style.width = "50px";
-        potatoImage.style.height = "50px";
-        potatoImage.style.objectFit = "contain";
-        potatoImage.style.borderRadius = "8px";
+  const emojiIdMap: { [key: string]: number } = {
+    "sad.svg": 1,
+    "angry.svg": 2,
+    "meh.svg": 3,
+    "happy.svg": 4,
+    "excited.svg": 5,
+  };
 
-        potatoButton.appendChild(potatoImage);
+  const potatoOptions = Object.entries(emojiIdMap).map(([src, id]) => ({
+    name: src.replace(".svg", "").replace(/^./, c => c.toUpperCase()) + " Potato",
+    src,
+    id
+  }));
 
-        potatoButton.onclick = () => {
-            const emojiIdMap: { [key: string]: number } = {
-                "sad.svg": 1,
-                "angry.svg": 2,
-                "meh.svg": 3,
-                "happy.svg": 4,
-                "excited.svg": 5,
-            };
-
-            const emoji_id = emojiIdMap[option.src];
-
-            // Get slider value for anonymity
-            const isAnonymous = anonSlider.checked;
-
-            placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous);
-            document.body.removeChild(modal);
-        };
-
-        potatoList.appendChild(potatoButton);
+  potatoOptions.forEach(option => {
+    const button = document.createElement("button");
+    Object.assign(button.style, {
+      padding: "10px",
+      border: "2px solid #ccc",
+      background: "transparent",
+      cursor: "pointer",
+      width: "80px",
+      height: "80px",
+      borderRadius: "8px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      transition: "transform 0.3s ease"
     });
 
-    // Slider for anonymity selection
-    const anonContainer = document.createElement("div");
-    anonContainer.style.display = "flex";
-    anonContainer.style.alignItems = "center";
-    anonContainer.style.justifyContent = "center";
-    anonContainer.style.marginTop = "15px";
+    const img = document.createElement("img");
+    img.src = option.src;
+    img.alt = option.name;
+    Object.assign(img.style, {
+      width: "50px",
+      height: "50px",
+      objectFit: "contain",
+      borderRadius: "8px"
+    });
 
-    const anonLabel = document.createElement("label");
-    anonLabel.innerText = "Anonymous";
-    anonLabel.style.marginRight = "10px";
+    button.appendChild(img);
 
-    const anonSlider = document.createElement("input");
-    anonSlider.type = "checkbox";
-    anonSlider.style.cursor = "pointer";
+    button.onclick = () => {
+      const emoji_id = emojiIdMap[option.src];
+      removeCurrentModal();
+      openDescriptionDialog(latLng, map, emoji_id, isSignedIn, user);
+    };
 
-    anonContainer.appendChild(anonLabel);
-    anonContainer.appendChild(anonSlider);
+    potatoList.appendChild(button);
+  });
 
-    modal.appendChild(potatoList);
-    modal.appendChild(anonContainer);
+  modal.appendChild(potatoList);
+  document.body.appendChild(modal);
+};
 
-    document.body.appendChild(modal);
+const openDescriptionDialog = (
+  latLng: google.maps.LatLng,
+  map: google.maps.Map,
+  emoji_id: number,
+  isSignedIn: boolean,
+  user: User
+) => {
+  removeCurrentModal();
+
+  const modal = document.createElement("div");
+  modal.id = "custom-potato-modal"; 
+  currentModal = modal;
+  Object.assign(modal.style, {
+    position: "absolute",
+    left: "50%",
+    top: "50%",
+    transform: "translate(-50%, -50%)",
+    padding: "20px",
+    background: "white",
+    border: "1px solid #ccc",
+    borderRadius: "8px",
+    boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.2)",
+    zIndex: "1000",
+    width: "500px",
+    height: "300px",
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center"
+  });
+
+  const title = document.createElement("h2");
+  title.innerText = "Add a Description";
+  title.style.textAlign = "center";
+  modal.appendChild(title);
+
+  const textbox = document.createElement("textarea");
+  Object.assign(textbox.style, {
+    width: "100%",
+    height: "100px",
+    marginTop: "10px",
+    padding: "10px",
+    border: "1px solid #ccc",
+    borderRadius: "4px"
+  });
+  textbox.placeholder = "Enter a description...";
+  modal.appendChild(textbox);
+
+  const anonContainer = document.createElement("div");
+  Object.assign(anonContainer.style, {
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    marginTop: "15px"
+  });
+
+  const anonLabel = document.createElement("label");
+  anonLabel.innerText = "Anonymous";
+  anonLabel.style.marginRight = "10px";
+
+  const anonSlider = document.createElement("input");
+  anonSlider.type = "checkbox";
+  anonSlider.style.cursor = "pointer";
+
+  anonContainer.appendChild(anonLabel);
+  anonContainer.appendChild(anonSlider);
+  modal.appendChild(anonContainer);
+
+  const submitButton = document.createElement("button");
+  submitButton.innerText = "Submit";
+  Object.assign(submitButton.style, {
+    marginTop: "15px",
+    padding: "10px 20px",
+    background: "#4CAF50",
+    color: "white",
+    border: "none",
+    borderRadius: "4px",
+    cursor: "pointer"
+  });
+
+  submitButton.onclick = () => {
+    const description = textbox.value;
+    const isAnonymous = anonSlider.checked;
+    placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
+    removeCurrentModal();
+  };
+
+  const closeButton = document.createElement("button");
+  closeButton.innerText = "✕";
+  Object.assign(closeButton.style, {
+    position: "absolute",
+    top: "10px",
+    right: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  closeButton.onclick = () => {
+    removeCurrentModal();
+  };
+
+  const backButton = document.createElement("button");
+  backButton.innerText = "←";
+  Object.assign(backButton.style, {
+    position: "absolute",
+    top: "10px",
+    left: "10px",
+    background: "transparent",
+    border: "none",
+    cursor: "pointer",
+    fontSize: "24px"
+  });
+  backButton.onclick = () => {
+    removeCurrentModal();
+    openPotatoSelectionDialog(latLng, map, isSignedIn, user);
+  };
+
+  modal.appendChild(submitButton);
+  modal.appendChild(closeButton);
+  modal.appendChild(backButton);
+
+  document.body.appendChild(modal);
 };
 
 
-  const placeMarkerAndPanTo = async (
+
+const placeMarkerAndPanTo = async (
     latLng: google.maps.LatLng,
     map: google.maps.Map,
     emoji_id: number, // Add emoji_id to the function arguments
     isSignedIn: boolean,
-    user: any,
-    isAnonymous: boolean // New parameter for anonymous upload
+    user: User,
+    isAnonymous: boolean, // New parameter for anonymous upload
+    description?: string // New parameter for description 
 ) => {
-    const emojiImages: { [key: number]: string } = {
-        1: "sad.svg",
-        2: "angry.svg",
-        3: "meh.svg",
-        4: "happy.svg",
-        5: "excited.svg",
-    };
 
-    const potatoImageSrc = emojiImages[emoji_id] || "happy.svg";
-    const newMarkerImage = createImageElement(potatoImageSrc);
+    // const newMarker = new google.maps.marker.AdvancedMarkerElement({
+    //     position: latLng,
+    //     map: map,
+    //     // content: newMarkerImage,
+    // });
 
-    const newMarker = new google.maps.marker.AdvancedMarkerElement({
-        position: latLng,
-        map: map,
-        content: newMarkerImage,
-    });
-
+    console.log("inserting marker");
+    console.log("signed in " + isSignedIn);
+    console.log("user " + user)
     // Insert the marker into the database
     if (isSignedIn && user) {
         try {
             console.log('User id ' + user.id)
             await insertMarker({
-                id: uuidv4(),
-                longitude: latLng.lng(),
-                latitude: latLng.lat(),
-                emoji_id: emoji_id,
-                created_by: user.id, // Handle anonymous uploads
-                anon: isAnonymous
+              id: uuidv4(),
+              longitude: latLng.lng(),
+              latitude: latLng.lat(),
+              emoji_id: emoji_id,
+              created_by: user.id, // Handle anonymous uploads
+              anon: isAnonymous,
+              text: description || "",
+              created_at: ''
             });
             console.log(`Marker Successfully Inserted! (Anonymous: ${isAnonymous})`);
+            removeCurrentModal();
+            initMap("map", true, user)
         } catch (error) {
             console.error("Failed to insert marker:", error);
         }
     }
 
-    // Pan the map to the new marker location
+    // Pin the map to the new marker location
     map.panTo(latLng);
   };
 };

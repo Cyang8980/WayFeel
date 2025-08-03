@@ -1,23 +1,30 @@
 import { createClient } from '@supabase/supabase-js';
+import { Marker } from './insertMarker';
 
-export const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!, 
-    process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
 );
 
-export async function getMarkersCurrUserAnon(user_id: string): Promise<any[] | null> {
-    const { data: markers, error } = await supabase
-        .from('markers')
-        .select('id, longitude, latitude, emoji_id, created_by, anon, created_at') // Ensure timestamp is fetched
-        .or(`created_by.eq.${user_id}, anon.eq.true`) // Fetch user-specific and anonymous markers
-        .order('created_at', { ascending: true });
+export async function getMarkersCurrUserAnon(user_id: string, startDate?: Date, endDate?: Date): Promise<Marker[] | null> {
+  let query = supabase
+    .from('markers')
+    .select('*')
+    .or(`created_by.eq.${user_id},anon.eq.true`);
 
-    if (error) {
-        console.error('Error fetching markers:', error.message);
-        return null;
-    }
+  // Just add these three lines for date filtering
+  if (startDate && endDate) {
+    query = query.gte('created_at', startDate.toISOString())
+                .lte('created_at', endDate.toISOString());
+  }
 
-    console.log('Fetched markers:', markers);
-    return markers;
+  // Keep everything else exactly the same
+  const { data: markers, error } = await query;
+
+  if (error) {
+    console.error("Error fetching markers:", error);
+    return null;
+  }
+
+  return markers;
 }
-

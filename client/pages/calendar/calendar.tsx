@@ -3,7 +3,7 @@ import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, useAuth, SignInButton } from "@clerk/nextjs";
-import { CustomUserButton } from "../profile/[[...index]]";
+import { CustomUserButton } from "@/components/CustomUserButton";
 import Sidebar from "@/components/sidebar";
 import { getMarkersCurrUserAnon } from "../api/getMarkers";
 

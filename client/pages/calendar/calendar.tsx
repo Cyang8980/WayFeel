@@ -27,11 +27,11 @@ const CalendarPage = () => {
   };
 
   const emojiColorMap: { [key: number]: string } = {
-    1: "#D4EFDF", // sad = light green
-    2: "#FADBD8", // angry = light red
-    3: "#FDEBD0", // meh = beige
-    4: "#D6EAF8", // happy = light blue
-    5: "#FCF3CF", // excited = yellow
+    1: "#D4EFDF",
+    2: "#FADBD8",
+    3: "#FDEBD0",
+    4: "#D6EAF8",
+    5: "#FCF3CF",
   };
 
   useEffect(() => {
@@ -39,9 +39,11 @@ const CalendarPage = () => {
       getMarkersCurrUserAnon(user.id).then((markers) => {
         if (!markers) return;
 
+        console.log("markers:", markers);
+
         const formattedEvents = markers.map((marker) => {
-          const start = new Date(marker.created_at);
-          const end = new Date(start.getTime() + 60 * 60 * 1000); // +1hr
+          const start = moment.utc(marker.created_at).local().toDate();
+          const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 hours
 
           return {
             id: marker.id,
@@ -52,6 +54,16 @@ const CalendarPage = () => {
             imageUrl: emojiMap[marker.emoji_id] || "/happy.svg",
           };
         });
+
+        console.log(
+          "Formatted Events:",
+          formattedEvents.map((e) => ({
+            id: e.id,
+            title: e.title,
+            start: e.start.toISOString(),
+            end: e.end.toISOString(),
+          }))
+        );
 
         setEvents(formattedEvents);
       });
@@ -73,25 +85,27 @@ const CalendarPage = () => {
     );
   };
 
-  const eventStyleGetter = (event: any, start: Date, end: Date, isSelected: boolean) => {
+  const eventStyleGetter = (event: any) => {
     const backgroundColor = emojiColorMap[event.emojiId] || "#E8E8E8";
-    const style = {
-      backgroundColor,
-      borderRadius: "5px",
-      opacity: 0.9,
-      color: "#333",
-      border: "none",
-      display: "block",
-      padding: "5px",
-      height: "auto",
-      fontSize: "0.85rem",
+    return {
+      style: {
+        backgroundColor,
+        borderRadius: "5px",
+        opacity: 0.9,
+        color: "#333",
+        border: "none",
+        display: "block",
+        padding: "5px",
+        height: "auto",
+        fontSize: "0.85rem",
+      },
     };
-    return { style };
   };
 
   return (
     <div className="h-screen flex flex-col">
-      <nav className="bg-gray-800 text-white fixed w-full z-10 flex justify-between items-center px-4 py-3">
+      {/* Navbar */}
+      <nav className="bg-gray-800 text-white fixed w-full z-50 flex justify-between items-center px-4 py-3">
         <h1 className="text-xl font-bold">Wayfeel</h1>
         <div>
           {!isSignedIn ? (
@@ -106,27 +120,37 @@ const CalendarPage = () => {
         </div>
       </nav>
 
-      <div className="w-1/6 fixed top-16 left-0 p-4">
+      {/* Sidebar */}
+      <div className="w-1/6 fixed top-16 left-0 p-4 z-20 h-[calc(100vh-4rem)] overflow-hidden">
         <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
       </div>
 
+      {/* Calendar */}
       {isSignedIn ? (
-        <div className="flex-1 flex justify-center items-center p-4 ml-[4.6%]">
+        <div className="flex-1 flex justify-center items-center p-4 ml-[4.6%] z-30">
           <Calendar
             localizer={localizer}
             events={events}
             startAccessor="start"
             endAccessor="end"
             date={currentDate}
-            onNavigate={(date) => setCurrentDate(date)}
-            style={{ height: "90vh", width: "100%" }}
-            className="shadow-lg rounded-lg bg-white p-4"
-            eventPropGetter={eventStyleGetter}
-            views={["month", "week", "day"]}
+            defaultDate={new Date()} // ⏱️ forces calendar to show today
             defaultView="week"
-            components={{
-              event: CustomEvent,
+            views={["month", "week", "day"]}
+            onNavigate={(date) => setCurrentDate(date)}
+            onRangeChange={(range) => {
+              if (Array.isArray(range)) {
+                console.log("Visible range (month):", range.map((d) => d.toISOString()));
+              } else {
+                console.log("Visible range (week/day):", {
+                  start: range.start.toISOString(),
+                  end: range.end.toISOString(),
+                });
+              }
             }}
+            style={{ height: "90vh", width: "100%" }}
+            eventPropGetter={eventStyleGetter}
+            components={{ event: CustomEvent }}
             onSelectEvent={(event) => setSelectedEvent(event)}
           />
         </div>

@@ -73,7 +73,7 @@ const Index = () => {
   const initializeMap = () => {
     console.log("[CALL] initializeMap");
     if (user && window.google && window.google.maps) {
-      // safelyClearMapElement();
+      safelyClearMapElement();
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,
         {

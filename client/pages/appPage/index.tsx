@@ -11,12 +11,11 @@ import EventList from "../../components/eventsComponent";
 const localizer = momentLocalizer(moment);
 
 
-type MarkerViewType = "all" | "personal" | "anon" | "notanon";
+type MarkerViewType = "all" | "personal" | "anon";
 const markerViewOptions: { label: string; value: MarkerViewType }[] = [
   { label: "All", value: "all" },
   { label: "Personal", value: "personal" },
   { label: "Anon", value: "anon" },
-  { label: "Non-Anon", value: "notanon" },
 ];
 
 function safelyClearMapElement() {

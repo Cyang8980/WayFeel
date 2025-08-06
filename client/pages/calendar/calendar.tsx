@@ -5,7 +5,8 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import { useUser, useAuth, SignInButton } from "@clerk/nextjs";
 import { CustomUserButton } from "@/components/CustomUserButton";
 import Sidebar from "@/components/sidebar";
-import { getMarkersCurrUserAnon } from "../api/getMarkers";
+import { getMarkers } from "../api/getMarkers";
+import EventModal from "@/components/EventModal";
 
 const localizer = momentLocalizer(moment);
 
@@ -18,6 +19,7 @@ const CalendarPage = () => {
   const { user } = useUser();
   const miniMapRef = useRef<HTMLDivElement>(null);
   const { getToken } = useAuth();
+  const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
 
   const emojiMap: { [key: number]: string } = {
     1: "/sad.svg",
@@ -35,16 +37,38 @@ const CalendarPage = () => {
     5: "#FCF3CF",
   };
 
+  // Load Google Maps script dynamically
+  useEffect(() => {
+    if (typeof window !== "undefined" && !window.google?.maps) {
+      const existingScript = document.querySelector('script[src*="maps.googleapis.com"]');
+      if (existingScript) {
+        setMapScriptLoaded(true);
+        return;
+      }
+
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => setMapScriptLoaded(true);
+      document.head.appendChild(script);
+    } else {
+      setMapScriptLoaded(true);
+    }
+  }, []);
+
+  // Mini map modal rendering logic
   useEffect(() => {
     const timeout = setTimeout(() => {
       if (
         selectedEvent &&
+        mapScriptLoaded &&
         window.google &&
         miniMapRef.current &&
         selectedEvent.latitude &&
         selectedEvent.longitude
       ) {
-        console.log("Rendering mini map at", selectedEvent.latitude, selectedEvent.longitude);
+        miniMapRef.current.innerHTML = ""; // Clear previous map content
 
         const map = new window.google.maps.Map(miniMapRef.current, {
           center: {
@@ -70,16 +94,17 @@ const CalendarPage = () => {
           selectedEvent,
           miniMapMounted: !!miniMapRef.current,
           googleLoaded: !!window.google,
+          scriptLoaded: mapScriptLoaded,
         });
       }
-    }, 0);
+    }, 100);
 
     return () => clearTimeout(timeout);
-  }, [selectedEvent]);
+  }, [selectedEvent, mapScriptLoaded]);
 
   useEffect(() => {
     if (user) {
-      getMarkersCurrUserAnon(user.id).then((markers) => {
+      getMarkers({ user_id: user.id }).then((markers) => {
         if (!markers) return;
 
         const formattedEvents = markers.map((marker) => {
@@ -93,9 +118,7 @@ const CalendarPage = () => {
             title: marker.description || "",
             emojiId: marker.emoji_id,
             imageUrl: emojiMap[marker.emoji_id] || "/happy.svg",
-
-            // Include coordinates (ensure your backend returns these)
-            latitude: marker.latitude || 37.7749, // fallback for testing
+            latitude: marker.latitude || 37.7749,
             longitude: marker.longitude || -122.4194,
           };
         });
@@ -183,52 +206,15 @@ const CalendarPage = () => {
 
       {/* Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
-          <div className="relative w-[90%] max-w-4xl bg-blue-100 rounded-3xl shadow-2xl p-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
-            <button
-              onClick={() => setSelectedEvent(null)}
-              className="absolute top-4 right-6 text-3xl text-gray-600 hover:text-black"
-            >
-              &times;
-            </button>
-
-            <div className="flex-shrink-0">
-              <img
-                src={selectedEvent.imageUrl}
-                alt="emoji"
-                className="w-36 h-36 md:w-48 md:h-48 object-contain"
-              />
-            </div>
-
-            <div className="flex-1 w-full max-w-lg">
-              <div className="bg-white rounded-2xl p-4 shadow-md text-gray-800 mb-3">
-                <h3 className="text-lg font-semibold mb-1">I felt great today!</h3>
-                <p className="text-sm whitespace-pre-wrap">{selectedEvent.title}</p>
-              </div>
-
-              <div className="text-sm text-gray-500 mb-2">
-                {moment(selectedEvent.start).format("MM/DD/YY")} —{" "}
-                {moment(selectedEvent.start).format("h:mm A")}
-              </div>
-
-              <div className="flex gap-2 mt-3">
-                {[1, 2, 3, 4, 5].map((id) => (
-                  <img
-                    key={id}
-                    src={emojiMap[id]}
-                    alt={`mood-${id}`}
-                    className={`w-7 h-7 ${id === selectedEvent.emojiId ? "scale-110" : "opacity-40"}`}
-                  />
-                ))}
-              </div>
-            </div>
-
-            <div className="hidden md:block w-40 h-40 rounded-xl overflow-hidden border-2 border-gray-300">
-              <div ref={miniMapRef} id="mini-map" className="w-full h-full" />
-            </div>
-          </div>
-        </div>
+        <EventModal
+          event={selectedEvent}
+          onClose={() => setSelectedEvent(null)}
+          emojiMap={emojiMap}
+          mapScriptLoaded={mapScriptLoaded}
+        />
       )}
+
+
     </div>
   );
 };

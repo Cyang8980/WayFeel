@@ -3,8 +3,8 @@
 export let map: google.maps.Map;
 import { insertMarker } from './insertMarker' 
 import {v4 as uuidv4} from 'uuid';
-import { getMarkersCurrUserAnon } from './getMarkers';
-
+import { getMarkers } from './getMarkers';
+import { MarkerFilterOptions } from "../api/getMarkers";
 interface User {
   id: string;
 }
@@ -20,7 +20,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User, startDate?: Date, endDate?: Date) => {
+export const initMap = async (mapElementId: string, isSignedIn: boolean, user: User, startDate?: Date, endDate?: Date, selectedView?: string) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
@@ -44,7 +44,20 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
 
   // Fetch existing markers
   if (isSignedIn && user) {
-    const markers = await getMarkersCurrUserAnon(user.id, startDate, endDate); 
+    const markerOptions: MarkerFilterOptions = {};
+
+    if (selectedView === "personal" && user?.id) {
+      markerOptions.user_id = user.id;
+      markerOptions.anonFilter = "all";  // personal, exclude anonymous
+    } else if (selectedView === "anon") {
+      markerOptions.anonFilter = "only";     // only anonymous markers
+    } else if (selectedView === "notanon") {
+      markerOptions.anonFilter = "exclude";  // only non-anonymous markers
+    } else if (selectedView === "all") {
+      markerOptions.anonFilter = "all";      // all markers
+    }
+
+    const markers = await getMarkers(markerOptions);
 
     if (markers) {
       markers.forEach((marker) => {
@@ -67,13 +80,6 @@ export const initMap = async (mapElementId: string, isSignedIn: boolean, user: U
       });
     }
   }
-
-  // // Marker images initialization
-  // const sadPotato = createImageElement("sad.svg");
-  // const angryPotato = createImageElement("angry.svg");
-  // const mehPotato = createImageElement("meh.svg");
-  // const happyPotato = createImageElement("happy.svg");
-  // const excitedPotato = createImageElement("excited.svg");
 
   map.addListener("click", (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {

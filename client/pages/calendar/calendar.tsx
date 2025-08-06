@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import moment from "moment";
 import "react-big-calendar/lib/css/react-big-calendar.css";
@@ -11,11 +11,12 @@ const localizer = momentLocalizer(moment);
 
 const CalendarPage = () => {
   const { isSignedIn } = useUser();
-  const [currentDate, setCurrentDate] = useState(new Date());
+  const [currentDate, setCurrentDate] = useState(() => new Date());
   const [events, setEvents] = useState<any[]>([]);
   const [selectedEvent, setSelectedEvent] = useState<any>(null);
   const [activeItem, setActiveItem] = useState("home");
   const { user } = useUser();
+  const miniMapRef = useRef<HTMLDivElement>(null);
   const { getToken } = useAuth();
 
   const emojiMap: { [key: number]: string } = {
@@ -35,15 +36,55 @@ const CalendarPage = () => {
   };
 
   useEffect(() => {
+    const timeout = setTimeout(() => {
+      if (
+        selectedEvent &&
+        window.google &&
+        miniMapRef.current &&
+        selectedEvent.latitude &&
+        selectedEvent.longitude
+      ) {
+        console.log("Rendering mini map at", selectedEvent.latitude, selectedEvent.longitude);
+
+        const map = new window.google.maps.Map(miniMapRef.current, {
+          center: {
+            lat: selectedEvent.latitude,
+            lng: selectedEvent.longitude,
+          },
+          zoom: 15,
+          disableDefaultUI: true,
+        });
+
+        new window.google.maps.Circle({
+          map,
+          center: { lat: selectedEvent.latitude, lng: selectedEvent.longitude },
+          radius: 50,
+          strokeColor: "#3B82F6",
+          strokeOpacity: 0.8,
+          strokeWeight: 2,
+          fillColor: "#3B82F6",
+          fillOpacity: 0.2,
+        });
+      } else {
+        console.warn("Mini map skipped — missing data or ref", {
+          selectedEvent,
+          miniMapMounted: !!miniMapRef.current,
+          googleLoaded: !!window.google,
+        });
+      }
+    }, 0);
+
+    return () => clearTimeout(timeout);
+  }, [selectedEvent]);
+
+  useEffect(() => {
     if (user) {
       getMarkersCurrUserAnon(user.id).then((markers) => {
         if (!markers) return;
 
-        console.log("markers:", markers);
-
         const formattedEvents = markers.map((marker) => {
           const start = moment.utc(marker.created_at).local().toDate();
-          const end = new Date(start.getTime() + 2 * 60 * 60 * 1000); // +2 hours
+          const end = new Date(start.getTime() + 2 * 60 * 60 * 1000);
 
           return {
             id: marker.id,
@@ -52,18 +93,12 @@ const CalendarPage = () => {
             title: marker.description || "",
             emojiId: marker.emoji_id,
             imageUrl: emojiMap[marker.emoji_id] || "/happy.svg",
+
+            // Include coordinates (ensure your backend returns these)
+            latitude: marker.latitude || 37.7749, // fallback for testing
+            longitude: marker.longitude || -122.4194,
           };
         });
-
-        console.log(
-          "Formatted Events:",
-          formattedEvents.map((e) => ({
-            id: e.id,
-            title: e.title,
-            start: e.start.toISOString(),
-            end: e.end.toISOString(),
-          }))
-        );
 
         setEvents(formattedEvents);
       });
@@ -104,7 +139,6 @@ const CalendarPage = () => {
 
   return (
     <div className="h-screen flex flex-col">
-      {/* Navbar */}
       <nav className="bg-gray-800 text-white fixed w-full z-50 flex justify-between items-center px-4 py-3">
         <h1 className="text-xl font-bold">Wayfeel</h1>
         <div>
@@ -120,34 +154,21 @@ const CalendarPage = () => {
         </div>
       </nav>
 
-      {/* Sidebar */}
       <div className="w-1/6 fixed top-16 left-0 p-4 z-20 h-[calc(100vh-4rem)] overflow-hidden">
         <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
       </div>
 
-      {/* Calendar */}
       {isSignedIn ? (
-        <div className="flex-1 flex justify-center items-center p-4 ml-[4.6%] z-30">
+        <div className="flex-1 flex justify-center items-center p-5 mt-8 ml-[4.6%] z-30">
           <Calendar
             localizer={localizer}
             events={events}
             startAccessor="start"
             endAccessor="end"
             date={currentDate}
-            defaultDate={new Date()} // ⏱️ forces calendar to show today
             defaultView="week"
             views={["month", "week", "day"]}
             onNavigate={(date) => setCurrentDate(date)}
-            onRangeChange={(range) => {
-              if (Array.isArray(range)) {
-                console.log("Visible range (month):", range.map((d) => d.toISOString()));
-              } else {
-                console.log("Visible range (week/day):", {
-                  start: range.start.toISOString(),
-                  end: range.end.toISOString(),
-                });
-              }
-            }}
             style={{ height: "90vh", width: "100%" }}
             eventPropGetter={eventStyleGetter}
             components={{ event: CustomEvent }}
@@ -162,28 +183,49 @@ const CalendarPage = () => {
 
       {/* Modal */}
       {selectedEvent && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex justify-center items-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg w-[90%] max-w-md">
-            <div className="flex justify-between items-center mb-4">
-              <h2 className="text-lg font-semibold">Event Details</h2>
-              <button
-                onClick={() => setSelectedEvent(null)}
-                className="text-gray-500 hover:text-gray-800 text-xl"
-              >
-                &times;
-              </button>
+        <div className="fixed inset-0 bg-black bg-opacity-40 flex justify-center items-center z-50">
+          <div className="relative w-[90%] max-w-4xl bg-blue-100 rounded-3xl shadow-2xl p-8 flex flex-col md:flex-row gap-6 items-center md:items-start">
+            <button
+              onClick={() => setSelectedEvent(null)}
+              className="absolute top-4 right-6 text-3xl text-gray-600 hover:text-black"
+            >
+              &times;
+            </button>
+
+            <div className="flex-shrink-0">
+              <img
+                src={selectedEvent.imageUrl}
+                alt="emoji"
+                className="w-36 h-36 md:w-48 md:h-48 object-contain"
+              />
             </div>
-            <div className="flex items-center gap-2 mb-3">
-              <img src={selectedEvent.imageUrl} alt="emoji" className="w-6 h-6" />
-              <span className="font-medium capitalize">
-                {selectedEvent.imageUrl.split("/").pop()?.replace(".svg", "")}
-              </span>
+
+            <div className="flex-1 w-full max-w-lg">
+              <div className="bg-white rounded-2xl p-4 shadow-md text-gray-800 mb-3">
+                <h3 className="text-lg font-semibold mb-1">I felt great today!</h3>
+                <p className="text-sm whitespace-pre-wrap">{selectedEvent.title}</p>
+              </div>
+
+              <div className="text-sm text-gray-500 mb-2">
+                {moment(selectedEvent.start).format("MM/DD/YY")} —{" "}
+                {moment(selectedEvent.start).format("h:mm A")}
+              </div>
+
+              <div className="flex gap-2 mt-3">
+                {[1, 2, 3, 4, 5].map((id) => (
+                  <img
+                    key={id}
+                    src={emojiMap[id]}
+                    alt={`mood-${id}`}
+                    className={`w-7 h-7 ${id === selectedEvent.emojiId ? "scale-110" : "opacity-40"}`}
+                  />
+                ))}
+              </div>
             </div>
-            <p className="text-gray-700 whitespace-pre-line">{selectedEvent.title}</p>
-            <p className="text-sm text-gray-500 mt-4">
-              {moment(selectedEvent.start).format("MMMM D, YYYY h:mm A")} –{" "}
-              {moment(selectedEvent.end).format("h:mm A")}
-            </p>
+
+            <div className="hidden md:block w-40 h-40 rounded-xl overflow-hidden border-2 border-gray-300">
+              <div ref={miniMapRef} id="mini-map" className="w-full h-full" />
+            </div>
           </div>
         </div>
       )}

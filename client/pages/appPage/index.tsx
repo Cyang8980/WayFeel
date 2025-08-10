@@ -6,16 +6,16 @@ import moment from "moment";
 import { useUser } from "@clerk/nextjs";
 import { useRouter } from "next/router";
 import "react-big-calendar/lib/css/react-big-calendar.css";
+import EventList from "../../components/eventsComponent";
 
 const localizer = momentLocalizer(moment);
 
 
-type MarkerViewType = "all" | "personal" | "anon" | "notanon";
+type MarkerViewType = "all" | "personal" | "anon";
 const markerViewOptions: { label: string; value: MarkerViewType }[] = [
   { label: "All", value: "all" },
   { label: "Personal", value: "personal" },
   { label: "Anon", value: "anon" },
-  { label: "Non-Anon", value: "notanon" },
 ];
 
 function safelyClearMapElement() {
@@ -151,17 +151,23 @@ const Index = () => {
             </div>
 
             <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
+              
               <section className="w-[25%] p-4">
-                <Calendar
-                  localizer={localizer}
-                  startAccessor="start"
-                  endAccessor="end"
-                  date={currentDate}
-                  onNavigate={(date) => setCurrentDate(date)}
-                  style={{ height: "310px", width: "100%" }}
-                  className="shadow-lg rounded-lg bg-white p-4"
-                  toolbar={false}
-                />
+                <div>
+                  <Calendar
+                    localizer={localizer}
+                    startAccessor="start"
+                    endAccessor="end"
+                    date={currentDate}
+                    onNavigate={(date) => setCurrentDate(date)}
+                    style={{ height: "310px", width: "100%" }}
+                    className="shadow-lg rounded-lg bg-white p-4"
+                    toolbar={false}
+                  />
+                </div>
+                <div>
+                  <EventList />
+                </div>
               </section>
 
               <section className="w-[65%] p-4">

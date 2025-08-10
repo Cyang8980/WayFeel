@@ -15,6 +15,13 @@ export default function EventList() {
     5: "excited.svg",
   };
 
+  const emojiBackgrounds: { [key: number]: string } = {
+    1: "#8BA6D0", // light red for sad
+    2: "#E8818C", // stronger red for angry
+    3: "#F2A181", // yellowish for meh
+    4: "#F7E599", // light green for happy
+    5: "#AAD485", // light blue for excited
+  };
   useEffect(() => {
     if (!isSignedIn || !user) return;
 
@@ -27,10 +34,18 @@ export default function EventList() {
   }, [isSignedIn, user]);
 
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "1rem", paddingTop: "20px" }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        gap: "1rem",
+        paddingTop: "20px",
+      }}
+    >
       {events.map((event) => {
-        const emojiId = event.emoji_id; // adjust property name to your actual emoji id field
+        const emojiId = event.emoji_id;
         const emojiSrc = emojiImages[emojiId];
+        const bgColor = emojiBackgrounds[emojiId] || "white"; // fallback if no match
 
         return (
           <div
@@ -42,22 +57,19 @@ export default function EventList() {
               width: "425px",
               minHeight: "200px",
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
-              backgroundColor: "white",
+              backgroundColor: bgColor,
               display: "flex",
               alignItems: "center",
               gap: "1rem",
             }}
           >
-            {/* Emoji Image */}
             {emojiSrc && (
               <img
-                src={`${emojiSrc}`}
+                src={emojiSrc}
                 alt={`Emoji ${emojiId}`}
                 style={{ width: 150, height: 150 }}
               />
             )}
-
-            {/* Text content */}
             <div>
               <h3>{event.text}</h3>
               <p>{new Date(event.created_at).toLocaleString()}</p>

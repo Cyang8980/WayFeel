@@ -142,7 +142,7 @@ const Index = () => {
           </div>
         </div>
       ) : (
-        <div className="min-h-screen bg-[#B5C7EB]">
+        <div className="min-h-screen bg-[#f9f0f0]">
           <nav className="bg-gray-800 text-white fixed w-full z-10"></nav>
 
           <div className="flex pt-14">

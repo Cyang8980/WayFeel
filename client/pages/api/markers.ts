@@ -8,7 +8,6 @@ export default async function handler(
   res: NextApiResponse<Marker[] | { error: string }>
 ) {
   const { userId, startDate, endDate, view } = req.query;
-
   const options: MarkerFilterOptions = {};
 
   if (typeof userId === 'string') {
@@ -16,22 +15,22 @@ export default async function handler(
   }
 
   if (typeof view === 'string') {
-  switch (view) {
-    case 'personal':
-      options.user_id = userId as string;
-      options.anonFilter = 'all'; // include anon and non-anon markers created by user
-      break;
-    case 'anon':
-      options.anonFilter = 'only'; // only anonymous markers (from any user)
-      break;
-    case 'notanon':
-      options.anonFilter = 'exclude'; // only non-anonymous markers (from any user)
-      break;
-    case 'all':
-    default:
-      options.anonFilter = 'all'; // all markers
-      break;
-  }
+    switch (view) {
+      case 'personal':
+        options.user_id = userId as string;
+        options.anonFilter = 'all'; // include anon and non-anon markers created by user
+        break;
+      case 'anon':
+        options.anonFilter = 'only'; // only anonymous markers (from any user)
+        break;
+      case 'notanon':
+        options.anonFilter = 'exclude'; // only non-anonymous markers (from any user)
+        break;
+      case 'all':
+      default:
+        options.anonFilter = 'all'; // all markers
+        break;
+    }
 } else {
     // default case if no view specified
     options.anonFilter = 'all';

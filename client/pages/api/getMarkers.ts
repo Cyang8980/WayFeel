@@ -11,6 +11,7 @@ export type MarkerFilterOptions = {
   anonFilter?: 'all' | 'only' | 'exclude';
   startDate?: Date;
   endDate?: Date;
+  limit?: number;
 };
 
 export async function getMarkers(options: MarkerFilterOptions = {}): Promise<Marker[] | null> {
@@ -59,3 +60,19 @@ export async function getMarkers(options: MarkerFilterOptions = {}): Promise<Mar
 
   return markers;
 }
+
+export const grabTwoEvents = async (userId: string) => {
+  const { data, error } = await supabase
+    .from("markers")
+    .select("*")
+    .eq("created_by", userId)          // filter by current user
+    .order("created_at", { ascending: false })
+    .limit(2);
+
+  if (error) {
+    console.error("Error fetching events:", error);
+    return [];
+  }
+
+  return data || [];
+};

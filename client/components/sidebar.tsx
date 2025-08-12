@@ -97,7 +97,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   ];
 
   return (
-    <aside className="w-21 bg-[#94AEE3] text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50">
+    <aside className="w-15 bg-[#E2CACA] text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50">
       {!isSignedIn ? (
         <SignInButton>
           <button className="text-white bg-blue-600 px-2 py-2 rounded hover:bg-blue-700 transition-colors mt-4 ml-1 mr-1">

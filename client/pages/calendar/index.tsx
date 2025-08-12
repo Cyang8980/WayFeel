@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { RbcView, WayfeelEvent } from "@/types/events";
 import CalendarShell from "@/components/calendar/CalendarShell";
@@ -27,9 +27,8 @@ const CalendarPage = () => {
   // modal
   const [selectedEvent, setSelectedEvent] = useState<WayfeelEvent | null>(null);
 
-  // maps
+  // maps (used by EventModal)
   const mapScriptLoaded = useGoogleMapsLoader(process.env.NEXT_PUBLIC_MAP_API_KEY);
-  const miniMapRef = useRef<HTMLDivElement>(null);
 
   // load gcal on view/date change
   useEffect(() => {
@@ -37,39 +36,10 @@ const CalendarPage = () => {
     loadEvents(currentDate, currentView);
   }, [isSignedIn, currentDate, currentView, loadEvents]);
 
-  // mini map render (kept here because it touches selectedEvent + DOM)
-  useEffect(() => {
-    const timeout = setTimeout(() => {
-      if (
-        selectedEvent &&
-        mapScriptLoaded &&
-        (window as any).google &&
-        miniMapRef.current &&
-        selectedEvent.latitude &&
-        selectedEvent.longitude
-      ) {
-        miniMapRef.current.innerHTML = "";
-        const map = new (window as any).google.maps.Map(miniMapRef.current, {
-          center: { lat: selectedEvent.latitude, lng: selectedEvent.longitude },
-          zoom: 15,
-          disableDefaultUI: true,
-        });
-        new (window as any).google.maps.Circle({
-          map,
-          center: { lat: selectedEvent.latitude, lng: selectedEvent.longitude },
-          radius: 50,
-          strokeColor: "#3B82F6",
-          strokeOpacity: 0.8,
-          strokeWeight: 2,
-          fillColor: "#3B82F6",
-          fillOpacity: 0.2,
-        });
-      }
-    }, 100);
-    return () => clearTimeout(timeout);
-  }, [selectedEvent, mapScriptLoaded]);
-
-  const allEvents = useMemo(() => [...markerEvents, ...gcalEvents], [markerEvents, gcalEvents]);
+  const allEvents = useMemo(
+    () => [...markerEvents, ...gcalEvents],
+    [markerEvents, gcalEvents]
+  );
 
   return (
     <CalendarShell
@@ -88,7 +58,7 @@ const CalendarPage = () => {
           date={currentDate}
           onNavigate={setCurrentDate}
           onView={setCurrentView}
-          onSelectEvent={(e) => setSelectedEvent(e)}
+          onSelectEvent={(e: WayfeelEvent) => setSelectedEvent(e)}
         />
       )}
 
@@ -96,7 +66,7 @@ const CalendarPage = () => {
         <EventModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-          emojiMap={emojiMap}                // or just omit this line
+          emojiMap={emojiMap}           // or omit; EventModal defaults it
           mapScriptLoaded={mapScriptLoaded}
         />
       )}

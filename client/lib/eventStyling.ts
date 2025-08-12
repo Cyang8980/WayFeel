@@ -1,7 +1,10 @@
 import { emojiColorMap } from "./constants";
+import { WayfeelEvent } from "@/types/events";
 
-export const eventStyleGetter = (event: any) => {
-  const backgroundColor = emojiColorMap[event.emojiId] || "#E8E8E8";
+export const eventStyleGetter = (event: WayfeelEvent) => {
+  const backgroundColor =
+    emojiColorMap[event.emojiId ?? 0] || "#E8E8E8";
+
   return {
     style: {
       backgroundColor,

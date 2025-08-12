@@ -1,26 +1,42 @@
 // EventModal.tsx
 import React, { useEffect, useRef, useState } from "react";
 import moment from "moment";
-import { WayfeelEvent } from "@/types/events";         // <-- import shared type
-import { emojiMap as defaultEmojiMap } from "@/lib/constants"; // optional default
+import { WayfeelEvent } from "@/types/events";
+import { emojiMap as defaultEmojiMap } from "@/lib/constants";
 
 type EmojiMap = { [key: number]: string };
 
-// Use the shared event type (optional fields)
 type Props = {
-  event: WayfeelEvent;                  // <-- was EventType
+  event: WayfeelEvent;
   onClose: () => void;
-  emojiMap?: EmojiMap;                  // <-- make optional (we’ll default it)
+  emojiMap?: EmojiMap;
   mapScriptLoaded: boolean;
 };
 
 const emojiIds = [1, 2, 3, 4, 5];
 
+// Minimal Maps typings for what we use (no `any`)
+interface GoogleMapsShim {
+  maps: {
+    Map: new (
+      el: HTMLElement,
+      opts: { center: { lat: number; lng: number }; zoom: number; disableDefaultUI?: boolean }
+    ) => unknown;
+    Marker: new (opts: {
+      map: unknown;
+      position: { lat: number; lng: number };
+      title?: string;
+      icon?: { url: string; scaledSize?: unknown };
+    }) => unknown;
+    Size: new (width: number, height: number) => unknown;
+  };
+}
+
 const EventModal: React.FC<Props> = ({
   event,
   onClose,
-  emojiMap = defaultEmojiMap,           // <-- default if prop omitted
-  mapScriptLoaded
+  emojiMap = defaultEmojiMap,
+  mapScriptLoaded,
 }) => {
   const miniMapRef = useRef<HTMLDivElement>(null);
 
@@ -36,9 +52,7 @@ const EventModal: React.FC<Props> = ({
         next[id] = Math.max(0, next[id] - 1);
         setUserReaction(null);
       } else {
-        if (userReaction !== null) {
-          next[userReaction] = Math.max(0, next[userReaction] - 1);
-        }
+        if (userReaction !== null) next[userReaction] = Math.max(0, next[userReaction] - 1);
         next[id] = (next[id] || 0) + 1;
         setUserReaction(id);
       }
@@ -48,36 +62,40 @@ const EventModal: React.FC<Props> = ({
 
   useEffect(() => {
     const t = setTimeout(() => {
+      const g = (window as unknown as { google?: GoogleMapsShim }).google;
+
       if (
         event &&
         mapScriptLoaded &&
-        (window as any).google &&
+        g?.maps &&
         miniMapRef.current &&
         event.latitude != null &&
         event.longitude != null
       ) {
         miniMapRef.current.innerHTML = "";
-        const map = new (window as any).google.maps.Map(miniMapRef.current, {
+
+        // Map
+        const map = new g.maps.Map(miniMapRef.current, {
           center: { lat: event.latitude, lng: event.longitude },
           zoom: 15,
           disableDefaultUI: true,
         });
 
-        new (window as any).google.maps.Marker({
+        // Marker
+        const iconUrl = event.imageUrl ?? "/happy.svg";
+        new g.maps.Marker({
           map,
           position: { lat: event.latitude, lng: event.longitude },
           title: event.title || "Event",
-          icon: {
-            url: (event.imageUrl ?? "/happy.svg"),
-            scaledSize: new (window as any).google.maps.Size(40, 40),
-          },
+          icon: { url: iconUrl, scaledSize: new g.maps.Size(40, 40) },
         });
       }
     }, 100);
+
     return () => clearTimeout(t);
   }, [event, mapScriptLoaded]);
 
-  const imgSrc = event.imageUrl ?? "/happy.svg";       // <-- safe fallback
+  const imgSrc = event.imageUrl ?? "/happy.svg";
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 overflow-y-auto">
@@ -86,10 +104,12 @@ const EventModal: React.FC<Props> = ({
           &times;
         </button>
 
+        {/* Left: Main Emoji Image */}
         <div className="flex-shrink-0">
           <img src={imgSrc} alt="emoji" className="w-64 h-64 md:w-72 md:h-72 object-contain" />
         </div>
 
+        {/* Middle: Details, Emoji Reactions, Comment */}
         <div className="flex-1 w-full max-w-3xl flex flex-col h-full justify-between">
           <div className="bg-white rounded-2xl p-6 shadow-md text-gray-800 mb-6">
             <h3 className="text-2xl font-semibold mb-4">I felt great today!</h3>
@@ -124,6 +144,7 @@ const EventModal: React.FC<Props> = ({
           </div>
         </div>
 
+        {/* Right: Mini Map */}
         <div className="hidden md:block w-96 h-96 rounded-xl overflow-hidden border-2 border-gray-300">
           <div ref={miniMapRef} id="mini-map" className="w-full h-full" />
         </div>

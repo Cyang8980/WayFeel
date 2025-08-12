@@ -54,7 +54,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
     {
       id: "calander",
       label: "📅",
-      action: () => router.push("/calendar/calendar"),
+      action: () => router.push("/calendar"),
     },
     {
       id: "timeline",

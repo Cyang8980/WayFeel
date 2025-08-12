@@ -54,7 +54,29 @@ const Index = () => {
   const [startDate, setStartDate] = useState<Date | null>(null);
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedView, setSelectedView] = useState<MarkerViewType>("all");
+  const { height: windowHeight } = useWindowSize();
+  const calendarHeight = Math.max(windowHeight * 0.25, 250); // at least 250px
+  const mapHeight = Math.max(windowHeight * 0.65, 400); // at least 400px
 
+  function useWindowSize() {
+    const [size, setSize] = useState({ width: 0, height: 0 });
+
+    useEffect(() => {
+      function handleResize() {
+        setSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        });
+      }
+
+      window.addEventListener("resize", handleResize);
+      handleResize(); // set on mount
+
+      return () => window.removeEventListener("resize", handleResize);
+    }, []);
+
+    return size;
+  }
   const handleViewChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedView(e.target.value as MarkerViewType);
   };
@@ -150,9 +172,10 @@ const Index = () => {
               <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
             </div>
 
-            <main className="flex flex-1 ml-[5%] space-x-[3%] space-y-[2%]">
+            <main className="flex flex-col lg:flex-row flex-1 ml-0 lg:ml-[5%] gap-4 p-4">
               
-              <section className="w-[25%] p-4">
+              {/* Left Section */}
+              <section className="w-full lg:w-1/3 xl:w-1/4 p-4">
                 <div>
                   <Calendar
                     localizer={localizer}
@@ -160,7 +183,10 @@ const Index = () => {
                     endAccessor="end"
                     date={currentDate}
                     onNavigate={(date) => setCurrentDate(date)}
-                    style={{ height: "310px", width: "100%" }}
+                    style={{
+                      height: `${calendarHeight}px`,
+                      width: "100%",
+                    }}
                     className="shadow-lg rounded-lg bg-white p-4"
                     toolbar={false}
                   />
@@ -170,8 +196,9 @@ const Index = () => {
                 </div>
               </section>
 
-              <section className="w-[65%] p-4">
-                <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex gap-4 -mt-6">
+              {/* Right Section */}
+              <section className="w-full lg:w-2/3 xl:w-3/4 p-4">
+                <div className="bg-white p-4 rounded-lg shadow-md mb-4 flex flex-col md:flex-row gap-4 -mt-6">
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">View</label>
                     <select
@@ -208,7 +235,10 @@ const Index = () => {
 
                 <div
                   id="map"
-                  style={{ height: "700px", width: "100%" }}
+                  style={{
+                    height: `${mapHeight}px`,
+                    width: "100%",
+                  }}
                   className="rounded-lg shadow-lg mb-4"
                 />
               </section>

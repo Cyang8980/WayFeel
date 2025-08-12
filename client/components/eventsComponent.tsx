@@ -3,9 +3,31 @@ import { grabTwoEvents } from "../pages/api/getMarkers";
 import { Marker } from "@/pages/api/insertMarker";
 import { useUser } from "@clerk/nextjs";
 
+
+function useWindowSize() {
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    function handleResize() {
+      setSize({ width: window.innerWidth, height: window.innerHeight });
+    }
+    window.addEventListener("resize", handleResize);
+    handleResize();
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  return size;
+}
+
 export default function EventList() {
   const [events, setEvents] = useState<Marker[]>([]);
   const { isSignedIn, user } = useUser();
+  const { width: windowWidth } = useWindowSize();
+
+  // Dynamic sizes
+  const cardWidth = windowWidth > 1200 ? "425px" : windowWidth > 768 ? "90%" : "100%";
+  const cardMinHeight = windowWidth > 768 ? "200px" : "150px";
+  const emojiSize = windowWidth > 1200 ? 150 : windowWidth > 768 ? 120 : 80;
 
   const emojiImages: { [key: number]: string } = {
     1: "sad.svg",
@@ -40,12 +62,13 @@ export default function EventList() {
         flexDirection: "column",
         gap: "1rem",
         paddingTop: "20px",
+        alignItems: "center", // center cards on wide screens
       }}
     >
       {events.map((event) => {
         const emojiId = event.emoji_id;
         const emojiSrc = emojiImages[emojiId];
-        const bgColor = emojiBackgrounds[emojiId] || "white"; // fallback if no match
+        const bgColor = emojiBackgrounds[emojiId] || "white";
 
         return (
           <div
@@ -54,25 +77,34 @@ export default function EventList() {
               border: "1px solid #ccc",
               padding: "2rem",
               borderRadius: "8px",
-              width: "425px",
-              minHeight: "200px",
+              width: cardWidth,
+              minHeight: cardMinHeight,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               backgroundColor: bgColor,
               display: "flex",
               alignItems: "center",
               gap: "1rem",
+              flexWrap: "wrap", // allow wrapping on small screens
             }}
           >
             {emojiSrc && (
               <img
                 src={emojiSrc}
                 alt={`Emoji ${emojiId}`}
-                style={{ width: 150, height: 150 }}
+                style={{
+                  width: emojiSize,
+                  height: emojiSize,
+                  objectFit: "contain",
+                }}
               />
             )}
-            <div>
-              <h3>{event.text}</h3>
-              <p>{new Date(event.created_at).toLocaleString()}</p>
+            <div style={{ flex: 1 }}>
+              <h3 style={{ fontSize: windowWidth < 500 ? "1rem" : "1.25rem" }}>
+                {event.text}
+              </h3>
+              <p style={{ fontSize: windowWidth < 500 ? "0.8rem" : "1rem" }}>
+                {new Date(event.created_at).toLocaleString()}
+              </p>
             </div>
           </div>
         );

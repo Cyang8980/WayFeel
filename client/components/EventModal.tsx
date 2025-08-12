@@ -155,9 +155,8 @@ const EventModal: React.FC<Props> = ({ event, onClose, emojiMap, mapScriptLoaded
             </label>
             <textarea
               id="comment"
-              className="w-full h-32 p-3 border border-gray-300 rounded-lg resize-none"
+              className="w-full p-3 border border-gray-300 rounded-lg resize-none"
               placeholder="Add your thoughts or notes here..."
-              disabled
             ></textarea>
           </div>
         </div>

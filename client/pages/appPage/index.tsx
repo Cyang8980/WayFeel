@@ -47,7 +47,7 @@ const Index = () => {
   const googleMapsRef = useRef<google.maps.Map | null>(null);
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
-
+  const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
@@ -92,33 +92,66 @@ const Index = () => {
   }, [isLoaded, isSignedIn, router]);
 
   const initializeMap = () => {
+    const mapDiv = document.getElementById("map");
+    if (!mapDiv) {
+      console.error("Map div with id='map' not found");
+      return;
+    }
     if (user && window.google && window.google.maps) {
-      googleMapsRef.current = new window.google.maps.Map(
-        document.getElementById("map") as HTMLElement,
-        {
-          zoom: 8,
-          center: { lat: 37.7749, lng: -122.4194 },
-        }
-      );
+      googleMapsRef.current = new window.google.maps.Map(mapDiv, {
+        zoom: 8,
+        center: { lat: 37.7749, lng: -122.4194 },
+      });
       initMap("map", isSignedIn, user, startDate || undefined, endDate || undefined, selectedView);
       setMapInitialized(true);
     }
   };
+  useEffect(() => {
+    if (!googleScriptLoaded) return;
 
+    const mapDiv = document.getElementById("map");
+    if (!mapDiv) {
+      console.log("Map div with id='map' not found yet. Waiting...");
+      return;
+    }
+
+    if (user && window.google && window.google.maps) {
+      googleMapsRef.current = new window.google.maps.Map(mapDiv, {
+        zoom: 12,
+        center: { lat: 37.7749, lng: -122.4194 },
+      });
+      setMapInitialized(true);
+      console.log("Map initialized");
+    }
+  }, [googleScriptLoaded, user]);
+  useEffect(() => {
+    if (window.google && window.google.maps) {
+      setGoogleScriptLoaded(true);
+    } else {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
+      script.async = true;
+      script.defer = true;
+      script.onload = () => {
+        setGoogleScriptLoaded(true);
+      };
+      document.head.appendChild(script);
+    }
+  }, []);
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
       initializeMap();
     } else {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
       script.async = true;
       script.defer = true;
-      window.initializeMap = initializeMap;
 
       script.onload = () => {
-        window.initializeMap = initializeMap;
+        initializeMap();
         setMapScriptLoaded(true);
       };
+
       document.head.appendChild(script);
     }
   };

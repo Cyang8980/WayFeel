@@ -2,16 +2,18 @@ import { emojiColorMap } from "./constants";
 import { WayfeelEvent } from "@/types/events";
 
 export const eventStyleGetter = (event: WayfeelEvent) => {
-  const backgroundColor =
-    emojiColorMap[event.emojiId ?? 0] || "#E8E8E8";
+  const isEmptyGcal = event.source === "gcal" && event.emojiId == null;
+  const backgroundColor = isEmptyGcal
+    ? "#C9CDD3"              // neutral grey
+    : (emojiColorMap[event.emojiId ?? 0] || "#E8E8E8");
 
   return {
     style: {
       backgroundColor,
-      borderRadius: "5px",
-      opacity: 0.9,
-      color: "#333",
-      border: "none",
+      borderRadius: "6px",
+      opacity: isEmptyGcal ? 0.7 : 0.95,
+      color: isEmptyGcal ? "#555" : "#333",
+      border: isEmptyGcal ? "1px dashed #9aa2a9" : "none",
       display: "block",
       padding: "5px",
       height: "auto",

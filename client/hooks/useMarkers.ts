@@ -3,19 +3,24 @@ import moment from "moment";
 import { WayfeelEvent } from "@/types/events";
 import { getMarkers } from "@/pages/api/getMarkers";
 import { emojiMap } from "@/lib/constants";
+import type { Marker }  from "@/types/markers";   // <-- use the real type
 
 export default function useMarkers(userId?: string) {
   const [events, setEvents] = useState<WayfeelEvent[]>([]);
 
   useEffect(() => {
     if (!userId) {
+      setEvents([]);
       return;
     }
+
     (async () => {
-      const markers = await getMarkers({ user_id: userId });
-      if (!markers) {
-        return;
-      }
+      try {
+        const markers: Marker[] | null = await getMarkers({ user_id: userId }); // <-- type matches
+        if (!markers) {
+          setEvents([]);
+          return;
+        }
 
       const formatted = markers.map((m: any) => {
         const start = moment.utc(m.created_at).local().toDate();
@@ -32,7 +37,12 @@ export default function useMarkers(userId?: string) {
         } as WayfeelEvent;
       });
 
-      setEvents(formatted);
+        setEvents(formatted);
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error("Failed to load markers:", e);
+        setEvents([]);
+      }
     })();
   }, [userId]);
 

@@ -2,12 +2,16 @@ import React, { useEffect, useMemo, useState } from "react";
 import { useUser } from "@clerk/nextjs";
 import { RbcView, WayfeelEvent } from "@/types/events";
 import CalendarShell from "@/components/calendar/CalendarShell";
-import CalendarBoard from "@/components/calendar/CalendarBoard";
+import CalendarBoard, { type DropResizeArgs } from "@/components/calendar/CalendarBoard";
 import EventModal from "@/components/EventModal";
+import CreateEventModal from "@/components/CreateEventModal";
+import AssignWayfeelModal from "@/components/AssignWayfeelModal";
 import useMarkers from "@/hooks/useMarkers";
 import useGoogleCalendar from "@/hooks/useGoogleCalendar";
 import useGoogleMapsLoader from "@/hooks/useGoogleMapsLoader";
 import { emojiMap } from "@/lib/constants";
+
+const toDate = (d: Date | string): Date => (d instanceof Date ? d : new Date(d));
 
 const CalendarPage = () => {
   const { isSignedIn, user } = useUser();
@@ -24,22 +28,73 @@ const CalendarPage = () => {
   const { connected: googleConnected, events: gcalEvents, connect: connectGoogle, loadEvents } =
     useGoogleCalendar();
 
-  // modal
-  const [selectedEvent, setSelectedEvent] = useState<WayfeelEvent | null>(null);
+  // local Wayfeel events created/edited in UI (persist later)
+  const [localWayfeel, setLocalWayfeel] = useState<WayfeelEvent[]>([]);
+  const [suppressedGcalIds, setSuppressedGcalIds] = useState<Set<string>>(new Set());
 
-  // maps (used by EventModal)
+  // modal states
+  const [selectedEvent, setSelectedEvent] = useState<WayfeelEvent | null>(null);
+  const [slotDraft, setSlotDraft] = useState<{ start: Date; end: Date } | null>(null);
+  const [assignTarget, setAssignTarget] = useState<WayfeelEvent | null>(null);
+
+  // maps for EventModal
   const mapScriptLoaded = useGoogleMapsLoader(process.env.NEXT_PUBLIC_MAP_API_KEY);
 
-  // load gcal on view/date change
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isSignedIn) {
+      return;
+    }
     loadEvents(currentDate, currentView);
   }, [isSignedIn, currentDate, currentView, loadEvents]);
 
-  const allEvents = useMemo(
-    () => [...markerEvents, ...gcalEvents],
-    [markerEvents, gcalEvents]
-  );
+  // combine events (gcal grey + wayfeel)
+  const allEvents = useMemo(() => {
+    const gcal = gcalEvents.filter((e) => !suppressedGcalIds.has(e.id));
+    return [...gcal, ...markerEvents, ...localWayfeel];
+  }, [gcalEvents, markerEvents, localWayfeel, suppressedGcalIds]);
+
+  // select an event
+  const handleSelectEvent = (e: WayfeelEvent) => {
+    if (e.source === "gcal") {
+      setAssignTarget(e);
+    } else {
+      setSelectedEvent(e);
+    }
+  };
+
+  // select a slot (click/drag)
+  const handleSelectSlot = ({
+    start,
+    end,
+  }: {
+    start: Date | string;
+    end: Date | string;
+    action: "select" | "click";
+  }) => {
+    if (!isSignedIn) {
+      return;
+    }
+    setSlotDraft({ start: toDate(start), end: toDate(end) });
+  };
+
+  // DnD handlers (only mutate Wayfeel events; GCal are read-only)
+  const onEventDrop = ({ event, start, end }: DropResizeArgs) => {
+    if (event.source !== "wayfeel") {
+      return;
+    }
+    setLocalWayfeel((prev) =>
+      prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
+    );
+  };
+
+  const onEventResize = ({ event, start, end }: DropResizeArgs) => {
+    if (event.source !== "wayfeel") {
+      return;
+    }
+    setLocalWayfeel((prev) =>
+      prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
+    );
+  };
 
   return (
     <CalendarShell
@@ -58,16 +113,49 @@ const CalendarPage = () => {
           date={currentDate}
           onNavigate={setCurrentDate}
           onView={setCurrentView}
-          onSelectEvent={(e: WayfeelEvent) => setSelectedEvent(e)}
+          onSelectEvent={handleSelectEvent}
+          onSelectSlot={handleSelectSlot}
+          onEventDrop={onEventDrop}
+          onEventResize={onEventResize}
         />
       )}
 
+      {/* View an existing Wayfeel event */}
       {selectedEvent && (
         <EventModal
           event={selectedEvent}
           onClose={() => setSelectedEvent(null)}
-          emojiMap={emojiMap}           // or omit; EventModal defaults it
+          emojiMap={emojiMap}
           mapScriptLoaded={mapScriptLoaded}
+        />
+      )}
+
+      {/* Create new Wayfeel event from a slot */}
+      {slotDraft && (
+        <CreateEventModal
+          start={slotDraft.start}
+          end={slotDraft.end}
+          onCancel={() => setSlotDraft(null)}
+          onCreate={(newEvt) => {
+            setLocalWayfeel((prev) => [...prev, newEvt]);
+            setSlotDraft(null);
+          }}
+        />
+      )}
+
+      {/* Assign emotion/description to a grey GCal event */}
+      {assignTarget && (
+        <AssignWayfeelModal
+          event={assignTarget}
+          onCancel={() => setAssignTarget(null)}
+          onSave={(updated) => {
+            setSuppressedGcalIds((prev) => new Set(prev).add(assignTarget.id));
+            setLocalWayfeel((prev) => [
+              ...prev,
+              { ...updated, id: `wf:${assignTarget.id}`, source: "wayfeel" },
+            ]);
+            setAssignTarget(null);
+          }}
         />
       )}
     </CalendarShell>

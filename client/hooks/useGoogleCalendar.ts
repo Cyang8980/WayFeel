@@ -1,6 +1,7 @@
 import { useCallback, useState } from "react";
 import { isoRangeForView } from "@/lib/dateRange";
 import { WayfeelEvent, RbcView } from "@/types/events";
+import { GoogleEvent } from "@/types/google"; // ✅ import
 
 export default function useGoogleCalendar() {
   const [connected, setConnected] = useState(false);
@@ -25,16 +26,15 @@ export default function useGoogleCalendar() {
         return;
       }
 
-      const data = await res.json();
+      const data: { events?: GoogleEvent[] } = await res.json(); // ✅ typed API response
       setConnected(true);
 
-      const mapped: WayfeelEvent[] = (data.events || []).map((e: any) => ({
+      const mapped: WayfeelEvent[] = (data.events || []).map((e) => ({
         id: `gcal:${e.id}`,
         start: new Date(e.start),
         end: new Date(e.end),
         title: e.title,
-        emojiId: 4,
-        imageUrl: "/happy.svg",
+        source: "gcal",
         latitude: null,
         longitude: null,
       }));

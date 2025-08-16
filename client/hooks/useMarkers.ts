@@ -24,7 +24,7 @@ export default function useMarkers(userId?: string) {
           id: m.id,
           start,
           end,
-          title: m.description || "",
+          title: m.text || "",
           emojiId: m.emoji_id,
           imageUrl: emojiMap[m.emoji_id] || "/happy.svg",
           latitude: m.latitude ?? 37.7749,

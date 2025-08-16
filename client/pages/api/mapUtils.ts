@@ -306,7 +306,7 @@ export const initMap = async (
     });
 
     submitButton.onclick = () => {
-      const description = textbox.value;
+      const text = textbox.value;
       const isAnonymous = anonSlider.checked;
       placeMarkerAndPanTo(
         latLng,
@@ -315,7 +315,7 @@ export const initMap = async (
         isSignedIn,
         user,
         isAnonymous,
-        description
+        text
       );
       removeCurrentModal();
     };
@@ -365,7 +365,7 @@ export const initMap = async (
     isSignedIn: boolean,
     user: User,
     isAnonymous: boolean, // New parameter for anonymous upload
-    description?: string // New parameter for description
+    text?: string // New parameter for description
   ) => {
     console.log("inserting marker");
     console.log("signed in " + isSignedIn);
@@ -381,9 +381,8 @@ export const initMap = async (
           emoji_id: emoji_id,
           created_by: user.id, // Handle anonymous uploads
           anon: isAnonymous,
-          description: description || "", // ✅ renamed from text
           created_at: new Date().toISOString(),
-          text: ""
+          text: text || ""
         });
         console.log(
           `Marker Successfully Inserted! (Anonymous: ${isAnonymous})`

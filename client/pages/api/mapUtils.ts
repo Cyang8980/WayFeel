@@ -23,7 +23,7 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
-type ApiMarker = {
+export type ApiMarker = {
   id: string;
   latitude: number;
   longitude: number;
@@ -47,9 +47,15 @@ export function emojiIdToUrl(id: number): string {
 
 /** Robustly coerce API created_at into a Date */
 function toDate(v: string | number | Date | undefined): Date {
-  if (v instanceof Date) return v;
-  if (typeof v === "number") return new Date(v);
-  if (typeof v === "string") return new Date(v);
+  if (v instanceof Date) {
+    return v;
+  }
+  if (typeof v === "number") {
+    return new Date(v);
+  }
+  if (typeof v === "string") {
+    return new Date(v);
+  }
   return new Date();
 }
 
@@ -71,7 +77,7 @@ export function toWayfeelEvent(m: ApiMarker): WayfeelEvent {
   };
 }
 
-export type MarkerClick = (m: WayfeelEvent) => void;
+export type MarkerClick = (m: ApiMarker) => void;
 
 // ---------- Main ----------
 export const initMap = async (
@@ -135,7 +141,7 @@ export const initMap = async (
 
         // AdvancedMarkerElement uses "gmp-click"
         adv.addListener("gmp-click", () => {
-          onMarkerClick?.(toWayfeelEvent(marker));
+          onMarkerClick?.(marker);
         });
 
         (adv.content as HTMLElement).style.cursor = "pointer";

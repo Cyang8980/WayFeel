@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { initMap, toWayfeelEvent } from "../api/mapUtils";
+import { ApiMarker, initMap, toWayfeelEvent } from "../api/mapUtils";
 import { Calendar, momentLocalizer } from "react-big-calendar";
 import Sidebar from "../../components/sidebar";
 import moment from "moment";
@@ -44,7 +44,6 @@ const Index = () => {
   const googleMapsRef = useRef<google.maps.Map | null>(null);
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
-  const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
@@ -85,7 +84,7 @@ const Index = () => {
   }, [isLoaded, isSignedIn, router]);
 
   // 👇 normalize backend marker → WayfeelEvent that the modal expects
-  const handleMarkerClick = (m: any) => {
+  const handleMarkerClick = (m: ApiMarker) => {
     setSelectedMarker(toWayfeelEvent(m));
     setIsEventModalOpen(true);
   };
@@ -108,7 +107,7 @@ const Index = () => {
         startDate || undefined,
         endDate || undefined,
         selectedView,
-        handleMarkerClick // ✅ ensure clicks open modal
+        handleMarkerClick 
       );
       setMapInitialized(true);
     }
@@ -125,7 +124,7 @@ const Index = () => {
         startDate || undefined,
         endDate || undefined,
         selectedView,
-        handleMarkerClick // ✅ keep passing handler
+        handleMarkerClick 
       );
     }
   }, [startDate, endDate, selectedView, mapInitialized, user, isSignedIn]);
@@ -149,7 +148,9 @@ const Index = () => {
   };
 
   useEffect(() => {
-    if (isLoaded) loadGoogleMapsScript();
+    if (isLoaded) {
+      loadGoogleMapsScript();
+    }
   }, [isLoaded]);
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -253,4 +254,3 @@ const Index = () => {
 
 export default Index;
 
-/* ---------- Helpers (keep in this file or move to utils) ---------- */

@@ -41,7 +41,9 @@ const CalendarPage = () => {
   const mapScriptLoaded = useGoogleMapsLoader(process.env.NEXT_PUBLIC_MAP_API_KEY);
 
   useEffect(() => {
-    if (!isSignedIn) return;
+    if (!isSignedIn) {
+      return;
+    }
     loadEvents(currentDate, currentView);
   }, [isSignedIn, currentDate, currentView, loadEvents]);
 
@@ -53,8 +55,11 @@ const CalendarPage = () => {
 
   // select an event
   const handleSelectEvent = (e: WayfeelEvent) => {
-    if (e.source === "gcal") setAssignTarget(e);
-    else setSelectedEvent(e);
+    if (e.source === "gcal") {
+      setAssignTarget(e);
+    } else {
+      setSelectedEvent(e);
+    }
   };
 
   // select a slot (click/drag)
@@ -66,20 +71,26 @@ const CalendarPage = () => {
     end: Date | string;
     action: "select" | "click";
   }) => {
-    if (!isSignedIn) return;
+    if (!isSignedIn) {
+      return;
+    }
     setSlotDraft({ start: toDate(start), end: toDate(end) });
   };
 
   // DnD handlers (only mutate Wayfeel events; GCal are read-only)
   const onEventDrop = ({ event, start, end }: DropResizeArgs) => {
-    if (event.source !== "wayfeel") return;
+    if (event.source !== "wayfeel") {
+      return;
+    }
     setLocalWayfeel((prev) =>
       prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
     );
   };
 
   const onEventResize = ({ event, start, end }: DropResizeArgs) => {
-    if (event.source !== "wayfeel") return;
+    if (event.source !== "wayfeel") {
+      return;
+    }
     setLocalWayfeel((prev) =>
       prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
     );

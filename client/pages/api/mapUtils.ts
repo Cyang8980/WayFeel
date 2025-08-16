@@ -28,7 +28,7 @@ export type ApiMarker = {
   latitude: number;
   longitude: number;
   emoji_id: number;
-  description?: string;
+  text?: string;
   created_by?: string;
   created_at?: string | number | Date;
   anon?: boolean;
@@ -64,14 +64,14 @@ export function toWayfeelEvent(m: ApiMarker): WayfeelEvent {
   const when = toDate(m.created_at);
   return {
     id: m.id,
-    title: m.description ?? "",
+    title: m.text ?? "",
     start: when,                 // Date
     end: when,                   // Date
     source: "wayfeel" as unknown as EventSource,
     // optional fields:
     emojiId: m.emoji_id,
     imageUrl: emojiIdToUrl(m.emoji_id),
-    description: m.description,
+    description: m.text,
     latitude: m.latitude,
     longitude: m.longitude,
   };
@@ -356,9 +356,17 @@ export const initMap = async (
     });
 
     submitButton.onclick = () => {
-      const description = textbox.value;
+      const text = textbox.value;
       const isAnonymous = anonSlider.checked;
-      placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
+      placeMarkerAndPanTo(
+        latLng,
+        map,
+        emoji_id,
+        isSignedIn,
+        user,
+        isAnonymous,
+        text
+      );
       removeCurrentModal();
     };
 
@@ -404,8 +412,8 @@ export const initMap = async (
     emoji_id: number,
     isSignedIn: boolean,
     user: User,
-    isAnonymous: boolean,
-    description?: string
+    isAnonymous: boolean, // New parameter for anonymous upload
+    text?: string // New parameter for description
   ) => {
     if (isSignedIn && user) {
       try {
@@ -416,21 +424,14 @@ export const initMap = async (
           emoji_id,
           created_by: user.id,
           anon: isAnonymous,
-          description: description || "",
           created_at: new Date().toISOString(),
-          text: "",
+          text: text || ""
         });
-
-        // Re-init to show the new marker and keep clicks working
-        await initMap(
-          mapElementId,
-          true,
-          user,
-          startDate,
-          endDate,
-          selectedView,
-          onMarkerClick // preserve click handler
+        console.log(
+          `Marker Successfully Inserted! (Anonymous: ${isAnonymous})`
         );
+        removeCurrentModal();
+        initMap("map", true, user);
       } catch (error) {
         console.error("Failed to insert marker:", error);
       }

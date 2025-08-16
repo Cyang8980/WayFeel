@@ -52,7 +52,9 @@ const EventModal: React.FC<Props> = ({
         next[id] = Math.max(0, next[id] - 1);
         setUserReaction(null);
       } else {
-        if (userReaction !== null) next[userReaction] = Math.max(0, next[userReaction] - 1);
+        if (userReaction !== null) {
+          next[userReaction] = Math.max(0, next[userReaction] - 1);
+        }
         next[id] = (next[id] || 0) + 1;
         setUserReaction(id);
       }
@@ -97,6 +99,8 @@ const EventModal: React.FC<Props> = ({
 
   const imgSrc = event.imageUrl ?? "/happy.svg";
 
+  const description = event.description ?? "Wonder what this user is feeling"
+
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 overflow-y-auto">
       <div className="relative w-[96%] max-w-7xl max-h-[90vh] bg-blue-100 rounded-3xl shadow-2xl p-10 flex flex-col md:flex-row gap-10 items-start overflow-y-auto">
@@ -112,7 +116,7 @@ const EventModal: React.FC<Props> = ({
         {/* Middle: Details, Emoji Reactions, Comment */}
         <div className="flex-1 w-full max-w-3xl flex flex-col h-full justify-between">
           <div className="bg-white rounded-2xl p-6 shadow-md text-gray-800 mb-6">
-            <h3 className="text-2xl font-semibold mb-4">I felt great today!</h3>
+            <h3 className="text-2xl font-semibold mb-4">{description}</h3>
             <p className="text-base whitespace-pre-wrap mb-3">{event.title}</p>
             <div className="text-sm text-gray-500 mb-5">
               {moment(event.start).format("MM/DD/YY")} — {moment(event.start).format("h:mm A")}

@@ -44,7 +44,7 @@ const Index = () => {
   const googleMapsRef = useRef<google.maps.Map | null>(null);
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
-
+  const [googleScriptLoaded, setGoogleScriptLoaded] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [mapScriptLoaded, setMapScriptLoaded] = useState(false);
@@ -91,6 +91,11 @@ const Index = () => {
   };
 
   const initializeMap = () => {
+    const mapDiv = document.getElementById("map");
+    if (!mapDiv) {
+      console.error("Map div with id='map' not found");
+      return;
+    }
     if (user && window.google && window.google.maps) {
       googleMapsRef.current = new window.google.maps.Map(
         document.getElementById("map") as HTMLElement,

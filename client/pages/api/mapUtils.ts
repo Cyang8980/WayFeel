@@ -1,16 +1,20 @@
 // mapUtils.ts
 
 export let map: google.maps.Map;
+
 import { insertMarker } from "./insertMarker";
 import { v4 as uuidv4 } from "uuid";
 import { getMarkers } from "./getMarkers";
 import { MarkerFilterOptions } from "../api/getMarkers";
+import type { WayfeelEvent, EventSource } from "@/types/events";
+
 interface User {
   id: string;
 }
 
 let currentModal: HTMLElement | null = null;
-console.log(currentModal);
+
+// ---------- Utilities ----------
 export function createImageElement(src: string): HTMLImageElement {
   const img = document.createElement("img");
   img.src = src;
@@ -19,34 +23,85 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
+export type ApiMarker = {
+  id: string;
+  latitude: number;
+  longitude: number;
+  emoji_id: number;
+  description?: string;
+  created_by?: string;
+  created_at?: string | number | Date;
+  anon?: boolean;
+};
+
+export function emojiIdToUrl(id: number): string {
+  const map: Record<number, string> = {
+    1: "/sad.svg",
+    2: "/angry.svg",
+    3: "/meh.svg",
+    4: "/happy.svg",
+    5: "/excited.svg",
+  };
+  return map[id] ?? "/happy.svg";
+}
+
+/** Robustly coerce API created_at into a Date */
+function toDate(v: string | number | Date | undefined): Date {
+  if (v instanceof Date) {
+    return v;
+  }
+  if (typeof v === "number") {
+    return new Date(v);
+  }
+  if (typeof v === "string") {
+    return new Date(v);
+  }
+  return new Date();
+}
+
+/** ✅ Normalize API marker → WayfeelEvent (matches your events.ts) */
+export function toWayfeelEvent(m: ApiMarker): WayfeelEvent {
+  const when = toDate(m.created_at);
+  return {
+    id: m.id,
+    title: m.description ?? "",
+    start: when,                 // Date
+    end: when,                   // Date
+    source: "wayfeel" as unknown as EventSource,
+    // optional fields:
+    emojiId: m.emoji_id,
+    imageUrl: emojiIdToUrl(m.emoji_id),
+    description: m.description,
+    latitude: m.latitude,
+    longitude: m.longitude,
+  };
+}
+
+export type MarkerClick = (m: ApiMarker) => void;
+
+// ---------- Main ----------
 export const initMap = async (
   mapElementId: string,
   isSignedIn: boolean,
   user: User,
   startDate?: Date,
   endDate?: Date,
-  selectedView?: string
+  selectedView?: string,
+  onMarkerClick?: MarkerClick
 ) => {
   if (typeof window === "undefined" || typeof document === "undefined") {
     console.error("This code is running on the server, not in the browser.");
     return;
   }
-  console.log();
-  const mapElement = document.getElementById(
-    mapElementId
-  ) as HTMLElement | null;
 
+  const mapElement = document.getElementById(mapElementId) as HTMLElement | null;
   if (!mapElement) {
     console.error("Map element not found.");
     return;
   }
 
-  const { Map } = (await google.maps.importLibrary(
-    "maps"
-  )) as google.maps.MapsLibrary;
-  const { AdvancedMarkerElement } = (await google.maps.importLibrary(
-    "marker"
-  )) as google.maps.MarkerLibrary;
+  const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
+  const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
 
   map = new Map(mapElement, {
     zoom: 14,
@@ -54,58 +109,57 @@ export const initMap = async (
     mapId: "2144d356e076f199b6e1e755",
   });
 
-  // Fetch existing markers
+  // --------- Populate existing markers ---------
   if (isSignedIn && user) {
     const markerOptions: MarkerFilterOptions = {};
 
     if (selectedView === "personal" && user?.id) {
       markerOptions.user_id = user.id;
-      markerOptions.anonFilter = "all"; // personal, exclude anonymous
+      markerOptions.anonFilter = "all";
     } else if (selectedView === "anon") {
-      markerOptions.anonFilter = "only"; // only anonymous markers
+      markerOptions.anonFilter = "only";
     } else if (selectedView === "notanon") {
-      markerOptions.anonFilter = "exclude"; // only non-anonymous markers
+      markerOptions.anonFilter = "exclude";
     } else if (selectedView === "all") {
-      markerOptions.anonFilter = "all"; // all markers
+      markerOptions.anonFilter = "all";
     }
+
+    // If your API supports date filtering, you could pass it via markerOptions here.
 
     const markers = await getMarkers(markerOptions);
 
-    if (markers) {
-      markers.forEach((marker) => {
-        const emojiImages: { [key: number]: string } = {
-          1: "sad.svg",
-          2: "angry.svg",
-          3: "meh.svg",
-          4: "happy.svg",
-          5: "excited.svg",
-        };
+    if (markers && markers.length) {
+      markers.forEach((marker: ApiMarker) => {
+        const imgSrc = emojiIdToUrl(marker.emoji_id);
+        const contentEl = createImageElement(imgSrc);
 
-        const potatoImageSrc = emojiImages[marker.emoji_id] || "happy.svg";
-        const newMarkerImage = createImageElement(potatoImageSrc);
-
-        new AdvancedMarkerElement({
+        const adv = new AdvancedMarkerElement({
           position: { lat: marker.latitude, lng: marker.longitude },
-          map: map,
-          content: newMarkerImage,
+          map,
+          content: contentEl,
         });
+
+        // AdvancedMarkerElement uses "gmp-click"
+        adv.addListener("gmp-click", () => {
+          onMarkerClick?.(marker);
+        });
+
+        (adv.content as HTMLElement).style.cursor = "pointer";
       });
     }
   }
 
+  // --------- Map click to open "potato" selection modal ----------
   map.addListener("click", (e: google.maps.MapMouseEvent) => {
     if (e.latLng) {
-      console.log("Clicked LatLng:", e.latLng.lat(), e.latLng.lng()); // Log directly
       openPotatoSelectionDialog(e.latLng, map, isSignedIn, user);
     }
   });
 
-  // Potato Selection Modal
-  // Safe utility to remove current modal
+  // ---------- Modal helpers ----------
   function removeCurrentModal() {
     if (currentModal && currentModal.isConnected) {
-      console.trace("Calling removeChild on node:", currentModal);
-      currentModal.remove(); // safe and simple
+      currentModal.remove();
     }
     currentModal = null;
   }
@@ -164,9 +218,7 @@ export const initMap = async (
       cursor: "pointer",
       fontSize: "24px",
     });
-    closeButton.onclick = () => {
-      removeCurrentModal();
-    };
+    closeButton.onclick = () => removeCurrentModal();
     modal.appendChild(closeButton);
 
     const emojiIdMap: { [key: string]: number } = {
@@ -178,9 +230,7 @@ export const initMap = async (
     };
 
     const potatoOptions = Object.entries(emojiIdMap).map(([src, id]) => ({
-      name:
-        src.replace(".svg", "").replace(/^./, (c) => c.toUpperCase()) +
-        " Potato",
+      name: src.replace(".svg", "").replace(/^./, (c) => c.toUpperCase()) + " Potato",
       src,
       id,
     }));
@@ -308,15 +358,7 @@ export const initMap = async (
     submitButton.onclick = () => {
       const description = textbox.value;
       const isAnonymous = anonSlider.checked;
-      placeMarkerAndPanTo(
-        latLng,
-        map,
-        emoji_id,
-        isSignedIn,
-        user,
-        isAnonymous,
-        description
-      );
+      placeMarkerAndPanTo(latLng, map, emoji_id, isSignedIn, user, isAnonymous, description);
       removeCurrentModal();
     };
 
@@ -331,9 +373,7 @@ export const initMap = async (
       cursor: "pointer",
       fontSize: "24px",
     });
-    closeButton.onclick = () => {
-      removeCurrentModal();
-    };
+    closeButton.onclick = () => removeCurrentModal();
 
     const backButton = document.createElement("button");
     backButton.innerText = "←";
@@ -361,43 +401,42 @@ export const initMap = async (
   const placeMarkerAndPanTo = async (
     latLng: google.maps.LatLng,
     map: google.maps.Map,
-    emoji_id: number, // Add emoji_id to the function arguments
+    emoji_id: number,
     isSignedIn: boolean,
     user: User,
-    isAnonymous: boolean, // New parameter for anonymous upload
-    description?: string // New parameter for description
+    isAnonymous: boolean,
+    description?: string
   ) => {
-    console.log("inserting marker");
-    console.log("signed in " + isSignedIn);
-    console.log("user " + user);
-
     if (isSignedIn && user) {
       try {
-        console.log("User id " + user.id);
         await insertMarker({
           id: uuidv4(),
           longitude: latLng.lng(),
           latitude: latLng.lat(),
-          emoji_id: emoji_id,
-          created_by: user.id, // Handle anonymous uploads
+          emoji_id,
+          created_by: user.id,
           anon: isAnonymous,
-          description: description || "", // ✅ renamed from text
+          description: description || "",
           created_at: new Date().toISOString(),
-          text: ""
+          text: "",
         });
-        console.log(
-          `Marker Successfully Inserted! (Anonymous: ${isAnonymous})`
+
+        // Re-init to show the new marker and keep clicks working
+        await initMap(
+          mapElementId,
+          true,
+          user,
+          startDate,
+          endDate,
+          selectedView,
+          onMarkerClick // preserve click handler
         );
-        removeCurrentModal();
-        initMap("map", true, user);
       } catch (error) {
         console.error("Failed to insert marker:", error);
       }
     }
 
-    // Pin the map to the new marker location
+    // Pan to where we dropped the marker
     map.panTo(latLng);
   };
 };
-
-// You can also move `openPotatoSelectionDialog` here if necessary

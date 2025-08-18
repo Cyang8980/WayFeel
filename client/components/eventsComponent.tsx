@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { grabTwoEvents } from "../pages/api/getMarkers";
-import { Marker } from "@/pages/api/insertMarker";
+import type { Marker } from "../types/markers";
 import { useUser } from "@clerk/nextjs";
 
 

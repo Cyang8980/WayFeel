@@ -1,5 +1,5 @@
 import { createClient } from '@supabase/supabase-js';
-import { Marker } from './insertMarker';
+import type { Marker } from "../../types/markers";
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,

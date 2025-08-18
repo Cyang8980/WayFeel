@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { getMarkers } from './getMarkers'; 
-import { Marker } from './insertMarker';
+import type { Marker } from "../../types/markers";
 import { MarkerFilterOptions } from "../api/getMarkers";
 
 export default async function handler(

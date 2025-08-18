@@ -10,6 +10,7 @@ export type MarkerRecord = {
 };
 
 
+
 export interface Marker {
     created_at: string | number | Date;
     id: string;

@@ -8,7 +8,7 @@ import { useRouter } from "next/router";
 import "react-big-calendar/lib/css/react-big-calendar.css";
 import EventList from "../../components/eventsComponent";
 import EventModal from "@/components/EventModal";
-import { WayfeelEvent } from "@/types/events"; // 👈 add this type
+import { WayfeelEvent } from "@/types/events";
 
 const localizer = momentLocalizer(moment);
 
@@ -42,6 +42,7 @@ const Index = () => {
   const [activeItem, setActiveItem] = useState("home");
   const [currentDate, setCurrentDate] = useState(new Date());
   const googleMapsRef = useRef<google.maps.Map | null>(null);
+  const mapContainerRef = useRef<HTMLDivElement | null>(null); // 👈 NEW ref
   const { isLoaded, isSignedIn, user } = useUser();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(true);
@@ -54,7 +55,7 @@ const Index = () => {
   const calendarHeight = Math.max(windowHeight * 0.25, 250);
   const mapHeight = Math.max(windowHeight * 0.65, 400);
 
-  // 👇 modal state typed to your modal's prop
+  // modal state
   const [selectedMarker, setSelectedMarker] = useState<WayfeelEvent | null>(null);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
 
@@ -83,23 +84,20 @@ const Index = () => {
     }
   }, [isLoaded, isSignedIn, router]);
 
-  // 👇 normalize backend marker → WayfeelEvent that the modal expects
+  // normalize backend marker → WayfeelEvent
   const handleMarkerClick = (m: ApiMarker) => {
     setSelectedMarker(toWayfeelEvent(m));
     setIsEventModalOpen(true);
   };
 
-  const initializeMap = () => {
-    const mapDiv = document.getElementById("map");
-    if (!mapDiv) {
-      console.error("Map div with id='map' not found");
-      return;
-    }
-    if (user && window.google && window.google.maps) {
-      googleMapsRef.current = new window.google.maps.Map(
-        document.getElementById("map") as HTMLElement,
-        { zoom: 8, center: { lat: 37.7749, lng: -122.4194 } }
-      );
+  // Initialize map only when script + div + user ready
+  useEffect(() => {
+    if (mapScriptLoaded && mapContainerRef.current && user && !mapInitialized) {
+      googleMapsRef.current = new window.google.maps.Map(mapContainerRef.current, {
+        zoom: 8,
+        center: { lat: 37.7749, lng: -122.4194 },
+      });
+
       initMap(
         "map",
         isSignedIn,
@@ -107,11 +105,12 @@ const Index = () => {
         startDate || undefined,
         endDate || undefined,
         selectedView,
-        handleMarkerClick 
+        handleMarkerClick
       );
+
       setMapInitialized(true);
     }
-  };
+  }, [mapScriptLoaded, user, isSignedIn, mapInitialized]);
 
   // Re-render markers when filters change
   useEffect(() => {
@@ -124,34 +123,24 @@ const Index = () => {
         startDate || undefined,
         endDate || undefined,
         selectedView,
-        handleMarkerClick 
+        handleMarkerClick
       );
     }
   }, [startDate, endDate, selectedView, mapInitialized, user, isSignedIn]);
 
-  // Load Maps script
-  const loadGoogleMapsScript = () => {
+  // Load Maps script once
+  useEffect(() => {
     if (window.google?.maps) {
-      initializeMap();
+      setMapScriptLoaded(true);
       return;
     }
     const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}&callback=initializeMap`;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_MAP_API_KEY}`;
     script.async = true;
     script.defer = true;
-    window.initializeMap = initializeMap;
-    script.onload = () => {
-      window.initializeMap = initializeMap;
-      setMapScriptLoaded(true);
-    };
+    script.onload = () => setMapScriptLoaded(true);
     document.head.appendChild(script);
-  };
-
-  useEffect(() => {
-    if (isLoaded) {
-      loadGoogleMapsScript();
-    }
-  }, [isLoaded]);
+  }, []);
 
   const handleStartDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedStartDate = e.target.valueAsDate;
@@ -165,7 +154,7 @@ const Index = () => {
   const handleEndDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const selectedEndDate = e.target.valueAsDate;
     if (startDate && selectedEndDate && selectedEndDate < startDate) {
-      alert("End date cannot be before end date");
+      alert("End date cannot be before start date");
       return;
     }
     setEndDate(selectedEndDate);
@@ -184,7 +173,6 @@ const Index = () => {
         <div className="min-h-screen bg-[#f9f0f0]">
           <nav className="bg-gray-800 text-white fixed w-full z-10"></nav>
 
-          {/* 👇 Open modal only when we have a marker */}
           {isEventModalOpen && selectedMarker && (
             <EventModal
               event={selectedMarker}
@@ -241,7 +229,10 @@ const Index = () => {
                   </div>
                 </div>
 
-                <div id="map" style={{ height: `${mapHeight}px`, width: "100%" }}
+                {/* 👇 map now uses ref, no getElementById */}
+                <div ref={mapContainerRef}
+                     id="map"
+                     style={{ height: `${mapHeight}px`, width: "100%" }}
                      className="rounded-lg shadow-lg mb-4" />
               </section>
             </main>
@@ -253,4 +244,3 @@ const Index = () => {
 };
 
 export default Index;
-

@@ -20,7 +20,9 @@ const isRbcView = (v: unknown): v is RbcView =>
 
 // Keep cast isolated
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-const DnDCalendar = withDragAndDrop<WayfeelEvent>(Calendar as unknown as React.ComponentType<any>);
+const DnDCalendar = withDragAndDrop<WayfeelEvent>(
+  Calendar as unknown as React.ComponentType<any>
+);
 
 // Our unified arg type that uses your WayfeelEvent
 export type DropResizeArgs = {
@@ -36,7 +38,6 @@ export default function CalendarBoard({
   onNavigate,
   onView,
   onSelectEvent,
-  onSelectSlot,
   onEventDrop,
   onEventResize,
 }: {
@@ -45,8 +46,6 @@ export default function CalendarBoard({
   onNavigate: (d: Date) => void;
   onView: (v: RbcView) => void;
   onSelectEvent: (e: WayfeelEvent) => void;
-
-  onSelectSlot: (range: { start: Date; end: Date; action: "select" | "click" }) => void;
   onEventDrop: (args: DropResizeArgs) => void;
   onEventResize: (args: DropResizeArgs) => void;
 }) {
@@ -68,15 +67,9 @@ export default function CalendarBoard({
         eventPropGetter={eventStyleGetter}
         components={components}
         onSelectEvent={onSelectEvent}
-        selectable
-        resizable
-        onSelectSlot={(slot) =>
-          onSelectSlot({
-            start: slot.start as Date,
-            end: slot.end as Date,
-            action: slot.action as "select" | "click",
-          })
-        }
+        selectable={false}         // ⬅️ no empty-slot selection
+        resizable                  // keep resize for existing events
+        // ⬇️ removed onSelectSlot entirely to prevent creation
         onEventDrop={({ event, start, end, isAllDay }) =>
           onEventDrop({
             event: event as WayfeelEvent,

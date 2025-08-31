@@ -17,7 +17,7 @@ const CalendarPage = () => {
   const { isSignedIn, user } = useUser();
 
   // layout
-  const [activeItem, setActiveItem] = useState("home");
+  const [activeItem, setActiveItem] = useState("calander");
 
   // calendar navigation
   const [currentDate, setCurrentDate] = useState<Date>(() => new Date());

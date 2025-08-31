@@ -47,7 +47,6 @@ const insertUser = async (user: {
 const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   const router = useRouter();
   const { isSignedIn, user } = useUser();
-
   const menuItems: MenuItem[] = [
     { id: "home", label: "🏠", action: () => router.push("/appPage") },
     // { id: "analytics", label: "📊", action: () => router.push("/analytics") },
@@ -57,20 +56,13 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
       action: () => router.push("/calendar"),
     },
     {
-      id: "timeline",
-      label: "🕑",
-      action: () => router.push("/timeline/timeline"),
-    },
-    // { id: "profile", label: "👤", action: openUserProfile },
-    { id: "analytics", label: "📊", action: () => alert("not done yet") },
-    { id: "settings", label: "⚙️", action: () => alert("not done yet") },
-    {
       id: "ko-fi",
       label: (
         <Image src="/kofi_symbol.svg" alt="Ko-Fi" width={24} height={24} />
       ),
       action: () => window.open("https://ko-fi.com/wayfeel", "_blank"),
     },
+    { id: "terms", label: "📜", action: () => router.push("/termsPage") },
     {
       id: "onBoard",
       label: "🚢",

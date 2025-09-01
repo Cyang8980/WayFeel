@@ -1,6 +1,7 @@
 // components/pdfviewer.tsx - Text extraction from PDF
 import React, { useState, useEffect } from 'react';
 import { FileText, Download, ExternalLink, Search, Copy, Check } from 'lucide-react';
+import type { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
 
 interface PdfViewerProps {
   file: string;
@@ -41,7 +42,9 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
         
         // Extract text items
         const pageText = textContent.items
-          .map((item: any) => item.str)
+          .map((item: TextItem | TextMarkedContent)=>
+          "str" in item ? item.str : ""
+        )
           .join(' ')
           .replace(/\s+/g, ' ') // Clean up multiple spaces
           .trim();
@@ -51,9 +54,13 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
       
       setTextContent(fullText.trim());
       setLoading(false);
-    } catch (err: any) {
-      console.error('Error extracting PDF text:', err);
-      setError(err.message || 'Failed to extract text from PDF');
+    } catch (err: unknown) {
+      console.error("Error extracting PDF text:", err);
+      if (err instanceof Error) {
+        setError(err.message);
+      } else {
+        setError("Failed to extract text from PDF");
+      }
       setLoading(false);
     }
   };

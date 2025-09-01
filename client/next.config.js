@@ -9,6 +9,8 @@ const nextConfig = {
     NEXT_PUBLIC_SUPABASE_API_KEY: process.env.NEXT_PUBLIC_SUPABASE_API_KEY,
   },
   webpack: (config) => {
+    config.resolve.alias.canvas = false;
+    config.resolve.alias.encoding = false;
     config.resolve.alias = {
       ...config.resolve.alias,
       "@": __dirname,

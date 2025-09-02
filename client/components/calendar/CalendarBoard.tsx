@@ -60,7 +60,7 @@ export default function CalendarBoard({
         endAccessor="end"
         date={date}
         defaultView="week"
-        views={["month", "week", "day"]}
+        views={["week"]}
         onNavigate={onNavigate}
         onView={(v) => isRbcView(v) && onView(v)}
         style={{ height: "90vh", width: "100%" }}

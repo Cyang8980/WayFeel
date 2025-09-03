@@ -88,6 +88,7 @@ export default function EventList() {
             }}
           >
             {emojiSrc && (
+              // eslint-disable-next-line @next/next/no-img-element
               <img
                 src={emojiSrc}
                 alt={`Emoji ${emojiId}`}

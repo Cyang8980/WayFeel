@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Image from "next/image";
 import { WayfeelEvent } from "@/types/events";
 import { emojiMap } from "@/lib/constants";
 
@@ -27,7 +28,7 @@ export default function AssignWayfeelModal({
               className={`p-2 rounded-xl border ${emojiId===id ? "border-blue-500" : "border-gray-300"}`}
               title={`mood-${id}`}
             >
-              <img src={emojiMap[id]} alt={`m-${id}`} className="w-10 h-10" />
+              <Image src={emojiMap[id]} alt={`m-${id}`} width={40} height={40} className="w-10 h-10" />
             </button>
           ))}
         </div>

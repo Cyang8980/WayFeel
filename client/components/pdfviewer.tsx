@@ -1,7 +1,9 @@
 // components/pdfviewer.tsx - Text extraction from PDF
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FileText, Download, ExternalLink, Search, Copy, Check } from 'lucide-react';
-import type { TextItem, TextMarkedContent } from "pdfjs-dist/types/src/display/api";
+
+// Minimal local types for PDF.js text items to avoid importing pdfjs-dist typings
+type PdfTextItem = { str: string } | Record<string, unknown>;
 
 interface PdfViewerProps {
   file: string;
@@ -14,11 +16,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [copied, setCopied] = useState<boolean>(false);
 
-  useEffect(() => {
-    extractTextFromPdf();
-  }, [file]);
-
-  const extractTextFromPdf = async (): Promise<void> => {
+  const extractTextFromPdf = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -42,9 +40,7 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
         
         // Extract text items
         const pageText = textContent.items
-          .map((item: TextItem | TextMarkedContent)=>
-          "str" in item ? item.str : ""
-        )
+          .map((item: PdfTextItem) => ("str" in item ? (item as { str: string }).str : ""))
           .join(' ')
           .replace(/\s+/g, ' ') // Clean up multiple spaces
           .trim();
@@ -63,7 +59,11 @@ const PdfViewer: React.FC<PdfViewerProps> = ({ file }) => {
       }
       setLoading(false);
     }
-  };
+  }, [file]);
+
+  useEffect(() => {
+    void extractTextFromPdf();
+  }, [extractTextFromPdf]);
 
   const copyToClipboard = async (): Promise<void> => {
     try {

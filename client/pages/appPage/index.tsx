@@ -77,7 +77,7 @@ const Index = () => {
   useEffect(() => {
     if (isLoaded) {
       if (!isSignedIn) {
-        router.push("/");
+        router.push("/appPage");
       } else {
         setIsLoading(false);
       }
@@ -86,6 +86,8 @@ const Index = () => {
 
   // normalize backend marker → WayfeelEvent
   const handleMarkerClick = (m: ApiMarker) => {
+    console.log("Raw marker from initMap:", m);
+    console.log("Converted WayfeelEvent:", toWayfeelEvent(m));
     setSelectedMarker(toWayfeelEvent(m));
     setIsEventModalOpen(true);
   };
@@ -110,7 +112,7 @@ const Index = () => {
 
       setMapInitialized(true);
     }
-  }, [mapScriptLoaded, user, isSignedIn, mapInitialized]);
+  }, [mapScriptLoaded, user, isSignedIn, mapInitialized, startDate, endDate, selectedView]);
 
   // Re-render markers when filters change
   useEffect(() => {
@@ -220,20 +222,20 @@ const Index = () => {
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">Start Date</label>
                     <input type="date" className="w-full p-2 border rounded" onChange={handleStartDateChange}
-                           max={endDate?.toISOString().split("T")[0]} />
+                      max={endDate?.toISOString().split("T")[0]} />
                   </div>
                   <div className="flex-1">
                     <label className="block text-sm font-medium mb-1">End Date</label>
                     <input type="date" className="w-full p-2 border rounded" onChange={handleEndDateChange}
-                           min={startDate?.toISOString().split("T")[0]} />
+                      min={startDate?.toISOString().split("T")[0]} />
                   </div>
                 </div>
 
                 {/* 👇 map now uses ref, no getElementById */}
                 <div ref={mapContainerRef}
-                     id="map"
-                     style={{ height: `${mapHeight}px`, width: "100%" }}
-                     className="rounded-lg shadow-lg mb-4" />
+                  id="map"
+                  style={{ height: `${mapHeight}px`, width: "100%" }}
+                  className="rounded-lg shadow-lg mb-4" />
               </section>
             </main>
           </div>

@@ -99,7 +99,25 @@ const EventModal: React.FC<Props> = ({
 
   const imgSrc = event.imageUrl ?? "/happy.svg";
 
-  const description = event.description ?? "Wonder what this user is feeling"
+  // Derive a human-readable emotion name from the image URL or emojiId
+  const deriveEmotionName = () => {
+    const src = (event.emojiId && emojiMap[event.emojiId]) || event.imageUrl;
+    if (!src) return null;
+    const last = src.split("/").pop();
+    if (!last) return null;
+    const base = last.replace(".svg", "");
+    // Capitalize first letter
+    return base.replace(/^./, (c) => c.toUpperCase());
+  };
+
+  const emotionName = deriveEmotionName();
+
+  // Prefer user-provided text (description/title). Fallback to emotion-based sentence.
+  const description = (() => {
+    const text = (event.description ?? event.title ?? "").trim();
+    if (text.length > 0) return text;
+    return emotionName ? `I feel ${emotionName} today!` : "I feel something today!";
+  })();
 
   return (
     <div className="fixed inset-0 bg-black/40 flex justify-center items-center z-50 overflow-y-auto">

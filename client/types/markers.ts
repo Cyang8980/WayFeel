@@ -13,6 +13,7 @@ export type MarkerRecord = {
 
 export interface Marker {
     created_at: string | number | Date;
+    end_at?: string | number | Date;
     id: string;
     longitude: number;
     latitude: number;

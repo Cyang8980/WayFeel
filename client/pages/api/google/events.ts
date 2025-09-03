@@ -71,7 +71,24 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       .filter((v): v is ApiEvent => v !== null);
 
     return res.status(200).json({ events });
-  } catch (err) {
+  } catch (err: unknown) {
+    // Normalize error
+    const msg = typeof err === "object" && err !== null ? (err as any).message : String(err);
+    const isInvalidGrant = msg?.toLowerCase?.().includes("invalid_grant");
+
+    // If tokens are invalid, clear cookie and ask client to reconnect
+    if (isInvalidGrant) {
+      try {
+        res.setHeader(
+          "Set-Cookie",
+          `${TOKEN_COOKIE}=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0; ${
+            process.env.NODE_ENV === "production" ? "Secure;" : ""
+          }`
+        );
+      } catch {}
+      return res.status(401).json({ error: "Not connected" });
+    }
+
     // eslint-disable-next-line no-console
     console.error(err);
     return res.status(500).json({ error: "Failed to fetch events" });

@@ -47,8 +47,14 @@ const CalendarPage = () => {
 
   // combine events (gcal grey + wayfeel)
   const allEvents = useMemo(() => {
-    const gcal = gcalEvents.filter((e) => !suppressedGcalIds.has(e.id));
-    return [...gcal, ...markerEvents, ...localWayfeel];
+    // Prefer localWayfeel changes over fetched markers to avoid duplicates
+    const map = new Map<string, WayfeelEvent>();
+    gcalEvents
+      .filter((e) => !suppressedGcalIds.has(e.id))
+      .forEach((e) => map.set(e.id, e));
+    markerEvents.forEach((e) => map.set(e.id, e));
+    localWayfeel.forEach((e) => map.set(e.id, e)); // override with local edits
+    return Array.from(map.values());
   }, [gcalEvents, markerEvents, localWayfeel, suppressedGcalIds]);
 
   // select an event
@@ -66,18 +72,58 @@ const CalendarPage = () => {
   // const handleSelectSlot = (...) => { /* disabled */ };
 
   // DnD handlers (only mutate Wayfeel events; GCal are read-only)
-  const onEventDrop = ({ event, start, end }: DropResizeArgs) => {
+  const onEventDrop = async ({ event, start, end }: DropResizeArgs) => {
     if (event.source !== "wayfeel") return;
-    setLocalWayfeel((prev) =>
-      prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
-    );
+    const nextStart = toDate(start);
+    const nextEnd = toDate(end);
+    setLocalWayfeel((prev) => {
+      const exists = prev.some((e) => e.id === event.id);
+      const updated = { ...event, start: nextStart, end: nextEnd };
+      return exists ? prev.map((e) => (e.id === event.id ? updated : e)) : [...prev, updated];
+    });
+    // persist to Supabase via API route (server-side service key)
+    try {
+      const res = await fetch("/api/markers/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: event.id, start: nextStart.toISOString(), end: nextEnd.toISOString() }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // eslint-disable-next-line no-console
+        console.error("Persist drop failed:", data.error || res.statusText);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to persist event drop:", e);
+    }
   };
 
-  const onEventResize = ({ event, start, end }: DropResizeArgs) => {
+  const onEventResize = async ({ event, start, end }: DropResizeArgs) => {
     if (event.source !== "wayfeel") return;
-    setLocalWayfeel((prev) =>
-      prev.map((e) => (e.id === event.id ? { ...e, start: toDate(start), end: toDate(end) } : e))
-    );
+    const nextStart = toDate(start);
+    const nextEnd = toDate(end);
+    setLocalWayfeel((prev) => {
+      const exists = prev.some((e) => e.id === event.id);
+      const updated = { ...event, start: nextStart, end: nextEnd };
+      return exists ? prev.map((e) => (e.id === event.id ? updated : e)) : [...prev, updated];
+    });
+    // persist to Supabase via API route (server-side service key)
+    try {
+      const res = await fetch("/api/markers/update", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ id: event.id, start: nextStart.toISOString(), end: nextEnd.toISOString() }),
+      });
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        // eslint-disable-next-line no-console
+        console.error("Persist resize failed:", data.error || res.statusText);
+      }
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error("Failed to persist event resize:", e);
+    }
   };
 
   return (

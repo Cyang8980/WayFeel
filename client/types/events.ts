@@ -7,7 +7,7 @@ export type WayfeelEvent = {
   end: Date;
   title: string;
 
-  source: EventSource;      // <- NEW: distinguishes gcal vs wayfeel
+  source: EventSource; 
 
   // Wayfeel (optional for “empty” gcal events)
   emojiId?: number;

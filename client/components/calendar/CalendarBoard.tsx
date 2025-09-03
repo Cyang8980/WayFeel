@@ -3,6 +3,7 @@ import {
   Calendar,
   momentLocalizer,
   type Components,
+  type CalendarProps,
 } from "react-big-calendar";
 import withDragAndDrop from "react-big-calendar/lib/addons/dragAndDrop";
 import "react-big-calendar/lib/addons/dragAndDrop/styles.css";
@@ -18,10 +19,9 @@ const localizer = momentLocalizer(moment);
 const isRbcView = (v: unknown): v is RbcView =>
   v === "month" || v === "week" || v === "day";
 
-// Keep cast isolated
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
+// Keep cast isolated and avoid `any`
 const DnDCalendar = withDragAndDrop<WayfeelEvent>(
-  Calendar as unknown as React.ComponentType<any>
+  Calendar as unknown as React.ComponentType<CalendarProps<WayfeelEvent, object>>
 );
 
 // Our unified arg type that uses your WayfeelEvent

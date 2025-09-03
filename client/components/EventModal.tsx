@@ -1,5 +1,6 @@
 // EventModal.tsx
 import React, { useEffect, useRef, useState } from "react";
+import Image from "next/image";
 import moment from "moment";
 import { WayfeelEvent } from "@/types/events";
 import { emojiMap as defaultEmojiMap } from "@/lib/constants";
@@ -128,7 +129,7 @@ const EventModal: React.FC<Props> = ({
 
         {/* Left: Main Emoji Image */}
         <div className="flex-shrink-0">
-          <img src={imgSrc} alt="emoji" className="w-64 h-64 md:w-72 md:h-72 object-contain" />
+          <Image src={imgSrc} alt="emoji" width={256} height={256} className="w-64 h-64 md:w-72 md:h-72 object-contain" />
         </div>
 
         {/* Middle: Details, Emoji Reactions, Comment */}
@@ -146,9 +147,11 @@ const EventModal: React.FC<Props> = ({
                   onClick={() => handleReact(id)}
                   className="flex flex-col items-center cursor-pointer hover:scale-105 transition-transform"
                 >
-                  <img
+                  <Image
                     src={emojiMap[id]}
                     alt={`mood-${id}`}
+                    width={56}
+                    height={56}
                     className={`w-14 h-14 ${id === userReaction ? "scale-110 border-2 border-blue-400 rounded-full" : "opacity-60"}`}
                   />
                   <span className="mt-1 text-sm text-gray-700 font-medium">{reactions[id]}</span>

@@ -30,7 +30,7 @@ const CalendarPage = () => {
 
   // local Wayfeel events created/edited in UI (persist later)
   const [localWayfeel, setLocalWayfeel] = useState<WayfeelEvent[]>([]);
-  const [suppressedGcalIds, setSuppressedGcalIds] = useState<Set<string>>(new Set());
+  const [suppressedGcalIds] = useState<Set<string>>(new Set());
 
   // modal states
   const [selectedEvent, setSelectedEvent] = useState<WayfeelEvent | null>(null);

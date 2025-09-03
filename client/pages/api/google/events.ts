@@ -72,8 +72,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     return res.status(200).json({ events });
   } catch (err: unknown) {
-    // Normalize error
-    const msg = typeof err === "object" && err !== null ? (err as any).message : String(err);
+    // Normalize error without using `any`
+    let msg: string;
+    if (typeof err === "object" && err !== null && "message" in err) {
+      const m = (err as { message?: unknown }).message;
+      msg = typeof m === "string" ? m : String(m);
+    } else {
+      msg = String(err);
+    }
     const isInvalidGrant = msg?.toLowerCase?.().includes("invalid_grant");
 
     // If tokens are invalid, clear cookie and ask client to reconnect

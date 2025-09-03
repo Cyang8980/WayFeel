@@ -112,7 +112,7 @@ const Index = () => {
 
       setMapInitialized(true);
     }
-  }, [mapScriptLoaded, user, isSignedIn, mapInitialized]);
+  }, [mapScriptLoaded, user, isSignedIn, mapInitialized, startDate, endDate, selectedView]);
 
   // Re-render markers when filters change
   useEffect(() => {

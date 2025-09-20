@@ -29,7 +29,6 @@ const Index = () => {
     selectedMarker,
     isEventModalOpen,
     setIsEventModalOpen,
-    loadCustomMarkers,
   } = useMapInitialization({
     startDate,
     endDate,

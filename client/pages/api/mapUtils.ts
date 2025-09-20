@@ -8,6 +8,16 @@ import { getMarkers } from "./getMarkers";
 import { MarkerFilterOptions } from "../api/getMarkers";
 import type { WayfeelEvent, EventSource } from "@/types/events";
 
+// Track markers for proper cleanup
+let currentMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
+
+// Callback to trigger marker reloading from external components
+let onMarkerReload: (() => void) | null = null;
+
+export const setMarkerReloadCallback = (callback: (() => void) | null) => {
+  onMarkerReload = callback;
+};
+
 interface User {
   id: string;
 }
@@ -79,6 +89,58 @@ export function toWayfeelEvent(m: ApiMarker): WayfeelEvent {
 
 export type MarkerClick = (m: ApiMarker) => void;
 
+// ---------- Marker Management ----------
+export const clearAllMarkers = () => {
+  currentMarkers.forEach(marker => {
+    marker.map = null;
+  });
+  currentMarkers = [];
+};
+
+// ---------- Load Markers with Filters ----------
+export const loadMarkersWithFilters = async (
+  filterOptions: MarkerFilterOptions,
+  onMarkerClick?: MarkerClick
+) => {
+  if (!map) {
+    console.error("Map not initialized");
+    return;
+  }
+
+  try {
+    // Clear existing markers first
+    clearAllMarkers();
+
+    const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
+    const markers = await getMarkers(filterOptions);
+    
+    if (markers && markers.length) {
+      markers.forEach((marker: ApiMarker) => {
+        const imgSrc = emojiIdToUrl(marker.emoji_id);
+        const contentEl = createImageElement(imgSrc);
+
+        const adv = new AdvancedMarkerElement({
+          position: { lat: marker.latitude, lng: marker.longitude },
+          map,
+          content: contentEl,
+        });
+
+        // AdvancedMarkerElement uses "gmp-click"
+        adv.addListener("gmp-click", () => {
+          onMarkerClick?.(marker);
+        });
+
+        (adv.content as HTMLElement).style.cursor = "pointer";
+        
+        // Track the marker for future cleanup
+        currentMarkers.push(adv);
+      });
+    }
+  } catch (error) {
+    console.error("Failed to load markers with filters:", error);
+  }
+};
+
 // ---------- Main ----------
 export const initMap = async (
   mapElementId: string,
@@ -145,6 +207,9 @@ export const initMap = async (
         });
 
         (adv.content as HTMLElement).style.cursor = "pointer";
+        
+        // Track the marker for future cleanup
+        currentMarkers.push(adv);
       });
     }
   }
@@ -431,7 +496,10 @@ export const initMap = async (
           `Marker Successfully Inserted! (Anonymous: ${isAnonymous})`
         );
         removeCurrentModal();
-        initMap("map", true, user);
+        // Trigger marker reloading from the hook
+        if (onMarkerReload) {
+          onMarkerReload();
+        }
       } catch (error) {
         console.error("Failed to insert marker:", error);
       }
@@ -441,3 +509,5 @@ export const initMap = async (
     map.panTo(latLng);
   };
 };
+
+export type { MarkerFilterOptions };

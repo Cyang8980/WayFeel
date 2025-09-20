@@ -25,30 +25,22 @@ export async function getMarkers(options: MarkerFilterOptions = {}): Promise<Mar
   }
 
   // Anonymous filtering logic
-  if (user_id) {
-    query = query.eq('created_by', user_id);
-    if (anonFilter === 'only') {
-      query = query.eq('anon', true);
-    } else if (anonFilter === 'exclude') {
-      query = query.eq('anon', false);
-    } // else anonFilter = 'all' → no anon filtering on user markers
-  } else {
-    if (anonFilter === 'only') {
-      query = query.eq('anon', true);
-    } else if (anonFilter === 'exclude') {
-      query = query.eq('anon', false);
-    }
-    // else anonFilter = 'all' → no filtering at all
+  if (anonFilter === 'only') {
+    query = query.eq('anon', true);
+  } else if (anonFilter === 'exclude') {
+    query = query.eq('anon', false);
   }
-  // if 'all', do not filter anon at all
-
-  // If user_id and anonFilter === 'only', maybe want to include anon + user markers? Up to your logic.
+  // else anonFilter = 'all' → no anon filtering
 
   // Date range filtering
   if (startDate && endDate) {
     query = query
       .gte('created_at', startDate.toISOString())
       .lte('created_at', endDate.toISOString());
+  } else if (startDate) {
+    query = query.gte('created_at', startDate.toISOString());
+  } else if (endDate) {
+    query = query.lte('created_at', endDate.toISOString());
   }
 
   const { data: markers, error } = await query;

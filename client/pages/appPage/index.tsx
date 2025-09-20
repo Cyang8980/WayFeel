@@ -52,8 +52,18 @@ const Index = () => {
   const [endDate, setEndDate] = useState<Date | null>(null);
   const [selectedView, setSelectedView] = useState<MarkerViewType>("all");
   const { height: windowHeight } = useWindowSize();
-  const calendarHeight = Math.max(windowHeight * 0.25, 250);
-  const mapHeight = Math.max(windowHeight * 0.65, 400);
+  const { isLoading } = useAuthentication();
+  const {
+    mapContainerRef,
+    mapScriptLoaded,
+    selectedMarker,
+    isEventModalOpen,
+    setIsEventModalOpen,
+  } = useMapInitialization({
+    startDate,
+    endDate,
+    selectedView,
+  });
 
   // modal state
   const [selectedMarker, setSelectedMarker] = useState<WayfeelEvent | null>(null);

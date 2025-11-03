@@ -18,6 +18,7 @@ let currentModal: HTMLElement | null = null;
 let currentMarkers: google.maps.marker.AdvancedMarkerElement[] = [];
 
 // Callback to trigger marker reloading from external components
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 let onMarkerReload: (() => void) | null = null;
 
 export const setMarkerReloadCallback = (callback: (() => void) | null) => {

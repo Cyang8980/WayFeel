@@ -1,9 +1,12 @@
-import React from "react";
+import React, { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
+import BetaSignupModal from "@/components/BetaSignupModal";
 
 export default function LandingPage() {
+  const [isBetaModalOpen, setIsBetaModalOpen] = useState(false);
+
   return (
     <div className="min-h-screen flex flex-col">
       {/* Header */}
@@ -41,6 +44,7 @@ export default function LandingPage() {
             <Button 
               size="lg" 
               className="bg-blue-400 hover:bg-blue-500 text-white text-lg px-8 py-6 rounded-xl font-semibold transition-colors"
+              onClick={() => setIsBetaModalOpen(true)}
             >
               Join beta
             </Button>
@@ -58,7 +62,7 @@ export default function LandingPage() {
                 Log Your Emotions— Anywhere, Anytime.
               </h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                Your feelings matter, and now there's a place to put them. With WayFeel's interactive map, you can drop an emoji to log how you're feeling—whether you're at home, work, or exploring somewhere new.
+                Your feelings matter, and now there&apos;s a place to put them. With WayFeel&apos;s interactive map, you can drop an emoji to log how you&apos;re feeling—whether you&apos;re at home, work, or exploring somewhere new.
               </p>
               <ul className="space-y-4 text-lg text-gray-700">
                 <li className="flex items-start">
@@ -75,7 +79,7 @@ export default function LandingPage() {
                 </li>
               </ul>
               <p className="text-lg text-gray-700 leading-relaxed">
-                It's more than a map—it's a safe space to be yourself, wherever you are.
+                It&apos;s more than a map—it&apos;s a safe space to be yourself, wherever you are.
               </p>
             </div>
 
@@ -134,7 +138,7 @@ export default function LandingPage() {
                 Start tracking to understand yourself
               </h2>
               <p className="text-lg text-gray-700 leading-relaxed">
-                You have an idea of what affects your emotions, but there's nothing better than visualizing it to confirm your suspicions.
+                You have an idea of what affects your emotions, but there&apos;s nothing better than visualizing it to confirm your suspicions.
               </p>
             </div>
 
@@ -200,7 +204,7 @@ export default function LandingPage() {
                 </li>
                 <li className="flex items-start">
                   <span className="text-black mr-3">•</span>
-                  <span>Celebrate growth: See how far you've come in managing your emotions.</span>
+                  <span>Celebrate growth: See how far you&apos;ve come in managing your emotions.</span>
                 </li>
                 <li className="flex items-start">
                   <span className="text-black mr-3">•</span>
@@ -267,19 +271,19 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-3 gap-8">
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-gray-700 mb-4">
-                "WayFeel helped me understand why certain places make me anxious. Now I can plan my days better!"
+                &quot;WayFeel helped me understand why certain places make me anxious. Now I can plan my days better!&quot;
               </p>
               <p className="text-gray-500 italic">— Future User</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-gray-700 mb-4">
-                "I love how anonymous and supportive the community is. It's like having a diary that talks back!"
+                &quot;I love how anonymous and supportive the community is. It&apos;s like having a diary that talks back!&quot;
               </p>
               <p className="text-gray-500 italic">— Future User</p>
             </div>
             <div className="bg-white rounded-xl p-6 shadow-lg">
               <p className="text-gray-700 mb-4">
-                "Tracking my emotions over time has been a game-changer for my mental health!"
+                &quot;Tracking my emotions over time has been a game-changer for my mental health!&quot;
               </p>
               <p className="text-gray-500 italic">— Future User</p>
             </div>
@@ -296,6 +300,7 @@ export default function LandingPage() {
           <Button
             size="lg"
             className="bg-blue-400 hover:bg-blue-500 text-white text-lg px-8 py-6 rounded-xl font-semibold transition-colors"
+            onClick={() => setIsBetaModalOpen(true)}
           >
             Join WayFeel. Now
           </Button>
@@ -308,13 +313,13 @@ export default function LandingPage() {
           <h3 className="text-2xl font-semibold text-gray-800 mb-6">Founder memo</h3>
           <div className="font-handwriting text-lg text-gray-700 leading-relaxed space-y-4" style={{ fontFamily: 'cursive, serif' }}>
             <p>
-              At WayFeel, we know what it's like to feel lost, overwhelmed, and out of place.
+              At WayFeel, we know what it&apos;s like to feel lost, overwhelmed, and out of place.
             </p>
             <p>
-              Life can be messy and sometimes it feels like there's no safe space to share how you're feeling.
+              Life can be messy and sometimes it feels like there&apos;s no safe space to share how you&apos;re feeling.
             </p>
             <p>
-              That's why we created WayFeel, a place where emotions are welcomed, validated, and understood.
+              That&apos;s why we created WayFeel, a place where emotions are welcomed, validated, and understood.
             </p>
             <p>
               Our mission is simple: to give you a space, anonymous sense to share your feelings, find reassurance, and track your emotional journey over time.
@@ -331,6 +336,12 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      {/* Beta Signup Modal */}
+      <BetaSignupModal 
+        isOpen={isBetaModalOpen} 
+        onClose={() => setIsBetaModalOpen(false)} 
+      />
     </div>
   );
 }

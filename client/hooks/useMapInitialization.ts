@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useUser } from '@clerk/nextjs';
-import { initMap, loadMarkersWithFilters, ApiMarker, toWayfeelEvent, MarkerFilterOptions } from '../pages/api/mapUtils';
+import { initMap, loadMarkersWithFilters, ApiMarker, toWayfeelEvent } from '../pages/api/mapUtils';
+import { MarkerFilterOptions } from '../pages/api/getMarkers';
 import { WayfeelEvent } from '../types/events';
 
 interface UseMapInitializationProps {
@@ -55,6 +56,9 @@ export function useMapInitialization({ startDate, endDate, selectedView }: UseMa
         'map',
         isSignedIn,
         user,
+        startDate || undefined,
+        endDate || undefined,
+        selectedView || undefined,
         handleMarkerClick
       );
 

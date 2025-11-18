@@ -1,0 +1,26 @@
+version: 1.0
+runtime: docker
+build:
+  commands:
+    build:
+      # App Runner will build the Docker image from your Dockerfile
+      - echo "Building WayFeel application with Docker"
+run:
+  runtime-version: latest
+  command: node server.js
+  network:
+    port: 3000
+    env: PORT
+  env:
+    # These will be set in the App Runner console
+    - name: NODE_ENV
+      value: production
+    - name: PORT
+      value: "3000"
+    # Public environment variables (these need to be configured in App Runner)
+    - name: NEXT_PUBLIC_SUPABASE_URL
+    - name: NEXT_PUBLIC_SUPABASE_API_KEY
+    - name: NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY
+    - name: NEXT_PUBLIC_MAP_API_KEY
+    - name: GOOGLE_CLIENT_ID
+    - name: GOOGLE_REDIRECT_URI

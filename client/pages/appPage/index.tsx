@@ -67,7 +67,7 @@ const Index = () => {
           <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
         </div>
 
-        <main className="flex flex-col lg:flex-row flex-1 ml-0 lg:ml-[5%] gap-4 p-4">
+        <main className="flex flex-col lg:flex-row flex-1 ml-0 lg:ml-[8%] mr-4 lg:mr-[8%] gap-4 p-4">
           <CalendarSection
             currentDate={currentDate}
             onDateChange={setCurrentDate}

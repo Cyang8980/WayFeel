@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
 import { WayfeelEvent } from "@/types/events";
-import { getMarkers } from "@/pages/api/getMarkers";
+import { getMarkers, getMarkersApollo } from "@/pages/api/getMarkers";
 import { emojiMap } from "@/lib/constants";
 import type { Marker } from "@/types/markers"; // use the real type
 
@@ -16,7 +16,7 @@ export default function useMarkers(userId?: string) {
 
     (async () => {
       try {
-        const markers: Marker[] | null = await getMarkers({ user_id: userId });
+        const markers: Marker[] | null = await getMarkersApollo({ user_id: userId });
         if (!markers) {
           setEvents([]);
           return;

@@ -16,7 +16,7 @@ export function useMapInitialization({ startDate, endDate, selectedView }: UseMa
   const [mapInitialized, setMapInitialized] = useState(false);
   const [selectedMarker, setSelectedMarker] = useState<WayfeelEvent | null>(null);
   const [isEventModalOpen, setIsEventModalOpen] = useState(false);
-  
+
   const googleMapsRef = useRef<google.maps.Map | null>(null);
   const mapContainerRef = useRef<HTMLDivElement | null>(null);
 
@@ -66,6 +66,33 @@ export function useMapInitialization({ startDate, endDate, selectedView }: UseMa
     }
   }, [mapScriptLoaded, user, isSignedIn, mapInitialized]);
 
+
+  // In useMapInitialization.ts
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible' && googleMapsRef.current) {
+        // Trigger a resize event to force the map to redraw
+        setTimeout(() => {
+          if (googleMapsRef.current) {
+            google.maps.event.trigger(googleMapsRef.current, 'resize');
+            // Get center and check if it exists before using it
+            const center = googleMapsRef.current.getCenter();
+            if (center) {
+              googleMapsRef.current.setCenter(center);
+            }
+          }
+        }, 100); // Small delay to ensure the container is visible
+      }
+    };
+
+    // Add event listener
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+
+    // Cleanup
+    return () => {
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+    };
+  }, []);
   // Load markers based on filter changes
   useEffect(() => {
     if (mapInitialized && user) {

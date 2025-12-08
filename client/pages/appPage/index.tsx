@@ -9,6 +9,7 @@ import { CalendarSection } from "../../components/appPage/CalendarSection";
 import { MapSection } from "../../components/appPage/MapSection";
 import { LoadingScreen } from "../../components/appPage/LoadingScreen";
 import { LAYOUT_SIZES, MarkerViewType } from "@/lib/appPageConstants";
+import { TestApollo } from "@/components/TestApollo";
 
 const Index = () => {
   // UI State
@@ -60,8 +61,9 @@ const Index = () => {
           onClose={() => setIsEventModalOpen(false)}
           mapScriptLoaded={mapScriptLoaded}
         />
-      )}
-
+      )} 
+      {/* <TestApollo /> */}
+     
       <div className="flex pt-14">
         <div className="w-1/6 fixed top-16 left-0 p-4">
           <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />

@@ -1,10 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Marker } from "../../types/markers";
+import { client } from '@/lib/graphql/client';
+import { GET_MARKERS } from '@/lib/graphql/queries/getMarkers';
 
 const supabase = createClient(
   process.env.NEXT_PUBLIC_SUPABASE_URL!,
   process.env.NEXT_PUBLIC_SUPABASE_API_KEY!
 );
+
+export type GetMarkersResponse = {
+  getMarkers: Marker[];
+};
 
 export type MarkerFilterOptions = {
   user_id?: string;
@@ -13,6 +19,26 @@ export type MarkerFilterOptions = {
   endDate?: Date;
   limit?: number;
 };
+
+
+export async function getMarkersApollo(options: MarkerFilterOptions = {}): Promise<Marker[] | null> {
+  try {
+    const { data } = await client.query<GetMarkersResponse>({
+      query: GET_MARKERS,
+      variables: {
+        options: {
+          startDate: options.startDate?.toISOString(),
+          endDate: options.endDate?.toISOString(),
+          limit: options.limit,
+        }
+      }
+    });
+    return data?.getMarkers || [];
+  } catch (error) {
+    console.error('Error fetching markers:', error);
+    return null;
+  }
+}
 
 export async function getMarkers(options: MarkerFilterOptions = {}): Promise<Marker[] | null> {
   const { user_id, anonFilter = 'all', startDate, endDate } = options;

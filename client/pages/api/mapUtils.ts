@@ -2,9 +2,9 @@
 
 export let map: google.maps.Map;
 
-import { insertMarker } from "./insertMarker";
+import { insertMarker, insertMarkerApollo } from "./insertMarker";
 import { v4 as uuidv4 } from "uuid";
-import { getMarkers } from "./getMarkers";
+import { getMarkers, getMarkersApollo } from "./getMarkers";
 import { MarkerFilterOptions } from "../api/getMarkers";
 import type { WayfeelEvent, EventSource } from "@/types/events";
 
@@ -113,7 +113,7 @@ export const loadMarkersWithFilters = async (
     clearAllMarkers();
 
     const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
-    const markers = await getMarkers(filterOptions);
+    const markers = await getMarkersApollo(filterOptions);
     
     if (markers && markers.length) {
       markers.forEach((marker: ApiMarker) => {
@@ -189,7 +189,7 @@ export const initMap = async (
 
     // If your API supports date filtering, you could pass it via markerOptions here.
 
-    const markers = await getMarkers(markerOptions);
+    const markers = await getMarkersApollo(markerOptions);
 
     if (markers && markers.length) {
       markers.forEach((marker: ApiMarker) => {
@@ -483,7 +483,7 @@ export const initMap = async (
   ) => {
     if (isSignedIn && user) {
       try {
-        await insertMarker({
+        await insertMarkerApollo({
           id: uuidv4(),
           longitude: latLng.lng(),
           latitude: latLng.lat(),

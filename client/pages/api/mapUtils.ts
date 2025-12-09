@@ -483,7 +483,8 @@ export const initMap = async (
   ) => {
     if (isSignedIn && user) {
       try {
-        await insertMarkerApollo({
+        
+        const request = {
           id: uuidv4(),
           longitude: latLng.lng(),
           latitude: latLng.lat(),
@@ -492,7 +493,8 @@ export const initMap = async (
           anon: isAnonymous,
           created_at: new Date().toISOString(),
           text: text || ""
-        });
+        }
+        await insertMarkerApollo(request);
         console.log(
           `Marker Successfully Inserted! (Anonymous: ${isAnonymous})`
         );

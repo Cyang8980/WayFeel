@@ -2,6 +2,7 @@ import { createClient } from '@supabase/supabase-js';
 import type { Marker } from "../../types/markers"
 import { client } from '@/lib/graphql/client';
 import { CREATE_MARKER } from '@/lib/graphql/queries/insertMarker';
+import { GET_MARKERS } from '@/lib/graphql/queries/getMarkers';
 export const supabase = createClient(process.env.NEXT_PUBLIC_SUPABASE_URL!, process.env.NEXT_PUBLIC_SUPABASE_API_KEY!);
   
   export async function insertMarker(marker: Marker): Promise<void> {
@@ -56,13 +57,14 @@ export async function insertMarkerApollo(marker: Marker): Promise<Marker | null>
   }
 
   try {
+    console.log("Data to be mutated: ", marker);
     const { data } = await client.mutate<{ createMarker: Marker }>({
       mutation: CREATE_MARKER,
       variables: { marker: input },
-      // OPTIONAL: kick your list back into sync
-      // refetchQueries: [{ query: GET_MARKERS, variables: { options: { limit: 50 } } }],
-      // awaitRefetchQueries: true,
+      refetchQueries: [{ query: GET_MARKERS, variables: { options: { limit: 50 } } }],
+      awaitRefetchQueries: true,
     });
+    console.log("data returned: ", data);
 
     return data?.createMarker ?? null;
   } catch (err) {

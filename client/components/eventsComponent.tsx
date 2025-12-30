@@ -26,7 +26,7 @@ export default function EventList() {
 
   // Dynamic sizes
   const cardWidth = windowWidth > 1200 ? "425px" : windowWidth > 768 ? "90%" : "100%";
-  const cardMinHeight = windowWidth > 768 ? "200px" : "150px";
+  const cardHeight = windowWidth > 768 ? "200px" : "100px";
   const emojiSize = windowWidth > 1200 ? 150 : windowWidth > 768 ? 120 : 80;
 
   const emojiImages: { [key: number]: string } = {
@@ -76,13 +76,14 @@ export default function EventList() {
             style={{
               border: "1px solid #ccc",
               padding: "2rem",
-              borderRadius: "8px",
+              borderRadius: "60px",
               width: cardWidth,
-              minHeight: cardMinHeight,
+              height: cardHeight,
               boxShadow: "0 2px 8px rgba(0,0,0,0.1)",
               backgroundColor: bgColor,
               display: "flex",
               alignItems: "center",
+              justifyContent: "center",
               gap: "1rem",
               flexWrap: "wrap", // allow wrapping on small screens
             }}
@@ -99,11 +100,27 @@ export default function EventList() {
                 }}
               />
             )}
-            <div style={{ flex: 1 }}>
-              <h3 style={{ fontSize: windowWidth < 500 ? "1rem" : "1.25rem" }}>
+            <div style={{ 
+              textAlign: "center", 
+              maxWidth: "100%", 
+              overflow: "hidden",
+              flex: "1 1 0",
+              minWidth: 0
+            }}>
+              <h3 
+                style={{ 
+                  fontSize: windowWidth < 500 ? "1rem" : "1.25rem",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  maxWidth: "100%",
+                  margin: 0,
+                  padding: 0
+                }}
+              >
                 {event.text}
               </h3>
-              <p style={{ fontSize: windowWidth < 500 ? "0.8rem" : "1rem" }}>
+              <p style={{ fontSize: windowWidth < 500 ? "0.8rem" : "1rem", margin: "0.5rem 0 0 0" }}>
                 {new Date(event.created_at).toLocaleString()}
               </p>
             </div>

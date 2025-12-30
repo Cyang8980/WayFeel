@@ -34,6 +34,61 @@ export function createImageElement(src: string): HTMLImageElement {
   return img;
 }
 
+// Create bean-shaped marker with emoji face
+export function createBeanMarker(emojiId: number, emojiSrc: string): HTMLElement {
+  const container = document.createElement("div");
+  container.style.position = "relative";
+  container.style.width = "50px";
+  container.style.height = "50px";
+  
+  // Bean shape using SVG for more organic, irregular shape
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("width", "50");
+  svg.setAttribute("height", "50");
+  svg.style.position = "absolute";
+  svg.style.top = "0";
+  svg.style.left = "0";
+  
+  // Get color from emojiId
+  const emojiColorMap: Record<number, string> = {
+    1: "#8BA6D0",
+    2: "#E8818C",
+    3: "#F2A181",
+    4: "#F7E599",
+    5: "#AAD485",
+  };
+  const color = emojiColorMap[emojiId] || "#F7E599";
+  
+  // Create bean/potato shape path - organic, irregular shape
+  const path = document.createElementNS("http://www.w3.org/2000/svg", "path");
+  path.setAttribute(
+    "d",
+    "M 25 5 Q 35 8, 40 18 Q 45 28, 42 38 Q 40 45, 32 47 Q 25 48, 18 47 Q 10 45, 8 38 Q 5 28, 10 18 Q 15 8, 25 5 Z"
+  );
+  path.setAttribute("fill", color);
+  path.setAttribute("stroke", "none");
+  svg.appendChild(path);
+  
+  container.appendChild(svg);
+  
+  // Add emoji image inside
+  const img = document.createElement("img");
+  img.src = emojiSrc;
+  img.style.width = "32px";
+  img.style.height = "32px";
+  img.style.position = "absolute";
+  img.style.top = "50%";
+  img.style.left = "50%";
+  img.style.transform = "translate(-50%, -50%)";
+  img.style.objectFit = "contain";
+  img.style.pointerEvents = "none";
+  img.style.zIndex = "1";
+  
+  container.appendChild(img);
+  
+  return container;
+}
+
 export type ApiMarker = {
   id: string;
   latitude: number;
@@ -118,7 +173,7 @@ export const loadMarkersWithFilters = async (
     if (markers && markers.length) {
       markers.forEach((marker: ApiMarker) => {
         const imgSrc = emojiIdToUrl(marker.emoji_id);
-        const contentEl = createImageElement(imgSrc);
+        const contentEl = createBeanMarker(marker.emoji_id, imgSrc);
 
         const adv = new AdvancedMarkerElement({
           position: { lat: marker.latitude, lng: marker.longitude },
@@ -166,10 +221,55 @@ export const initMap = async (
   const { Map } = (await google.maps.importLibrary("maps")) as google.maps.MapsLibrary;
   const { AdvancedMarkerElement } = (await google.maps.importLibrary("marker")) as google.maps.MarkerLibrary;
 
+  // Load custom map style
+  const mapStyle = [
+    {
+      featureType: "all",
+      elementType: "geometry",
+      stylers: [{ color: "#e8e8e8" }]
+    },
+    {
+      featureType: "landscape",
+      elementType: "geometry",
+      stylers: [{ color: "#f5f5f5" }]
+    },
+    {
+      featureType: "water",
+      elementType: "geometry",
+      stylers: [{ color: "#a8d5e2" }]
+    },
+    {
+      featureType: "road",
+      elementType: "geometry",
+      stylers: [{ color: "#ffffff" }, { weight: 1 }]
+    },
+    {
+      featureType: "road.highway",
+      elementType: "geometry",
+      stylers: [{ color: "#ffffff" }, { weight: 1.5 }]
+    },
+    {
+      featureType: "poi.park",
+      elementType: "geometry",
+      stylers: [{ color: "#c8e6c9" }]
+    },
+    {
+      featureType: "administrative",
+      elementType: "labels",
+      stylers: [{ visibility: "off" }]
+    },
+    {
+      featureType: "poi",
+      elementType: "labels",
+      stylers: [{ visibility: "off" }]
+    }
+  ];
+
   map = new Map(mapElement, {
     zoom: 14,
     center: { lat: 40.6782, lng: -73.9442 },
     mapId: "2144d356e076f199b6e1e755",
+    styles: mapStyle,
   });
 
   // --------- Populate existing markers ---------
@@ -194,7 +294,7 @@ export const initMap = async (
     if (markers && markers.length) {
       markers.forEach((marker: ApiMarker) => {
         const imgSrc = emojiIdToUrl(marker.emoji_id);
-        const contentEl = createImageElement(imgSrc);
+        const contentEl = createBeanMarker(marker.emoji_id, imgSrc);
 
         const adv = new AdvancedMarkerElement({
           position: { lat: marker.latitude, lng: marker.longitude },

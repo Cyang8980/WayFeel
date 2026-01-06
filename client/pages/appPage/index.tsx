@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useRef, useEffect } from "react";
 import Sidebar from "../../components/sidebar";
 import EventModal from "@/components/EventModal";
 import { useWindowSize } from "../../hooks/useWindowSize";
@@ -41,10 +41,24 @@ const Index = () => {
     [windowHeight]
   );
   
-  const mapHeight = useMemo(
-    () => Math.max(windowHeight * LAYOUT_SIZES.MAP_HEIGHT_RATIO, LAYOUT_SIZES.MIN_MAP_HEIGHT),
-    [windowHeight]
-  );
+  // Map height will be set to match width to make it shorter than square
+  // Width will be calculated based on container, so we'll use a ref callback
+  const [mapHeight, setMapHeight] = useState<number>(LAYOUT_SIZES.MIN_MAP_HEIGHT);
+  
+  const mapContainerWidthRef = useRef<HTMLDivElement>(null);
+  
+  useEffect(() => {
+    const updateMapSize = () => {
+      if (mapContainerWidthRef.current) {
+        const width = mapContainerWidthRef.current.offsetWidth;
+        setMapHeight(width * 0.8); // Increased from 0.75 to 0.9 for a bigger map
+      }
+    };
+    
+    updateMapSize();
+    window.addEventListener('resize', updateMapSize);
+    return () => window.removeEventListener('resize', updateMapSize);
+  }, []);
 
   if (isLoading) {
     return <LoadingScreen />;
@@ -62,27 +76,33 @@ const Index = () => {
         />
       )}
 
-      <div className="flex pt-14">
-        <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
+      <div className="flex justify-center pt-14 px-24 lg:px-32 xl:px-40">
+        <div className="w-full max-w-[1800px] relative flex items-start">
+          <Sidebar activeItem={activeItem} onSetActiveItem={setActiveItem} />
 
-        <main className="flex flex-col lg:flex-row flex-1 ml-28 lg:ml-32 mr-4 lg:mr-[8%] gap-4 p-4">
-          <CalendarSection
-            currentDate={currentDate}
-            onDateChange={setCurrentDate}
-            calendarHeight={calendarHeight}
-          />
+          <main className="flex flex-col lg:flex-row flex-1 ml-28 lg:ml-32 gap-12 pt-12 lg:pt-16 px-12 lg:px-16 pb-12 lg:pb-16">
+            <div className="w-full lg:w-1/3 flex-shrink-0">
+              <CalendarSection
+                currentDate={currentDate}
+                onDateChange={setCurrentDate}
+                calendarHeight={calendarHeight}
+              />
+            </div>
 
-          <MapSection mapContainerRef={mapContainerRef} mapHeight={mapHeight}>
-            <FilterControls
-              selectedView={selectedView}
-              onViewChange={setSelectedView}
-              startDate={startDate}
-              endDate={endDate}
-              onStartDateChange={setStartDate}
-              onEndDateChange={setEndDate}
-            />
-          </MapSection>
-        </main>
+            <div ref={mapContainerWidthRef} className="flex-1 lg:flex-[3]">
+              <MapSection mapContainerRef={mapContainerRef} mapHeight={mapHeight}>
+                <FilterControls
+                  selectedView={selectedView}
+                  onViewChange={setSelectedView}
+                  startDate={startDate}
+                  endDate={endDate}
+                  onStartDateChange={setStartDate}
+                  onEndDateChange={setEndDate}
+                />
+              </MapSection>
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );

@@ -89,7 +89,7 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   ];
 
   return (
-    <aside className="w-20 max-w-20 bg-[#E2CACA] text-white h-auto max-h-[600px] fixed top-20 left-4 rounded-2xl shadow-lg transform transition-all duration-300 z-50 flex flex-col py-4">
+    <aside className="w-20 max-w-20 bg-[#E2CACA] text-white max-h-[600px] mt-[70px] left-30 rounded-2xl shadow-lg transform transition-all duration-300 z-50 flex flex-col py-4">
       {!isSignedIn ? (
         <div className="px-2">
           <SignInButton>

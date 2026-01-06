@@ -13,7 +13,7 @@ export const MapSection: React.FC<MapSectionProps> = ({
   children,
 }) => {
   return (
-    <section className={`w-full ${LAYOUT_SIZES.MAP_WIDTH_LG} ${LAYOUT_SIZES.MAP_WIDTH_XL} p-4`}>
+    <section className="w-full p-5">
       {children}
       <div
         ref={mapContainerRef}

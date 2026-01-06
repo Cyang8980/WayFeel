@@ -17,7 +17,7 @@ interface Emoji {
 const HomePage: React.FC = () => {
   const { isSignedIn, user } = useUser();
   const router = useRouter();
-  const [emojis, setEmojis] = useState<Emoji[]>([]); // array to track active emojis
+  const [emojis] = useState<Emoji[]>([]); // array to track active emojis
   const [clickCount, setClickCount] = useState(0); // track number of clicks
   const [showTextBox, setShowTextBox] = useState(false); // control visibility of text box
   const [showMapPopup, setShowMapPopup] = useState(false); // control visibility of map popup
@@ -80,7 +80,7 @@ const HomePage: React.FC = () => {
   // });
 
   // Handle emoji click - show popup to join Wayfeel
-  const handleEmojiClick = (index: number) => {
+  const handleEmojiClick = () => {
     setShowEmojiPopup(true);
     
     // Increment click count
@@ -231,7 +231,7 @@ const HomePage: React.FC = () => {
                     key={index}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.9 }}
-                    onClick={() => handleEmojiClick(index)}
+                    onClick={handleEmojiClick}
                     className="cursor-pointer transition-transform"
                   >
                     <Image

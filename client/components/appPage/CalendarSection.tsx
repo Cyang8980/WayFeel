@@ -2,7 +2,6 @@ import React, { useMemo } from 'react';
 import moment from 'moment';
 import Image from 'next/image';
 import EventList from '../eventsComponent';
-import { LAYOUT_SIZES } from '@/lib/appPageConstants';
 import { useUser } from '@clerk/nextjs';
 import useMarkers from '@/hooks/useMarkers';
 import { emojiColorMap } from '@/lib/constants';

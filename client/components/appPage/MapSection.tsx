@@ -1,5 +1,4 @@
 import React, { RefObject } from 'react';
-import { LAYOUT_SIZES } from '@/lib/appPageConstants';
 
 interface MapSectionProps {
   mapContainerRef: RefObject<HTMLDivElement>;

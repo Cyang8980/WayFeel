@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 import moment from 'moment';
+import Image from 'next/image';
 import EventList from '../eventsComponent';
-import { LAYOUT_SIZES } from '@/lib/appPageConstants';
 import { useUser } from '@clerk/nextjs';
 import useMarkers from '@/hooks/useMarkers';
 import { emojiColorMap } from '@/lib/constants';
@@ -77,7 +77,7 @@ export const CalendarSection: React.FC<CalendarSectionProps> = ({
   };
 
   return (
-    <section className={` ${LAYOUT_SIZES.CALENDAR_WIDTH_LG} ${LAYOUT_SIZES.CALENDAR_WIDTH_XL} p-4`}>
+    <section className="px-4 pb-4">
       <div className="bg-gray-100 rounded-[60px] shadow-lg p-4" style={{ minHeight: `${calendarHeight}px` }}>
         {/* Header */}
         <div className="flex items-center justify-between mb-3 px-2">
@@ -133,6 +133,28 @@ export const CalendarSection: React.FC<CalendarSectionProps> = ({
           })}
         </div>
       </div>
+      
+      {/* Horizontal Emoji List */}
+      <div className="my-4 bg-white rounded-lg shadow-md p-4">
+        <div className="flex justify-center items-center gap-3 overflow-x-auto">
+          {[1, 2, 3, 4, 5].map((emojiIndex) => (
+            <div
+              key={emojiIndex}
+              className="flex-shrink-0"
+            >
+              <Image
+                src={`/emojis/Wayfeel_Emojis-0${emojiIndex}.png`}
+                alt={`Emoji ${emojiIndex}`}
+                width={60}
+                height={60}
+                className="select-none"
+                draggable="false"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+
       <div>
         <EventList />
       </div>

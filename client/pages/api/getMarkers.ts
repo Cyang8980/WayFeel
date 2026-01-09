@@ -67,7 +67,7 @@ export const grabTwoEvents = async (userId: string) => {
     .select("*")
     .eq("created_by", userId)          // filter by current user
     .order("created_at", { ascending: false })
-    .limit(2);
+    .limit(1);
 
   if (error) {
     console.error("Error fetching events:", error);

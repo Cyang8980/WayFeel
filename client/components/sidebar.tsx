@@ -89,28 +89,32 @@ const Sidebar: React.FC<SidebarProps> = ({ activeItem, onSetActiveItem }) => {
   ];
 
   return (
-    <aside className="w-15 bg-[#E2CACA] text-white h-screen fixed top-0 left-0 transform transition-transform duration-300 z-50">
+    <aside className="w-20 max-w-20 bg-[#E2CACA] text-white max-h-[600px] mt-[70px] left-30 rounded-2xl shadow-lg transform transition-all duration-300 z-50 flex flex-col py-4">
       {!isSignedIn ? (
-        <SignInButton>
-          <button className="text-white bg-blue-600 px-2 py-2 rounded hover:bg-blue-700 transition-colors mt-4 ml-1 mr-1">
-            Sign In
-          </button>
-        </SignInButton>
+        <div className="px-2">
+          <SignInButton>
+            <button className="text-white bg-blue-600 px-2 py-2 rounded-lg hover:bg-blue-700 transition-colors w-full">
+              Sign In
+            </button>
+          </SignInButton>
+        </div>
       ) : (
-        <ButtonWrapper>
-          <CustomUserButton />
-        </ButtonWrapper>
+        <div className="px-2 mb-2">
+          <ButtonWrapper>
+            <CustomUserButton />
+          </ButtonWrapper>
+        </div>
       )}
-      <ul className="mt-4 space-y-2">
+      <ul className="flex-1 flex flex-col items-center space-y-2 px-2">
         {menuItems.map((item) => (
-          <li key={item.id}>
+          <li key={item.id} className="w-full">
             <button
               onClick={() => {
                 onSetActiveItem(item.id);
                 item.action();
               }}
-              className={`w-full text-left px-6 py-3 flex items-center gap-2 hover:bg-gray-700 transition ${
-                activeItem === item.id ? "bg-gray-800" : ""
+              className={`w-full text-center px-4 py-3 flex items-center justify-center gap-2 rounded-xl hover:bg-[#d4b8b8] transition-all ${
+                activeItem === item.id ? "bg-[#c9a5a5] shadow-md" : ""
               }`}
             >
               {item.label}

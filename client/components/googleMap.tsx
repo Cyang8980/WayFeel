@@ -5,7 +5,6 @@ import initMap from "@/components/map"
 declare global {
   interface Window {
     initMap: () => void;
-    google: typeof google;
   }
 }
 

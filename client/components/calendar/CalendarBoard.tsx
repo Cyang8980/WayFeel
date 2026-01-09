@@ -12,6 +12,7 @@ import "react-big-calendar/lib/css/react-big-calendar.css";
 import CustomEvent from "./CustomEvent";
 import { WayfeelEvent, RbcView } from "@/types/events";
 import { eventStyleGetter } from "@/lib/eventStyling";
+import { CustomToolBar } from "./CustomToolBar";
 
 const localizer = momentLocalizer(moment);
 
@@ -35,6 +36,8 @@ export type DropResizeArgs = {
 export default function CalendarBoard({
   events,
   date,
+  googleConnected,
+  onConnectGoogle,
   onNavigate,
   onView,
   onSelectEvent,
@@ -43,16 +46,46 @@ export default function CalendarBoard({
 }: {
   events: WayfeelEvent[];
   date: Date;
+  googleConnected: boolean;
+  onConnectGoogle: () => Promise<void>;
   onNavigate: (d: Date) => void;
   onView: (v: RbcView) => void;
   onSelectEvent: (e: WayfeelEvent) => void;
   onEventDrop: (args: DropResizeArgs) => void;
   onEventResize: (args: DropResizeArgs) => void;
+  view: RbcView;
 }) {
-  const components: Components<WayfeelEvent> = { event: CustomEvent };
+  const components: Components<WayfeelEvent> = {
+    event: CustomEvent,
+    toolbar: (props) => (
+      <CustomToolBar
+        onConnectGoogle={onConnectGoogle}
+        onNavigate={(action: string) => {
+          const newDate = new Date(date);
+          if (action === 'TODAY') {
+            onNavigate(new Date());
+          } else if (action === 'PREV') {
+            newDate.setDate(date.getDate() - 7);
+            onNavigate(newDate);
+          } else if (action === 'NEXT') {
+            newDate.setDate(date.getDate() + 7);
+            onNavigate(newDate);
+          }
+        } } 
+        date={date} 
+        googleConnected={googleConnected}
+        emojis={[
+        { src: '/emojis/Wayfeel_Emojis-01.png', alt: 'Emoji 1' },
+        { src: '/emojis/Wayfeel_Emojis-02.png', alt: 'Emoji 2' },
+        { src: '/emojis/Wayfeel_Emojis-03.png', alt: 'Emoji 3' },
+        { src: '/emojis/Wayfeel_Emojis-04.png', alt: 'Emoji 4' },
+        { src: '/emojis/Wayfeel_Emojis-05.png', alt: 'Emoji 5' }
+    ]}      />
+    )
+  };
 
   return (
-    <div className="flex-1 flex justify-center items-center p-5 mt-8 ml-[4.6%] z-30">
+    <div className="flex-1 flex justify-center items-center p-20 ml-[4.0%] z-30">
       <DnDCalendar
         localizer={localizer}
         events={events}

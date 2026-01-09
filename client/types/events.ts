@@ -1,4 +1,4 @@
-export type RbcView = "month" | "week" | "day";
+export type RbcView = "month" | "week" | "day" | "work_week" | "agenda";
 export type EventSource = "gcal" | "wayfeel";
 
 export type WayfeelEvent = {
